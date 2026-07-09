@@ -13,24 +13,6 @@ Explore adding git commits at critical stages of the role pipeline, not just in 
 
 ## From Reviewer — Loop 2 Pipeline-Wide Review (2026-07-09)
 
-### Consolidate Send-Back Cleanup Logic (Warning)
-**Proposed by:** Reviewer
-**Should be handled by:** Planner → Worker
-
-Send-back cleanup instructions are duplicated between AGENTS.md and `03_worker.md`. If one changes and the other doesn't, they'll drift apart. Pick a single source of truth — either keep details in Worker only with a pointer from AGENTS.md, or vice versa.
-
-### Add Non-Code Iteration Guidance to Reviewer (Warning)
-**Proposed by:** Reviewer
-**Should be handled by:** Planner → Worker
-
-The Reviewer's tasks are all code-focused. On infrastructure-only iterations (no application code), there's no guidance on how to adapt. Add a note: "If this iteration produced only configuration/documentation changes, focus your review on those artifacts and skip code-specific sections, noting why in your report."
-
-### Make Send-Back Mechanism Visible in Tester Role (Suggestion)
-**Proposed by:** Reviewer
-**Should be handled by:** Planner → Worker
-
-The Tester can create `send_back_to_worker.md`, but the instruction is buried inside "Execute Tests and Report Results" with no dedicated subsection. The Reviewer has a clear "Auto Send-Back on Critical Issues" section. Add a matching subsection to the Tester for symmetry so agents don't miss the option.
-
 ### Handle Partial/Re-Run Loops in Finalizer (Suggestion)
 **Proposed by:** Reviewer
 **Should be handled by:** Planner → Worker

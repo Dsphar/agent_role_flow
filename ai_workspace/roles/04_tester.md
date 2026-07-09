@@ -39,10 +39,17 @@ Before writing any tests, check whether testing preferences are already defined 
 ### Execute Tests and Report Results
 - Run all tests and capture results.
 - If tests fail, diagnose the failures:
-  - **Bug in implementation** → document clearly. Create `ai_workspace/send_back_to_worker.md` starting with a header line `Source: Tester (Role 04)`, followed by a list of bugs (file, line, description, severity). This file triggers an automatic send-back to the Worker role on next session start.
+  - **Bug in implementation** → document clearly with file, line, description, and severity.
   - **Flaky or incorrect test** → fix the test itself.
 - Re-run until a stable result is achieved (all passing, or known issues documented).
-- If `send_back_to_worker.md` was created, inform the user that work will be sent back to the Worker automatically on next session start.
+
+### Send-Back on Bugs
+When tests reveal bugs in the implementation:
+1. Present your findings to the user — list each bug with file references, descriptions, and severity.
+2. Ask the user how to proceed:
+   - **(a) Send back to Worker** — Create `ai_workspace/send_back_to_worker.md` starting with a header line `Source: Tester (Role 04)`, followed by the bug list. This triggers the Worker role on next session start so bugs are fixed immediately.
+   - **(b) Defer as TODO** — Add each bug to `ai_workspace/todo.md` for a future pipeline loop. The current run continues without interruption.
+3. If option (a) is chosen, inform the user that work will be sent back to the Worker on next session start.
 
 ### Run Regression Tests (Existing Projects)
 If `ai_workspace/project_context.md` exists, the project has prior work. Before focusing on new tests:

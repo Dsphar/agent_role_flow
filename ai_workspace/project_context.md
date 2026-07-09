@@ -18,7 +18,7 @@ ai_workspace/
 - **State via files:** Pipeline state is inferred from `_complete.md` and `_in_progress.md` files — no external state tracking.
 - **AGENTS.md kept minimal:** Trimmed to ~85 lines, removing redundant documentation-only sections. Operational logic only.
 - **Summarizer before Reviewer (Loop 2):** Documentation is produced before the quality gate so it gets reviewed too. Previously docs were written after review and slipped through unchecked.
-- **Auto send-back mechanism (Loop 2):** Tester/Reviewer can create `send_back_to_worker.md` to automatically route bugs back to Worker on next session start, then re-run validation from that point forward.
+- **User-prompted send-back mechanism:** Tester/Reviewer present findings and ask the user whether to create `send_back_to_worker.md` (routes to Worker on next session start) or defer as a TODO. The pipeline does not auto-send — the human decides.
 
 ## Recent Changes
 - **Loop N (2026-07-09):** Added TODO self-maintenance to the pipeline — Interviewer notes addressed TODO items by origin, Planner adds a removal step, Worker executes. Removed completed TODO "Consolidate Send-Back Cleanup Logic" from `todo.md`.

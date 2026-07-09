@@ -24,6 +24,7 @@ Translate the problem statement from the Interviewer into a concrete, actionable
 - Produce a numbered list of implementation steps in execution order. Each step should be specific enough that the Worker can complete it independently.
 - Group related tasks logically (e.g., scaffolding → core logic → integration → tests).
 - Note dependencies between steps so the Worker knows what must be done first.
+- **If `01_interviewer_complete.md` notes a `todo.md` item was addressed, add a final step to remove that completed item from `ai_workspace/todo.md`.** This keeps the TODO list accurate across pipeline loops.
 
 ### Identify Risks and Open Questions
 - Flag any technical risks, unknowns, or decisions that need user input before coding begins.

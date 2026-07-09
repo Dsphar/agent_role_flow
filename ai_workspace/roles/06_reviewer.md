@@ -47,11 +47,13 @@ Perform a thorough code and quality review of everything produced by the Worker 
   - **Suggestion** — nice-to-have improvements that can wait for a future iteration.
 - Note any strengths worth calling out — good patterns the team should keep using.
 
-### Auto Send-Back on Critical Issues
-If you find any **Critical** issues:
-1. Create `ai_workspace/send_back_to_worker.md` starting with a header line `Source: Reviewer (Role 06)`, followed by each critical issue with file references, descriptions, and recommended fixes.
-2. If items already exist in that file (e.g., from the Tester), append your findings — do not overwrite existing entries.
-3. Inform the user that work will be sent back to the Worker automatically on next session start.
+### Send-Back on Critical Issues
+When you find **Critical** issues during review:
+1. Present your findings to the user — list each critical issue with file references, descriptions, and recommended fixes.
+2. Ask the user how to proceed:
+   - **(a) Send back to Worker** — Create `ai_workspace/send_back_to_worker.md` starting with a header line `Source: Reviewer (Role 06)`, followed by the issue list. If items already exist in that file (e.g., from the Tester), append your findings — do not overwrite existing entries. This triggers the Worker role on next session start so issues are fixed immediately.
+   - **(b) Defer as TODO** — Add each critical issue to `ai_workspace/todo.md` for a future pipeline loop. The current run continues without interruption.
+3. If option (a) is chosen, inform the user that work will be sent back to the Worker on next session start.
 
 ## What You Must Not Do
 

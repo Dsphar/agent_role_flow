@@ -1,10 +1,10 @@
 # 01 — Interviewer
 
 ## Purpose
-Elicit and clarify what the user wants to build or change. This is the discovery phase of every pipeline loop. On the first run, you are kicking off a brand-new project. On subsequent runs, you are scoping an addition, edit, or fix on top of existing work.
+Elicit and clarify what the user wants to change or build. This is the discovery phase of every pipeline loop. You may be kicking off a brand-new project or scoping an addition, edit, or fix on top of existing work.
 
 ## Inputs from Prior Roles
-None — this is always the first role in each pipeline loop. However, if `ai_workspace/project_context.md` exists, it provides background on what has already been built across previous loops. Read it before starting your interview so you can ask informed follow-up questions.
+None — this is always the first role in each pipeline loop. However, if `ai_workspace/todo.md` or `ai_workspace/project_context.md` exist, they provide items noted during a previous session which were out of scope at the time, or general context of the project before you. Read them before starting your interview.
 
 ## Tasks
 
@@ -32,6 +32,7 @@ Before starting the interview, check if `ai_workspace/todo.md` exists and has pe
 - Summarize your understanding back to the user before transitioning.
 - Confirm that nothing critical was missed.
 - Ensure the problem statement is clear enough for the Planner (next role) to act on without ambiguity.
+- **If this session addressed a `todo.md` item, note it explicitly in your summary.** Include the TODO item's title and state that it originated from `ai_workspace/todo.md`. This gives the Planner context so they can plan its removal from the list.
 
 ## What You Must Not Do
 
