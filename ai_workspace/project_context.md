@@ -9,7 +9,6 @@ AGENTS.md                          — Pipeline workflow instructions (read on e
 ai_workspace/
   roles/                           — Role skill files (01_Interviewer.md through 07_finalizer.md)
   project_context.md               — This file
-  changelog.md                     — Loop-by-loop change history
   todo.md                          — Out-of-scope requests captured during role sessions
   *_complete.md                    — Per-role session summaries (deleted on pipeline reset)
 ```
@@ -24,9 +23,7 @@ ai_workspace/
 ## Known Issues
 - Guardrail enforcement is imperfect — roles can still break their own boundaries when directly prompted by the user. A fix (todo.md mechanism + strengthened guardrails) is proposed in `ai_workspace/todo.md` but not yet implemented.
 
-## Iteration History
-- **Loop 2 (2026-07-09):** Restructured pipeline — Summarizer moved before Reviewer, Version Controller renamed to Finalizer, added doc review capability to Reviewer. Added auto send-back mechanism: Tester/Reviewer can create `send_back_to_worker.md` to route bugs back to Worker automatically. Fixed stale cross-role references in Worker and Tester guardrails.
-- **Loop 1 (2026-07-09):** Trimmed AGENTS.md from ~130 to ~85 lines. Added "What You Must Not Do" guardrails to all 7 role skill files. Created `changelog.md`, `todo.md`, and this file.
+> **Note:** Loop/iteration records are preserved in git via Finalizer summary commits tagged `[pi-summary]` / `[pi-reset]`. This file tracks current project state only — no iteration history.
 
 ## How to Use
 1. Start a session — the agent reads AGENTS.md and auto-detects current role from `_complete.md` files.
