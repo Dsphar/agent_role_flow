@@ -25,6 +25,12 @@ After a send-back, some `_complete.md` files are deleted and re-created. The Fin
 
 Role Detection step 3 finds "the first role whose `_complete.md` does not exist" but doesn't verify all *prior* roles are present. If a file is accidentally deleted mid-pipeline, the agent silently skips ahead past the gap. Add: "If any role before the current one is also missing its `_complete.md`, warn the user and ask whether to start from the earliest missing role instead."
 
+### Remove Redundant _complete.md Deletion Instruction in Send-Back Flow
+**Proposed by:** User (via Tester, 2026-07-09)
+**Should be handled by:** Planner → Worker
+
+When the sending role (Tester/Reviewer) completes its re-run and deletes `send_back_to_worker.md`, AGENTS.md instructs it to also delete `_complete.md` files for roles after itself. This is unnecessary — since the send-back halts the pipeline at the sending role, no downstream roles have run yet, so those `_complete.md` files will never exist. The instruction can be removed from both AGENTS.md and the relevant role skill files.
+
 ### Add Non-Code Iteration Guidance to Summarizer (Suggestion)
 **Proposed by:** Reviewer
 **Should be handled by:** Planner → Worker
