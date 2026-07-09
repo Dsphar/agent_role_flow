@@ -20,8 +20,11 @@ ai_workspace/
 - **Summarizer before Reviewer (Loop 2):** Documentation is produced before the quality gate so it gets reviewed too. Previously docs were written after review and slipped through unchecked.
 - **Auto send-back mechanism (Loop 2):** Tester/Reviewer can create `send_back_to_worker.md` to automatically route bugs back to Worker on next session start, then re-run validation from that point forward.
 
+## Recent Changes
+- **Loop N (2026-07-09):** Added TODO self-maintenance to the pipeline — Interviewer notes addressed TODO items by origin, Planner adds a removal step, Worker executes. Removed completed TODO "Consolidate Send-Back Cleanup Logic" from `todo.md`.
+
 ## Known Issues
-- Guardrail enforcement is imperfect — roles can still break their own boundaries when directly prompted by the user. A fix (todo.md mechanism + strengthened guardrails) is proposed in `ai_workspace/todo.md` but not yet implemented.
+- Guardrail enforcement is imperfect — roles can still break their own boundaries when directly prompted by the user. Remaining items in `ai_workspace/todo.md` track proposed improvements.
 
 > **Note:** Loop/iteration records are preserved in git via Finalizer summary commits tagged `[pi-summary]` / `[pi-reset]`. This file tracks current project state only — no iteration history.
 
