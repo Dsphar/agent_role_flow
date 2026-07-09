@@ -13,14 +13,17 @@ If both `{NN}_*_in_progress.md` **and** `{NN}_*_complete.md` exist for the same 
 
 ### Send-Back Detection
 Before normal role detection, check for `ai_workspace/send_back_to_worker.md`. If it exists:
-1. Read it — it contains items that need fixing (bugs from Tester, critical issues from Reviewer).
-2. Load the Worker role (`03_worker.md`) regardless of `_complete.md` state.
-3. Greet the user as Worker, present the send-back items, and begin fixing them.
-4. After all send-back items are resolved and confirmed by the user:
-   - **Delete** `send_back_to_worker.md`.
-   - **Delete `_complete.md` files for roles at and after the sending role** (noted in the file header). This ensures the pipeline re-runs validation through to the end. For example, if sent back from Tester (04), delete `04_tester_complete.md`, `05_summarizer_complete.md`, `06_reviewer_complete.md`, and `07_finalizer_complete.md`.
-   - Do NOT delete `_complete.md` files for roles before the sending role.
-5. On next session start, normal role detection picks up from where `_complete.md` files were removed.
+1. Read it — it contains items that need fixing (bugs from Tester, critical issues from Reviewer), plus a log of work done during the send-back cycle.
+2. **You are in send-back mode.** This affects your behavior (see below). Proceed to normal role detection to determine which role you play this session — do NOT force-load Worker.
+3. The sending role is noted in the file header (e.g., `Source: Tester (Role 04)`).
+
+**Send-back mode rules for every role:**
+- **Commit prefix:** Use `[ai-{role-name}-sendback]` instead of `[ai-{role-name}]` on all git commits during transition.
+- **Append a log entry to `send_back_to_worker.md`:** At the bottom of the file, under an existing "## Send-Back Log" heading (or create one), add a section with your role name, date, and a brief summary of what you did. This builds an audit trail across all roles in the cycle.
+- **Deleting the send-back file:** Only the *original sending role* deletes `send_back_to_worker.md` — and only when it runs again during send-back mode and its work passes (no more bugs/issues to send back). At that point, the send-back cycle is complete. The sending role also deletes `_complete.md` files for roles *after itself* in the pipeline so they re-run. For example, if Tester (04) is the source and now passes: delete `send_back_to_worker.md`, then delete `05_summarizer_complete.md`, `06_reviewer_complete.md`, and `07_finalizer_complete.md`.
+- **All other roles** during send-back mode leave `send_back_to_worker.md` untouched (they only append to it).
+
+> The file persists through the entire re-run cycle so every role knows it is in send-back mode. It was committed by the sending role when created, so deleting it later does not lose history.
 
 ### Role Detection
 1. **Scan** `ai_workspace/` for files matching `{nn}_*_complete.md`. All summary filenames use **lowercase**.
@@ -51,6 +54,13 @@ When you believe the current role's work is complete:
 3. Address any requested changes, then re-prompt when ready.
 4. Once confirmed:
    - If `{NN}_rolename_in_progress.md` exists, **rename** it to `{NN}_rolename_complete.md`. Otherwise, create `{NN}_rolename_complete.md` with the full summary.
+   - **Send-back log (if applicable):** If `ai_workspace/send_back_to_worker.md` exists and you are NOT the original sending role completing its re-run, append a brief work summary to the bottom of that file under a "## Send-Back Log" heading. If you ARE the original sending role and your work passes, delete `send_back_to_worker.md` and `_complete.md` files for roles after yourself (see Send-Back Detection rules).
+   - **Git commit:** Commit all changed files so progress is preserved incrementally.
+     1. Run `git status`. If not in a git repo or there are no changes, skip this step silently.
+     2. Determine prefix: if you are in send-back mode (`send_back_to_worker.md` exists now, **or you just deleted it** as the original sending role), use `[ai-{role-name}-sendback]`; otherwise use `[ai-{role-name}]`. Extract `{role-name}` from the `_complete.md` filename (e.g., `03_worker_complete.md` → `worker`).
+     3. Run `git add -A`.
+     4. Run `git commit -m "{prefix determined in step 2} {up to 100 char summary of what was accomplished}"`.
+     5. **If the commit fails** (identity not configured, merge conflict, etc.), **block transition** — present the error to the user and ask how to proceed. Do not mark the role complete until the commit succeeds or the user explicitly says to skip it.
    - Announce the role is complete and introduce the next role.
 5. On the next interaction, re-run **Session Startup** to load the new current role.
 

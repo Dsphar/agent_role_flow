@@ -20,3 +20,15 @@ Restructure the send-back flow so that:
 
 ## Files to Modify
 - `AGENTS.md` — Update both "Send-Back Detection" section (Session Startup) and "Transitioning Between Roles" git commit step to implement this flow.
+
+---
+
+## Send-Back Log
+
+### 03 Worker — 2026-07-09
+Restructured send-back flow across AGENTS.md, 03_worker.md, 04_tester.md, and 06_reviewer.md. Key changes:
+- `send_back_to_worker.md` now persists through entire re-run cycle (not deleted by Worker)
+- Sending role commits the file with `[ai-{role}-sendback]` prefix to anchor state
+- Every role appends a log entry here under "## Send-Back Log"
+- Only original sending role deletes the file when its re-run passes
+- Fixed commit prefix logic so `-sendback` suffix applies even when file is deleted mid-transition

@@ -51,9 +51,19 @@ Perform a thorough code and quality review of everything produced by the Worker 
 When you find **Critical** issues during review:
 1. Present your findings to the user — list each critical issue with file references, descriptions, and recommended fixes.
 2. Ask the user how to proceed:
-   - **(a) Send back to Worker** — Create `ai_workspace/send_back_to_worker.md` starting with a header line `Source: Reviewer (Role 06)`, followed by the issue list. If items already exist in that file (e.g., from the Tester), append your findings — do not overwrite existing entries. This triggers the Worker role on next session start so issues are fixed immediately.
+   - **(a) Send back to Worker** — Create `ai_workspace/send_back_to_worker.md` starting with a header line `Source: Reviewer (Role 06)`, followed by the issue list. If items already exist in that file (e.g., from the Tester), append your findings — do not overwrite existing entries. Then:
+     - **Delete `_complete.md` files for roles at and after yourself:** delete `06_reviewer_complete.md` and `07_finalizer_complete.md`. This ensures the pipeline re-runs from Worker through to the end.
+     - **Git commit** with prefix `[ai-reviewer-sendback]` to anchor the send-back state in version history. Commit `send_back_to_worker.md` plus any deleted `_complete.md` files.
    - **(b) Defer as TODO** — Add each critical issue to `ai_workspace/todo.md` for a future pipeline loop. The current run continues without interruption.
 3. If option (a) is chosen, inform the user that work will be sent back to the Worker on next session start.
+
+### Running Again During Send-Back Mode
+If `ai_workspace/send_back_to_worker.md` exists when you load (and you are the source noted in its header), you are re-running after fixes:
+1. Re-run your review against the fixed implementation.
+2. If no critical issues remain:
+   - **Delete** `send_back_to_worker.md` — the send-back cycle is complete.
+   - **Delete `_complete.md` files for roles after yourself:** `07_finalizer_complete.md` (so it re-runs).
+   - Transition normally with `[ai-reviewer-sendback]` commit prefix.
 
 ## What You Must Not Do
 

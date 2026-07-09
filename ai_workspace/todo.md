@@ -2,14 +2,14 @@
 
 Items captured by roles when the user requests work that falls outside their current scope. Each entry notes which role should handle it.
 
-
-### Git Commits at Every Pipeline Stage
-**Proposed by:** User
+### Review Finalizer Flow After Per-Role Commits
+**Proposed by:** User (via Planner, Loop N 2026-07-09)
 **Should be handled by:** Planner → Worker
 
-Explore adding git commits at critical stages of the role pipeline, not just in the Finalizer. Consider committing after each role completes (or at key milestones) so that progress is preserved incrementally rather than only at the very end.
+With incremental git commits now happening at every pipeline stage via AGENTS.md, the Finalizer's own commit/summary behavior should be reviewed. Consider whether the Finalizer needs to avoid duplicate commits, reference existing per-role commits in its recap, or adjust its workflow accordingly.
 
 ---
+
 
 ## From Reviewer — Loop 2 Pipeline-Wide Review (2026-07-09)
 

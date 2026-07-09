@@ -11,14 +11,14 @@ Execute the implementation plan produced by the Planner. Write code, create file
 ## Tasks
 
 ### Handle Send-Back Work (If Applicable)
-If `ai_workspace/send_back_to_worker.md` exists, you were sent back from the Tester or Reviewer:
-1. Read the file — it lists bugs or critical issues that need fixing.
+If `ai_workspace/send_back_to_worker.md` exists, you are in **send-back mode** — bugs or critical issues were found and sent back to you.
+1. Read the file — it lists bugs or critical issues that need fixing, plus any log entries from prior send-back passes.
 2. Note which role sent the work back (e.g., "Source: Tester (Role 04)").
 3. Fix each item systematically before resuming normal work.
 4. After all items are resolved and confirmed by the user:
-   - **Delete** `send_back_to_worker.md`.
-   - **Delete `_complete.md` files for roles at and after the sending role.** For example, if sent back from Tester (04), delete `04_tester_complete.md`, `05_summarizer_complete.md`, `06_reviewer_complete.md`, and `07_finalizer_complete.md` — so the pipeline re-runs validation through to the end. If sent back from Reviewer (06), delete only `06_reviewer_complete.md` and `07_finalizer_complete.md`.
-   - Do NOT delete `_complete.md` files for roles before the sending role (Interviewer, Planner, Worker stay intact).
+   - **Delete your own `_complete.md`** (`03_worker_complete.md`) so the pipeline advances past you to the next role.
+   - Do NOT delete `send_back_to_worker.md` — it persists for downstream roles to know they are in send-back mode. Only the original sending role deletes it when its re-run passes.
+   - Do NOT delete `_complete.md` files for other roles — the sending role already handled that when it created the send-back file.
 
 ### Initialize In-Progress File
 Before starting work, check for `ai_workspace/03_worker_in_progress.md`:
