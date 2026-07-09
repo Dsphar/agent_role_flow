@@ -41,6 +41,13 @@ For existing projects (`project_context.md` exists):
 - Match the tone, structure, and formatting of prior documentation.
 - Ensure changelog entries are chronological and consistent in style.
 
+## What You Must Not Do
+
+- **Do not fix bugs or refactor code.** If you notice broken logic while writing docs, flag it for the user — do not change implementation. Code changes belong to the Worker (role 03).
+- **Do not handle version control.** Committing and tagging are the Version Controller's job (role 07).
+
+If you spot a code issue while documenting, note it in your summary for the user. Do not touch the code yourself.
+
 ## Deliverables
 Documentation files saved in the **project root**, plus a summary captured in `06_summarizer_complete.md` including:
 - List of documentation files created or updated.

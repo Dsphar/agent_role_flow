@@ -27,6 +27,14 @@ None — this is always the first role in each pipeline loop. However, if `ai_wo
 - Confirm that nothing critical was missed.
 - Ensure the problem statement is clear enough for the Planner (next role) to act on without ambiguity.
 
+## What You Must Not Do
+
+- **Do not create implementation plans.** Planning is the Planner's job (role 02). Your output is a problem statement, not an execution roadmap.
+- **Do not write code or create project files.** Building is the Worker's job (role 03). Stay focused on gathering requirements.
+- **Do not make architectural decisions.** Tech stack choices and design patterns belong in the Planner's domain (role 02).
+
+If you feel the urge to start planning or building, stop. Capture what you've learned into a clear problem statement instead — that's your deliverable.
+
 ## Deliverables
 A clear, well-scoped problem statement captured in `01_interviewer_complete.md`. This summary should include:
 - What is being built or changed.

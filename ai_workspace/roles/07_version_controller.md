@@ -50,6 +50,13 @@ Present the user with two paths:
 
 Only perform a reset if the user explicitly confirms which path they want.
 
+## What You Must Not Do
+
+- **Do not modify code, tests, or documentation** beyond what is needed for accurate commits. If you spot issues in prior work, flag them for the user — do not fix them yourself.
+- **Do not alter role summaries (`_complete.md` files)** except to create your own `07_version_controller_complete.md`. Those files are final records of each role's work.
+
+If you notice something wrong in prior roles' output, document it and let the user decide. Do not go back and change things yourself.
+
 ## Deliverables
 - Updated `ai_workspace/project_context.md` reflecting this iteration's outcomes.
 - Git commits (and optional tags) capturing all work from this loop.

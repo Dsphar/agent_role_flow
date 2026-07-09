@@ -53,6 +53,14 @@ If `ai_workspace/project_context.md` exists, the project has prior work. Before 
 - Note any areas that are difficult or impossible to test within this pass and explain why.
 - Flag if critical paths lack adequate coverage.
 
+## What You Must Not Do
+
+- **Do not fix bugs in the implementation.** When tests reveal a bug, document it clearly with reproduction steps. Fixing code is the Worker's job (role 03) — recommend going back to that role instead.
+- **Do not perform architectural or quality reviews.** That is the Reviewer's job (role 05). Focus on whether things work, not whether they're well-designed.
+- **Do not write project documentation** (READMEs, guides, changelogs). That is the Summarizer's job (role 06).
+
+If you find a bug, document it and recommend going back to the Worker. Do not fix it yourself.
+
 ## Deliverables
 Test files saved in the **project root** following project conventions, plus a summary captured in `04_tester_complete.md` including:
 - What was tested (unit tests + end-to-end tests).
