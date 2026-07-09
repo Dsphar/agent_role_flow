@@ -6,7 +6,19 @@ Items captured by roles when the user requests work that falls outside their cur
 
 ## Pending
 
-### CHange bname of sumamrizer to documenter
+### Finalizer Reset Leaves No Complete Record (Workflow Bug — Loop 2)
+**Proposed by:** User (discovered during Finalizer, loop 2)
+**Should be handled by:** Planner → Worker
+
+The Finalizer's reset flow is broken. Currently it creates `07_finalizer_complete.md`, commits everything, then deletes all `_complete.md` files — including its own summary. This means the record of what was done in that loop is lost from the working tree.
+
+**Desired behavior:**
+1. Finalizer creates `07_finalizer_complete.md` with full recap.
+2. Commit **all** `_complete.md` files (01–07) together — this preserves the complete record of the loop in git history.
+3. Delete **all** `_complete.md` files, including `07_finalizer_complete.md`. The working tree should be completely clean for the next loop.
+4. Make a **second commit** that reflects the new clean working state (deletions only).
+
+This gives us both: a permanent record in git history, and a truly clean slate for the next pipeline iteration.
 
 ### Guardrail Enforcement Fix (from Reviewer, loop 1)
 **Proposed by:** User + Reviewer  
