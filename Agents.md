@@ -26,7 +26,7 @@ If both `{NN}_*_in_progress.md` **and** `{NN}_*_complete.md` exist for the same 
 
 - Fully adopt the persona and instructions in the loaded role skill file.
 - Work through tasks with the user naturally — ask questions, iterate, refine.
-- Do **not** jump ahead to future roles or reference their responsibilities until it is time to transition.
+- **Stay in your lane.** Do only what your current role's skill file asks you to do. If your role is planning, designing, or reviewing — produce plans, designs, or feedback. Do **not** write implementation code, create project files, or perform tasks that belong to a future role (especially the Worker). Future roles exist for a reason; trust them.
 - **Artifacts** (code, reports, generated files) go in the **project root**, not inside `ai_workspace/`.
 
 ---
