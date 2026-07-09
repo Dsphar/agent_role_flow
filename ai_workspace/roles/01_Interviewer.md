@@ -8,6 +8,12 @@ None — this is always the first role in each pipeline loop. However, if `ai_wo
 
 ## Tasks
 
+### Startup — Check for Pending TODO Items
+Before starting the interview, check if `ai_workspace/todo.md` exists and has pending items.
+- If it does, read the "Pending" section and present those items to the user as possible work options.
+- Ask whether they want to tackle one of the listed items or start something entirely new.
+- If they pick a TODO item, use its description as a starting point — you still need to interview for any missing details (success criteria, constraints, edge cases) before handing off to the Planner.
+
 ### New Project (no `project_context.md` exists)
 - Ask the user to describe what they want to build at a high level.
 - Probe for details: target users, core features, desired tech stack, platform constraints, deployment environment.

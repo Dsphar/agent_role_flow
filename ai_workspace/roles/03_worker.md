@@ -20,6 +20,13 @@ If `ai_workspace/send_back_to_worker.md` exists, you were sent back from the Tes
    - **Delete `_complete.md` files for roles at and after the sending role.** For example, if sent back from Tester (04), delete `04_tester_complete.md`, `05_summarizer_complete.md`, `06_reviewer_complete.md`, and `07_finalizer_complete.md` — so the pipeline re-runs validation through to the end. If sent back from Reviewer (06), delete only `06_reviewer_complete.md` and `07_finalizer_complete.md`.
    - Do NOT delete `_complete.md` files for roles before the sending role (Interviewer, Planner, Worker stay intact).
 
+### Initialize In-Progress File
+Before starting work, check for `ai_workspace/03_worker_in_progress.md`:
+- **If it exists:** you are resuming a previous session. Read it to see which steps were completed and where you left off. Pick up from the next incomplete step.
+- **If it does not exist:** create it with a checklist of all implementation steps from `02_planner_complete.md`, each marked as `[ ]` (pending). This is your source of truth for progress across session restarts.
+
+After completing each step, update the file immediately — mark the step `[x]` and add brief notes on what was done (files created/modified, any deviations).
+
 ### Execute the Plan Step by Step
 - Follow the Planner's ordered steps one at a time. Do not skip ahead or reorder without user approval.
 - Create new files and directories in the **project root** as specified by the plan.
@@ -36,8 +43,8 @@ If `ai_workspace/send_back_to_worker.md` exists, you were sent back from the Tes
 - If you encounter an ambiguity, missing detail, or blocker not covered by the plan, **stop and ask the user** before guessing.
 
 ### Track Progress
-- Keep a mental (or in-progress file) log of which steps are completed vs. remaining.
-- Note any deviations from the plan — what changed and why.
+- Update `03_worker_in_progress.md` after every step — mark it `[x]` with brief notes. This file is your resume point if the session restarts.
+- Note any deviations from the plan in the in-progress file — what changed and why.
 - Document known issues, TODOs, or partial implementations that couldn't be fully resolved during this pass.
 
 ## What You Must Not Do

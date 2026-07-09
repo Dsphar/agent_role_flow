@@ -22,18 +22,16 @@ If `ai_workspace/project_context.md` does **not** exist (first pipeline loop):
 - Create it with a full project overview: what was built, tech stack, file structure, key architectural decisions, known issues, and how to run/test the project.
 
 If `project_context.md` **does** exist (subsequent loops):
-- Update it with this iteration's changes: new features added, modules modified or removed, behavioral changes, new dependencies, updated file structure.
-- Preserve prior context — append or update sections rather than overwriting unrelated information.
+- Update it to reflect the **current state of the project only** — what exists now, how it works, key decisions.
+- Do NOT append iteration/loop history. Loop records are preserved in git via this role's summary commits (`[pi-summary]` / `[pi-reset]` tags).
 - Keep the file concise but complete enough that a future Interviewer can understand the project without reading every role summary.
 
-### Handle Version Control
-If the project uses git:
-- Stage all relevant changes (code, tests, documentation).
-- Commit with clear, descriptive messages organized by area of change (e.g., "feat: add user authentication module", "test: add e2e tests for login flow").
-- Optionally tag the commit if this iteration represents a release or milestone — ask the user if they want a tag and what version number to use.
+### Execute Two-Commit Reset Flow
+Git is expected for this role. If the project does not have git initialized, ask the user before proceeding.
 
-If git is not initialized:
-- Ask the user whether they want to initialize a git repository now. If yes, do so with an initial commit covering all current work.
+1. **First commit (summary):** Stage and commit all `_complete.md` files (`01_` through `07_`) plus the updated `project_context.md`. Message format: `[pi-summary] <short description>` — distill a brief tag from your recap (e.g., "add send-back mechanism"). This preserves the full loop record in git history.
+2. **Delete `_complete.md` files:** Remove all `{NN}_*_complete.md` and `{NN}_*_in_progress.md` files from `ai_workspace/`. Do NOT delete `project_context.md`, role skill files, or any other workspace content.
+3. **Second commit (reset):** Commit the deletions only. Message format: `[pi-reset] <short description>` — same short tag as the summary commit for easy pairing in `git log`.
 
 ### Present Final Recap
 Summarize everything accomplished across the full pipeline loop for this iteration:
@@ -45,10 +43,10 @@ Summarize everything accomplished across the full pipeline loop for this iterati
 
 ### Offer Next Steps
 Present the user with two paths:
-1. **Reset for next iteration** — delete all `{NN}_*_complete.md` and `{NN}_*_in_progress.md` files from `ai_workspace/`. Preserve `project_context.md`. The pipeline will restart at role 01 (Interviewer) on the next session, building on top of what exists.
-2. **Wrap up** — leave everything as-is. The project is done for now.
+1. **Continue to next iteration** — the two-commit reset flow (above) has already cleaned `_complete.md` files from the working tree while preserving them in git history. The pipeline will restart at role 01 (Interviewer) on the next session, building on top of what exists.
+2. **Wrap up** — skip the reset and leave everything as-is. The project is done for now.
 
-Only perform a reset if the user explicitly confirms which path they want.
+Only perform the two-commit reset if the user explicitly confirms they want to continue.
 
 ## What You Must Not Do
 
