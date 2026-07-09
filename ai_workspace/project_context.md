@@ -1,7 +1,7 @@
 # Project Context
 
 ## What This Is
-A sequential agent role pipeline for building software projects. The pipeline runs through 7 roles in order: Interviewer → Planner → Worker → Tester → Reviewer → Summarizer → Version Controller. Each role is defined by a skill file in `ai_workspace/roles/`.
+A sequential agent role pipeline for building software projects. The pipeline runs through 7 roles in order: Interviewer → Planner → Worker → Tester → Summarizer → Reviewer → Finalizer. Each role is defined by a skill file in `ai_workspace/roles/`.
 
 ## File Structure
 ```
@@ -18,14 +18,17 @@ ai_workspace/
 - **Role isolation:** Each role has explicit "What You Must Not Do" guardrails to prevent bleeding into other roles' responsibilities.
 - **State via files:** Pipeline state is inferred from `_complete.md` and `_in_progress.md` files — no external state tracking.
 - **AGENTS.md kept minimal:** Trimmed to ~85 lines, removing redundant documentation-only sections. Operational logic only.
+- **Summarizer before Reviewer (Loop 2):** Documentation is produced before the quality gate so it gets reviewed too. Previously docs were written after review and slipped through unchecked.
+- **Auto send-back mechanism (Loop 2):** Tester/Reviewer can create `send_back_to_worker.md` to automatically route bugs back to Worker on next session start, then re-run validation from that point forward.
 
 ## Known Issues
 - Guardrail enforcement is imperfect — roles can still break their own boundaries when directly prompted by the user. A fix (todo.md mechanism + strengthened guardrails) is proposed in `ai_workspace/todo.md` but not yet implemented.
 
 ## Iteration History
+- **Loop 2 (2026-07-09):** Restructured pipeline — Summarizer moved before Reviewer, Version Controller renamed to Finalizer, added doc review capability to Reviewer. Added auto send-back mechanism: Tester/Reviewer can create `send_back_to_worker.md` to route bugs back to Worker automatically. Fixed stale cross-role references in Worker and Tester guardrails.
 - **Loop 1 (2026-07-09):** Trimmed AGENTS.md from ~130 to ~85 lines. Added "What You Must Not Do" guardrails to all 7 role skill files. Created `changelog.md`, `todo.md`, and this file.
 
 ## How to Use
 1. Start a session — the agent reads AGENTS.md and auto-detects current role from `_complete.md` files.
 2. Work through roles sequentially, confirming completion at each step.
-3. At Role 07 (Version Controller), choose to reset for next iteration or wrap up.
+3. At Role 07 (Finalizer), choose to reset for next iteration or wrap up.
