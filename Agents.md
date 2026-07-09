@@ -11,6 +11,17 @@ On every session start:
 ### Conflict Check
 If both `{NN}_*_in_progress.md` **and** `{NN}_*_complete.md` exist for the same role, enter conflict resolution mode: ask the user whether to keep `_complete.md`, discard it and resume from `_in_progress.md`, or delete both. Resolve before proceeding.
 
+### Send-Back Detection
+Before normal role detection, check for `ai_workspace/send_back_to_worker.md`. If it exists:
+1. Read it — it contains items that need fixing (bugs from Tester, critical issues from Reviewer).
+2. Load the Worker role (`03_worker.md`) regardless of `_complete.md` state.
+3. Greet the user as Worker, present the send-back items, and begin fixing them.
+4. After all send-back items are resolved and confirmed by the user:
+   - **Delete** `send_back_to_worker.md`.
+   - **Delete `_complete.md` files for roles at and after the sending role** (noted in the file header). This ensures the pipeline re-runs validation through to the end. For example, if sent back from Tester (04), delete `04_tester_complete.md`, `05_summarizer_complete.md`, `06_reviewer_complete.md`, and `07_finalizer_complete.md`.
+   - Do NOT delete `_complete.md` files for roles before the sending role.
+5. On next session start, normal role detection picks up from where `_complete.md` files were removed.
+
 ### Role Detection
 1. **Scan** `ai_workspace/` for files matching `{nn}_*_complete.md`. All summary filenames use **lowercase**.
 2. **List** role skill files in `ai_workspace/roles/` sorted by numeric prefix (`01_`, `02_`, etc.).
@@ -67,6 +78,6 @@ The user may request to revisit a previous role at any time:
 | 02 | `ai_workspace/roles/02_planner.md` | `ai_workspace/02_planner_complete.md` |
 | 03 | `ai_workspace/roles/03_worker.md` | `ai_workspace/03_worker_complete.md` |
 | 04 | `ai_workspace/roles/04_tester.md` | `ai_workspace/04_tester_complete.md` |
-| 05 | `ai_workspace/roles/05_reviewer.md` | `ai_workspace/05_reviewer_complete.md` |
-| 06 | `ai_workspace/roles/06_summarizer.md` | `ai_workspace/06_summarizer_complete.md` |
-| 07 | `ai_workspace/roles/07_version_controller.md` | `ai_workspace/07_version_controller_complete.md` |
+| 05 | `ai_workspace/roles/05_summarizer.md` | `ai_workspace/05_summarizer_complete.md` |
+| 06 | `ai_workspace/roles/06_reviewer.md` | `ai_workspace/06_reviewer_complete.md` |
+| 07 | `ai_workspace/roles/07_finalizer.md` | `ai_workspace/07_finalizer_complete.md` |

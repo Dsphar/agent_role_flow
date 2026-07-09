@@ -7,7 +7,7 @@ A sequential agent role pipeline for building software projects. The pipeline ru
 ```
 AGENTS.md                          — Pipeline workflow instructions (read on every session start)
 ai_workspace/
-  roles/                           — Role skill files (01_Interviewer.md through 07_version_controller.md)
+  roles/                           — Role skill files (01_Interviewer.md through 07_finalizer.md)
   project_context.md               — This file
   changelog.md                     — Loop-by-loop change history
   todo.md                          — Out-of-scope requests captured during role sessions

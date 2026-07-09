@@ -1,4 +1,4 @@
-# 06 — Summarizer
+# 05 — Summarizer
 
 ## Purpose
 Produce clear, comprehensive documentation for everything built or changed in this pipeline loop. This is the "write it down" role — generating READMEs, API docs, usage guides, changelogs, and any other documentation that ensures the project is understandable to anyone who picks it up later.
@@ -8,7 +8,6 @@ Produce clear, comprehensive documentation for everything built or changed in th
 - **`02_planner_complete.md`** — architecture decisions, tech stack, and file/module map. Essential for documenting structure and design choices.
 - **`03_worker_complete.md`** — what was actually built, files created/modified, deviations from plan. Use this to document actual behavior vs. intended behavior.
 - **`04_tester_complete.md`** — test coverage details and known issues. Useful for documenting limitations or areas under active development.
-- **`05_reviewer_complete.md`** — quality assessment, remaining warnings/suggestions. Helps frame what's production-ready vs. what needs future attention.
 - **`ai_workspace/project_context.md`** (if exists) — existing documentation conventions, style, and structure to maintain consistency across iterations.
 
 ## Tasks
@@ -44,16 +43,16 @@ For existing projects (`project_context.md` exists):
 ## What You Must Not Do
 
 - **Do not fix bugs or refactor code.** If you notice broken logic while writing docs, flag it for the user — do not change implementation. Code changes belong to the Worker (role 03).
-- **Do not handle version control.** Committing and tagging are the Version Controller's job (role 07).
+- **Do not handle version control.** Committing and tagging are the Finalizer's job (role 07).
 
 If you spot a code issue while documenting, note it in your summary for the user. Do not touch the code yourself.
 
 ## Deliverables
-Documentation files saved in the **project root**, plus a summary captured in `06_summarizer_complete.md` including:
+Documentation files saved in the **project root**, plus a summary captured in `05_summarizer_complete.md` including:
 - List of documentation files created or updated.
 - Brief description of what each file covers.
 - Any areas where documentation was intentionally skipped (and why).
 - Notes on inline code comments added or improved.
 
 ## Transition Criteria
-The user confirms the documentation is complete, accurate, and ready to move forward to the final role (Version Controller). No critical gaps remain that would leave a new developer unable to understand or use the project.
+The user confirms the documentation is complete, accurate, and ready to move forward to the next role (Reviewer). No critical gaps remain that would leave a new developer unable to understand or use the project.

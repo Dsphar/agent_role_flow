@@ -20,3 +20,15 @@ The Reviewer broke its own guardrails during the first pipeline loop by directly
 3. Add a "TODO Check" step to Session Startup in AGENTS.md — on every session start, check if `todo.md` has items and ask the user whether to address them before proceeding.
 
 **Note:** The user intends to make adjustments to this proposal themselves before handing it off for implementation.
+
+### Investigate More Git Usage (from Interviewer, loop 2)
+**Proposed by:** User
+**Should be handled by:** Planner → Worker
+
+Explore deeper git integration in the pipeline — e.g., branching strategies per iteration, commit conventions enforced by roles, using `git diff` earlier in the pipeline (not just at Version Controller), or other git-driven workflow improvements.
+
+### Interviewer Suggests Work Items from TODO (from Interviewer, loop 2)
+**Proposed by:** User
+**Should be handled by:** Planner → Worker
+
+Consider having the Interviewer read `ai_workspace/todo.md` during Session Startup and suggest pending items as possible work to tackle. This would surface deferred tasks naturally instead of leaving them buried in a file.

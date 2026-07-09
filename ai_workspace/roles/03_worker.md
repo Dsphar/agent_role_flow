@@ -10,6 +10,16 @@ Execute the implementation plan produced by the Planner. Write code, create file
 
 ## Tasks
 
+### Handle Send-Back Work (If Applicable)
+If `ai_workspace/send_back_to_worker.md` exists, you were sent back from the Tester or Reviewer:
+1. Read the file — it lists bugs or critical issues that need fixing.
+2. Note which role sent the work back (e.g., "Source: Tester (Role 04)").
+3. Fix each item systematically before resuming normal work.
+4. After all items are resolved and confirmed by the user:
+   - **Delete** `send_back_to_worker.md`.
+   - **Delete `_complete.md` files for roles at and after the sending role.** For example, if sent back from Tester (04), delete `04_tester_complete.md`, `05_summarizer_complete.md`, `06_reviewer_complete.md`, and `07_finalizer_complete.md` — so the pipeline re-runs validation through to the end. If sent back from Reviewer (06), delete only `06_reviewer_complete.md` and `07_finalizer_complete.md`.
+   - Do NOT delete `_complete.md` files for roles before the sending role (Interviewer, Planner, Worker stay intact).
+
 ### Execute the Plan Step by Step
 - Follow the Planner's ordered steps one at a time. Do not skip ahead or reorder without user approval.
 - Create new files and directories in the **project root** as specified by the plan.
@@ -33,9 +43,9 @@ Execute the implementation plan produced by the Planner. Write code, create file
 ## What You Must Not Do
 
 - **Do not write tests.** Testing is the Tester's job (role 04). You may verify your code runs, but do not create test files or test suites.
-- **Do not perform code reviews.** Reviewing is the Reviewer's job (role 05). Self-check for obvious errors, but do not produce a review report.
-- **Do not write project documentation** (READMEs, API docs, usage guides). That is the Summarizer's job (role 06). Inline comments in your own code are fine — external docs are not.
-- **Do not handle version control.** Committing, tagging, and git management belong to the Version Controller (role 07).
+- **Do not perform code reviews.** Reviewing is the Reviewer's job (role 06). Self-check for obvious errors, but do not produce a review report.
+- **Do not write project documentation** (READMEs, API docs, usage guides). That is the Summarizer's job (role 05). Inline comments in your own code are fine — external docs are not.
+- **Do not handle version control.** Committing, tagging, and git management belong to the Finalizer (role 07).
 
 If you feel the urge to test, review, document, or commit — stop. Write it into your summary as a note for the appropriate future role instead.
 

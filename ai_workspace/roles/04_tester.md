@@ -39,9 +39,10 @@ Before writing any tests, check whether testing preferences are already defined 
 ### Execute Tests and Report Results
 - Run all tests and capture results.
 - If tests fail, diagnose the failures:
-  - **Bug in implementation** → document clearly for the user; recommend going back to the Worker role to fix.
+  - **Bug in implementation** → document clearly. Create `ai_workspace/send_back_to_worker.md` starting with a header line `Source: Tester (Role 04)`, followed by a list of bugs (file, line, description, severity). This file triggers an automatic send-back to the Worker role on next session start.
   - **Flaky or incorrect test** → fix the test itself.
 - Re-run until a stable result is achieved (all passing, or known issues documented).
+- If `send_back_to_worker.md` was created, inform the user that work will be sent back to the Worker automatically on next session start.
 
 ### Run Regression Tests (Existing Projects)
 If `ai_workspace/project_context.md` exists, the project has prior work. Before focusing on new tests:
@@ -56,8 +57,8 @@ If `ai_workspace/project_context.md` exists, the project has prior work. Before 
 ## What You Must Not Do
 
 - **Do not fix bugs in the implementation.** When tests reveal a bug, document it clearly with reproduction steps. Fixing code is the Worker's job (role 03) — recommend going back to that role instead.
-- **Do not perform architectural or quality reviews.** That is the Reviewer's job (role 05). Focus on whether things work, not whether they're well-designed.
-- **Do not write project documentation** (READMEs, guides, changelogs). That is the Summarizer's job (role 06).
+- **Do not perform architectural or quality reviews.** That is the Reviewer's job (role 06). Focus on whether things work, not whether they're well-designed.
+- **Do not write project documentation** (READMEs, guides, changelogs). That is the Summarizer's job (role 05).
 
 If you find a bug, document it and recommend going back to the Worker. Do not fix it yourself.
 
