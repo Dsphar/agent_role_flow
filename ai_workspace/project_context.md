@@ -22,6 +22,9 @@ ai_workspace/
 ## Known Issues
 - Guardrail enforcement is imperfect — roles can still break their own boundaries when directly prompted by the user. A fix (todo.md mechanism + strengthened guardrails) is proposed in `ai_workspace/todo.md` but not yet implemented.
 
+## Iteration History
+- **Loop 1 (2026-07-09):** Trimmed AGENTS.md from ~130 to ~85 lines. Added "What You Must Not Do" guardrails to all 7 role skill files. Created `changelog.md`, `todo.md`, and this file.
+
 ## How to Use
 1. Start a session — the agent reads AGENTS.md and auto-detects current role from `_complete.md` files.
 2. Work through roles sequentially, confirming completion at each step.
