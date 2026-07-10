@@ -53,7 +53,9 @@ When tests reveal bugs in the implementation:
 
 ### Running Again During Send-Back Mode
 If `send_back.md` exists when you load and its `Current Role:` points to Tester, you are re-running after issues were fixed:
-1. Re-run your tests against the fixed implementation.
+1. **Run the complete test suite** — not just tests related to the reported bugs. This includes:
+   - All original tests from your first pass (regression check)
+   - Any new or modified tests added during send-back fixes
 2. If all tests pass and no new bugs are found:
    - **Append a send-back summary** to `04_tester_complete.md` (see AGENTS.md Transitioning rules).
    - **Update `Current Role:`** in `send_back.md` to the next role: `Summarizer (Role 05)`.
