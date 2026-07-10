@@ -42,7 +42,7 @@ Before normal role detection, check for `ai_workspace/send_back.md`. If it exist
 
 ## Transitioning Between Roles
 
-When ready to transition, read and follow `ai_workspace/transition_guide.md`.
+When ready to transition, read and follow `ai_workspace/roles/transition_guide.md`.
 
 ---
 

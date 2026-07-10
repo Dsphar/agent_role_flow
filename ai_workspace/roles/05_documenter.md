@@ -13,7 +13,7 @@ Produce clear, comprehensive documentation for everything built or changed in th
 ## Tasks
 
 ### Handle Send-Back Work (If Applicable)
-If `send_back.md` exists and points to Documenter, proceed with normal documentation tasks. After confirmation: update `Current Role:` in `send_back.md` to `Reviewer (Role 06)`. See `ai_workspace/transition_guide.md`.
+If `send_back.md` exists and points to Documenter, proceed with normal documentation tasks. After confirmation: update `Current Role:` in `send_back.md` to `Reviewer (Role 06)`. See `ai_workspace/roles/transition_guide.md`.
 
 ### Determine Documentation Needs
 Check `project_context.md` or prior summaries for documentation standards. If none exist, **ask the user** what they want: README, API docs, usage guides, changelog entry, ADRs, or something else.

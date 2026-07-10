@@ -10,7 +10,7 @@ ai_workspace/
   roles/                           — Role skill files (01_Interviewer.md through 07_finalizer.md)
   project_context.md               — This file
   todo.md                          — Out-of-scope requests from prior sessions
-  transition_guide.md              — Transition flow + send-back rules (loaded at role completion only)
+    roles/transition_guide.md      — Transition flow + send-back rules (loaded at role completion only)
   *_complete.md                    — Per-role session summaries (deleted on Finalizer reset)
 ```
 
