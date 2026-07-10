@@ -1,7 +1,7 @@
 # 07 — Finalizer
 
 ## Purpose
-Finalize the pipeline loop. Capture an accurate record of what was built or changed, update project context for future iterations, handle version control (commits, tags), and perform the two-commit reset flow so the pipeline can start a new iteration. The pipeline is designed to loop continuously — there is no "wrap up" option. This is the last role in each pipeline loop.
+Finalize the pipeline loop. Capture an accurate record of what was built or changed, update project context for future iterations, and perform a single-commit reset so the pipeline can start a new iteration. Per-role commits already preserve all artifacts in git history — this role's commit captures only the final context update and workspace reset. The pipeline is designed to loop continuously — there is no "wrap up" option. This is the last role in each pipeline loop.
 
 ## Inputs from Prior Roles
 - **All `_complete.md` summaries (`01` through `06`)** — provide intent and context for *why* changes were made. Read these to understand the story behind the work.
@@ -9,15 +9,6 @@ Finalize the pipeline loop. Capture an accurate record of what was built or chan
 - **`git diff` output** — ground-truth view of what actually changed in the codebase. Use this alongside role summaries to build a complete, accurate picture: *what* changed + *why*.
 
 ## Tasks
-
-### Handle Send-Back Work (If Applicable)
-If `ai_workspace/send_back.md` exists and its `Current Role:` points to Finalizer, you are in **send-back mode** — the pipeline has looped back through all roles including yourself.
-1. Read the file — it lists bugs or critical issues that need fixing, plus any log entries from prior send-back passes.
-2. Note which role sent the work back (e.g., "Source: Tester (Role 04").
-3. Proceed with your normal finalization tasks — capture an accurate record of everything built or changed, including fixes applied during the send-back cycle.
-4. After all tasks are resolved and confirmed by the user:
-   - **If you ARE the original sending role** (i.e., `Source:` in `send_back.md` says "Finalizer"): append a send-back summary to `07_finalizer_complete.md`, then **delete `send_back.md`** — the send-back cycle is complete.
-   - **If you are NOT the original sending role:** append a send-back summary to `07_finalizer_complete.md`, then **update `Current Role:`** in `send_back.md` to point back to `Summarizer (Role 05)` for another pass through documentation and review.
 
 ### Determine What Changed This Iteration
 - Run `git diff` (or equivalent) to see all file-level changes since the start of this pipeline loop. If git is not initialized, list all files in the project root and compare against what existed before this loop (use role summaries as a reference).
@@ -32,15 +23,14 @@ If `ai_workspace/project_context.md` does **not** exist (first pipeline loop):
 
 If `project_context.md` **does** exist (subsequent loops):
 - Update it to reflect the **current state of the project only** — what exists now, how it works, key decisions.
-- Do NOT append iteration/loop history. Loop records are preserved in git via this role's summary commits (`[pi-summary]` / `[pi-reset]` tags).
+- Do NOT append iteration/loop history. Loop records are preserved in git via per-role transition commits and this role's final `[ai-finalizer]` commit.
 - Keep the file concise but complete enough that a future Interviewer can understand the project without reading every role summary.
 
-### Execute Two-Commit Reset Flow
+### Execute Single-Commit Reset Flow
 Git is expected for this role. If the project does not have git initialized, ask the user before proceeding.
 
-1. **First commit (summary):** Stage and commit all `_complete.md` files (`01_` through `07_`) plus the updated `project_context.md`. Message format: `[pi-summary] <short description>` — distill a brief tag from your recap (e.g., "add send-back mechanism"). This preserves the full loop record in git history.
-2. **Delete `_complete.md` files:** Remove all `{NN}_*_complete.md` and `{NN}_*_in_progress.md` files from `ai_workspace/`. Do NOT delete `project_context.md`, role skill files, or any other workspace content.
-3. **Second commit (reset):** Commit the deletions only. Message format: `[pi-reset] <short description>` — same short tag as the summary commit for easy pairing in `git log`.
+1. **Delete `_complete.md` files:** Remove all `{NN}_*_complete.md` and `{NN}_*_in_progress.md` files from `ai_workspace/`. Do NOT delete `project_context.md`, role skill files, or any other workspace content.
+2. **Single commit (reset):** Stage the updated `project_context.md` and the deleted `_complete.md` / `_in_progress.md` files. Commit with message format: `[ai-finalizer] -- <short description>` — distill a brief summary of what was built this iteration (e.g., "add send-back mechanism"). Per-role commits already preserve all artifacts in git history; this commit captures only the final context update and workspace reset.
 
 ### Present Final Recap
 Summarize everything accomplished across the full pipeline loop for this iteration:
@@ -51,19 +41,19 @@ Summarize everything accomplished across the full pipeline loop for this iterati
 - Documentation produced (Summarizer).
 
 ### Proceed to Reset
-After presenting the final recap, if the user is satisfied with the work, proceed directly to the two-commit reset flow described above. Do not offer a "wrap up" option — the pipeline always resets for the next iteration.
+After presenting the final recap, if the user is satisfied with the work, proceed directly to the single-commit reset flow described above. Do not offer a "wrap up" option — the pipeline always resets for the next iteration.
 
 ## What You Must Not Do
 
 - **Do not modify code, tests, or documentation** beyond what is needed for accurate commits. If you spot issues in prior work, flag them for the user — do not fix them yourself.
-- **Do not alter role summaries (`_complete.md` files)** except to create your own `07_finalizer_complete.md`. Those files are final records of each role's work.
+- **Do not alter role summaries (`_complete.md` files).** Those files are final records of each role's work.
 
 If you notice something wrong in prior roles' output, document it and let the user decide. Do not go back and change things yourself.
 
 ## Deliverables
 - Updated `ai_workspace/project_context.md` reflecting this iteration's outcomes.
-- Git commits (and optional tags) capturing all work from this loop.
-- Summary captured in `07_finalizer_complete.md` including: change log and commit references.
+- Single git commit (`[ai-finalizer]`) capturing the context update and workspace reset.
+- Verbal recap of everything accomplished across the full pipeline loop.
 
 ## Transition Criteria
-The user confirms they are satisfied with the final recap. The two-commit reset flow then executes automatically.
+The user confirms they are satisfied with the final recap. The single-commit reset flow then executes automatically.
