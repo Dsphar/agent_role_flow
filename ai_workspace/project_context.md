@@ -1,7 +1,7 @@
 # Project Context
 
 ## What This Is
-A sequential agent role pipeline for building software projects. Seven roles run in order: Interviewer → Planner → Worker → Tester → Summarizer → Reviewer → Finalizer. Each role is defined by a skill file in `ai_workspace/roles/`.
+A sequential agent role pipeline for building software projects. Seven roles run in order: Interviewer → Planner → Worker → Tester → Documenter → Reviewer → Finalizer. Each role is defined by a skill file in `ai_workspace/roles/`.
 
 ## File Structure
 ```
@@ -18,7 +18,7 @@ ai_workspace/
 - **Role isolation:** Each role has "What You Must Not Do" guardrails to prevent bleeding into other roles.
 - **State via files:** Pipeline state inferred from `_complete.md` / `_in_progress.md` — no external tracking.
 - **AGENTS.md minimal (~50 lines):** Transition flow, send-back rules, and guardrail prose extracted to `transition_guide.md` (loaded only at role completion). Role skill files trimmed similarly. Operational logic only.
-- **Summarizer before Reviewer:** Docs produced before the quality gate so they get reviewed too.
+- **Documenter before Reviewer:** Docs produced before the quality gate so they get reviewed too.
 - **User-prompted send-back:** Tester/Reviewer present findings and ask whether to create `send_back.md` (routes to Planner) or defer as TODO. Human decides — no auto-send.
 - **Per-role git commits:** Every role transitions with `[ai-{role-name}] -- <goal summary>`. Send-back cycles use `-sendback` suffix. Transition blocks on commit failure. Goal body sourced from `## Goal Summary` in `01_interviewer_complete.md`.
 - **Send-back persistence:** `send_back.md` persists through the full re-run cycle with a `Current Role:` pointer and per-role log entries under "## Send-Back Log". Only the original sending role deletes it.

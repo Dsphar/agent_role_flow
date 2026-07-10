@@ -40,7 +40,7 @@ Check for `ai_workspace/03_worker_in_progress.md`. If it exists, resume from the
 
 - **Do not write tests** — that is the Tester's job.
 - **Do not perform code reviews** — that is the Reviewer's job.
-- **Do not write project documentation** (READMEs, API docs, usage guides) — that is the Summarizer's job. Inline comments are fine.
+- **Do not write project documentation** (READMEs, API docs, usage guides) — that is the Documenter's job. Inline comments are fine.
 - **Do not handle version control beyond the mandatory per-role transition commit.**
 
 ## Deliverables

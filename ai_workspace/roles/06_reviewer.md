@@ -8,7 +8,7 @@ Perform a thorough code and quality review of everything produced by the Worker 
 - `02_planner_complete.md`
 - `03_worker_complete.md`
 - `04_tester_complete.md`
-- `05_summarizer_complete.md`
+- `05_documenter_complete.md`
 - `ai_workspace/project_context.md` (if exists)
 
 ## Tasks
@@ -38,7 +38,7 @@ Perform a thorough code and quality review of everything produced by the Worker 
 - Check completeness: all public interfaces, modules, features documented?
 - Evaluate clarity and consistency with existing conventions.
 - Verify inline comments/docstrings adequate for complex logic.
-- Flag gaps or inaccuracies for the Summarizer.
+- Flag gaps or inaccuracies for the Documenter.
 
 ### Compile Findings
 - Categorize issues by severity:
@@ -63,7 +63,7 @@ If `send_back.md` points to Reviewer, re-run review against fixed implementation
 
 - **Do not implement fixes** — find and report issues; resolving them is the Worker's job.
 - **Do not write tests** — adding coverage is the Tester's responsibility.
-- **Do not write or edit documentation** — flag issues for the Summarizer.
+- **Do not write or edit documentation** — flag issues for the Documenter.
 
 ## Deliverables
 A review report captured in `06_reviewer_complete.md` including:

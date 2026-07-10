@@ -13,7 +13,7 @@ When you believe the current role's work is complete:
    - **Normal mode:** If `{NN}_rolename_in_progress.md` exists, **rename** it to `{NN}_rolename_complete.md`. Otherwise, create `{NN}_rolename_complete.md` with the full summary.
    - **Send-back mode (you are NOT the original sending role):**
      1. **Append your send-back summary** to the existing `{NN}_rolename_complete.md` — add a `---` divider followed by `## Send-Back Summary`, then your work recap. Do not overwrite the file.
-     2. **Update `Current Role:`** in `send_back.md` to point to the next role in the pipeline (e.g., Worker → Tester, Tester → Summarizer).
+     2. **Update `Current Role:`** in `send_back.md` to point to the next role in the pipeline (e.g., Worker → Tester, Tester → Documenter).
    - **Send-back mode (you ARE the original sending role and your work passes):**
      1. **Append your send-back summary** to the existing `{NN}_rolename_complete.md` as above.
      2. **Delete `send_back.md`** — the send-back cycle is complete.
@@ -37,8 +37,8 @@ Optionally create `{NN}_rolename_in_progress.md` in `ai_workspace/` during a rol
 
 ```
   ┌──────────┐     ┌──────────┐     ┌─────────┐     ┌────────┐     ┌────────────┐     ┌──────────┐     ┌───────────┐
-  │ 01 Inter-│────▶│ 02 Plan-│────▶│ 03 Work-│────▶│ 04 Test-│────▶│ 05 Summa-  │────▶│ 06 Review-│────▶│ 07 Final-  │
-  │  viewer  │     │   ner   │     │   er    │     │   er   │     │  rizer     │     │   er     │     │   izer     │
+  │ 01 Inter-│────▶│ 02 Plan-│────▶│ 03 Work-│────▶│ 04 Test-│────▶│ 05 Docu-   │────▶│ 06 Review-│────▶│ 07 Final-  │
+  │  viewer  │     │   ner   │     │   er    │     │   er   │     │  menter    │     │   er     │     │   izer     │
   └──────────┘     └────┬─────┘     └────┬────┘     └────────┘     └────────────┘     └────┬─────┘     └───────────┘
                         │                 │                                                   │
                         │          ┌──────┴──────────┐                                        │

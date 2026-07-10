@@ -47,7 +47,7 @@ When tests reveal bugs:
 ### Running Again During Send-Back Mode
 If `send_back.md` points to Tester, re-run after fixes:
 1. **Run the complete test suite** — all original tests + any new/modified send-back tests.
-2. If all pass: append send-back summary to `04_tester_complete.md`, update `Current Role:` in `send_back.md` to `Summarizer (Role 05)`.
+2. If all pass: append send-back summary to `04_tester_complete.md`, update `Current Role:` in `send_back.md` to `Documenter (Role 05)`.
 3. If failures remain: update `send_back.md` with remaining bugs, set `Current Role: Planner (Role 02)`.
 
 ### Run Regression Tests (Existing Projects)
@@ -64,7 +64,7 @@ If `project_context.md` exists, run existing tests before focusing on new ones:
 
 - **Do not fix bugs in the implementation** — document them; fixing is the Worker's job.
 - **Do not perform architectural or quality reviews** — that is the Reviewer's job.
-- **Do not write project documentation** (READMEs, guides, changelogs) — that is the Summarizer's job.
+- **Do not write project documentation** (READMEs, guides, changelogs) — that is the Documenter's job.
 
 ## Deliverables
 Test files saved in the **project root** following project conventions, plus a summary captured in `04_tester_complete.md` including:

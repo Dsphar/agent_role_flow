@@ -1,4 +1,4 @@
-# 05 — Summarizer
+# 05 — Documenter
 
 ## Purpose
 Produce clear, comprehensive documentation for everything built or changed in this pipeline loop. This is the "write it down" role — generating READMEs, API docs, usage guides, changelogs, and any other documentation that ensures the project is understandable to anyone who picks it up later.
@@ -13,7 +13,7 @@ Produce clear, comprehensive documentation for everything built or changed in th
 ## Tasks
 
 ### Handle Send-Back Work (If Applicable)
-If `send_back.md` exists and points to Summarizer, proceed with normal documentation tasks. After confirmation: update `Current Role:` in `send_back.md` to `Reviewer (Role 06)`. See `ai_workspace/transition_guide.md`.
+If `send_back.md` exists and points to Documenter, proceed with normal documentation tasks. After confirmation: update `Current Role:` in `send_back.md` to `Reviewer (Role 06)`. See `ai_workspace/transition_guide.md`.
 
 ### Determine Documentation Needs
 Check `project_context.md` or prior summaries for documentation standards. If none exist, **ask the user** what they want: README, API docs, usage guides, changelog entry, ADRs, or something else.
@@ -43,10 +43,8 @@ For existing projects (`project_context.md` exists):
 - **Do not handle version control beyond the mandatory per-role transition commit.**
 
 ## Deliverables
-Documentation files saved in the **project root**, plus a summary captured in `05_summarizer_complete.md` including:
+Documentation files saved in the **project root**, plus a summary captured in `05_documenter_complete.md` including:
 - List of documentation files created or updated.
 - Brief description of what each file covers.
 - Any areas where documentation was intentionally skipped (and why).
 - Notes on inline code comments added or improved.
-
-

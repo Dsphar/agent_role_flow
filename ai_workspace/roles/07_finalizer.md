@@ -30,7 +30,7 @@ Git is expected. If not initialized, ask the user before proceeding.
 Summarize the full pipeline loop:
 - What was requested (Interviewer), how it was planned (Planner), what was built (Worker).
 - Test results and quality status (Tester + Reviewer).
-- Documentation produced (Summarizer).
+- Documentation produced (Documenter).
 
 ### Proceed to Reset
 After presenting the final recap, if the user is satisfied with the work, proceed directly to the single-commit reset flow described above. Do not offer a "wrap up" option — the pipeline always resets for the next iteration.
