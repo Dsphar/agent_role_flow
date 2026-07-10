@@ -24,8 +24,7 @@ When you believe the current role's work is complete:
      4. Determine the commit body: read `## Goal Summary` from `ai_workspace/01_interviewer_complete.md`. If it exists, use its content as the body (truncate to <100 chars if needed). If not, generate a concise ad-hoc summary of what was accomplished.
      5. Run `git commit -m "{prefix determined in step 2} -- {commit body from step 4}"`.
      6. **If the commit fails** (identity not configured, merge conflict, etc.), **block transition** — present the error to the user and ask how to proceed. Do not mark the role complete until the commit succeeds or the user explicitly says to skip it.
-   - Announce the role is complete and introduce the next role.
-5. On the next interaction, re-run **Session Startup** (AGENTS.md) to load the new current role.
+   - Inform the user that the handoff is ready and instruct them to clear their session so the next role loads on a fresh start via normal startup detection.
 
 ### In-Progress Files
 

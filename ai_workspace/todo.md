@@ -4,11 +4,6 @@ Items captured by roles when the user requests work that falls outside their cur
 
 ## Pending
 
-### Hard Stop Between Role Handoffs (captured by Documenter, 2026-07-10)
-- After a role's transition commit, do not auto-load or announce the next role.
-- Instead, inform the user that the handoff is ready and instruct them to clear their session to start the next role.
-- This requires updates to `AGENTS.md` (session startup / role detection flow) and possibly `transition_guide.md`.
-
 ### Move In-Progress Files Instructions to AGENTS.md (captured by user, 2026-07-10)
 - The "In-progress files" section in `transition_guide.md` describes the optional `{NN}_rolename_in_progress.md` pattern.
 - This info should live in `AGENTS.md` instead so roles know about it from session startup, not just at transition time.
