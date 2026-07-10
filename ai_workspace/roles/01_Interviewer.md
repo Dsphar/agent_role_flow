@@ -42,7 +42,7 @@ None (first role). Check for `ai_workspace/todo.md` and `ai_workspace/project_co
 
 ## Deliverables
 A clear, well-scoped problem statement in `01_interviewer_complete.md`:
-- **`## Goal Summary`** — Concise (<100 char) description of what this loop builds/changes. Used as commit body by all subsequent roles (after `[ai-{role-name}] -- `). Place at top.
+- **`## Goal Summary`** — Concise (<100 char) description of what this loop builds/changes. Used as commit body by all subsequent roles, with the role tag appended at the end (e.g., `<goal summary> [ai-{role-name}]`). Place at top.
 - What is being built or changed.
 - Why it matters (goals / success criteria).
 - Technical constraints and preferences.

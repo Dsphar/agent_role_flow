@@ -20,7 +20,7 @@ ai_workspace/
 - **AGENTS.md minimal (~50 lines):** Transition flow, send-back rules, and guardrail prose extracted to `transition_guide.md` (loaded only at role completion). Role skill files trimmed similarly. Operational logic only.
 - **Documenter before Reviewer:** Docs produced before the quality gate so they get reviewed too.
 - **User-prompted send-back:** Tester/Reviewer present findings and ask whether to create `send_back.md` (routes to Planner) or defer as TODO. Human decides — no auto-send.
-- **Per-role git commits:** Every role transitions with `[ai-{role-name}] -- <goal summary>`. Send-back cycles use `-sendback` suffix. Transition blocks on commit failure. Goal body sourced from `## Goal Summary` in `01_interviewer_complete.md`.
+- **Per-role git commits:** Every role transitions with `<goal summary> [ai-{role-name}]`. Send-back cycles append `[ai-{role-name}-sendback]` at the end. Transition blocks on commit failure. Goal body sourced from `## Goal Summary` in `01_interviewer_complete.md`.
 - **Send-back persistence:** `send_back.md` persists through the full re-run cycle with a `Current Role:` pointer and per-role log entries under "## Send-Back Log". Only the original sending role deletes it.
 - **Finalizer always resets:** Single `[ai-finalizer]` commit, no "wrap up" option. Pipeline loops continuously.
 
@@ -37,7 +37,7 @@ ai_workspace/
 - **W1:** Ambiguity if both Tester and Reviewer append `Current Role:` lines to `send_back.md` simultaneously. Unlikely in practice.
 - Guardrail enforcement is imperfect — roles can break boundaries when directly prompted by the user.
 
-> Loop/iteration history preserved in git via per-role commits (`[ai-{role-name}]`) and Finalizer reset commits (`[ai-finalizer]`). This file tracks current state only.
+> Loop/iteration history preserved in git via per-role commits (tag `[ai-{role-name}]` appended at end of message) and Finalizer reset commits (`[ai-finalizer]`). This file tracks current state only.
 
 ## How to Use
 1. Start a session — agent reads AGENTS.md, auto-detects current role from `_complete.md` files.

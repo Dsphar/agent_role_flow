@@ -15,7 +15,7 @@ If both `{NN}_*_in_progress.md` **and** `{NN}_*_complete.md` exist for the same 
 Optionally create `{NN}_rolename_in_progress.md` in `ai_workspace/` during a role for early notes and progress tracking. It is temporary — rename it to `{NN}_rolename_complete.md` upon confirmation of completion (see Transition Guide). Summary filenames always use **lowercase** role names, regardless of how the role skill file is cased (e.g., `06_reviewer_complete.md`, not `06_Reviewer_complete.md`).
 
 ### Send-Back Detection
-Before normal role detection, check for `ai_workspace/send_back.md`. If it exists you are in send-back mode — read it for items to fix. Commit prefix: `[ai-{role-name}-sendback]`, separator ` -- `. Append a log entry under "## Send-Back Log".
+Before normal role detection, check for `ai_workspace/send_back.md`. If it exists you are in send-back mode — read it for items to fix. Tag appended at end of commit message as `[ai-{role-name}-sendback]`. No separator. Append a log entry under "## Send-Back Log".
 
 ### Role Detection
 1. **If `send_back.md` exists:** read its `Current Role:` line (e.g., `Current Role: Planner (Role 02)`) and load that role directly — skip steps 2–3 below.
