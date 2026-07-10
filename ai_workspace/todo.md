@@ -16,12 +16,6 @@ Items captured by roles when the user requests work that falls outside their cur
   - Skip testing entirely.
 - Update `ai_workspace/roles/04_tester.md` with these interaction guidelines.
 
-### Add Optional Multi-Round Questioning to Interviewer (captured by user, 2026-07-10)
-- Instruct the Interviewer to use **optional multi-round questioning**.
-- After the user answers the first round of questions, digest those answers and determine if follow-up questions are needed.
-- Allow a **maximum of 3 rounds** of questions. No limit to the number of questions per round.
-- Update `ai_workspace/roles/01_Interviewer.md` with this interaction guideline.
-
 ### Consolidate Overlapping Sections in Finalizer Skill File (captured by Reviewer, 2026-07-10)
 - The "Proceed to Reset" section in `ai_workspace/roles/07_finalizer.md` largely repeats the steps already described in "Loop Reset and Handoff".
 - Consider consolidating these sections or having "Proceed to Reset" reference the named section without restating all steps.
