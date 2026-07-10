@@ -13,3 +13,16 @@
 ## Files Modified
 - `ai_workspace/roles/07_finalizer.md` — all edits above
 - `ai_workspace/todo.md` — removed completed TODO entry
+
+---
+
+## Send-Back Summary
+
+**Triggered by:** Tester (Role 04) → Planner (Role 02) → Worker (Role 03)
+
+### Step 8: Fix AGENTS.md Role Pipeline table
+- **File:** `AGENTS.md`, line ~97
+- **Change:** Replaced `` `ai_workspace/07_finalizer_complete.md` `` with `(none — Finalizer resets for next loop)` in the role pipeline table.
+
+### Files Modified (Send-Back)
+- `AGENTS.md` — updated role 07 summary column

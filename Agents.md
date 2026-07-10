@@ -94,4 +94,4 @@ The user may request to revisit a previous role at any time:
 | 04 | `ai_workspace/roles/04_tester.md` | `ai_workspace/04_tester_complete.md` |
 | 05 | `ai_workspace/roles/05_summarizer.md` | `ai_workspace/05_summarizer_complete.md` |
 | 06 | `ai_workspace/roles/06_reviewer.md` | `ai_workspace/06_reviewer_complete.md` |
-| 07 | `ai_workspace/roles/07_finalizer.md` | `ai_workspace/07_finalizer_complete.md` |
+| 07 | `ai_workspace/roles/07_finalizer.md` | (none — Finalizer resets for next loop) |
