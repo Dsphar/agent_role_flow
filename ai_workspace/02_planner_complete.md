@@ -38,3 +38,16 @@ The change is a **single-file edit** to `ai_workspace/roles/01_Interviewer.md`. 
 
 ## Risks and Open Questions
 - None identified. The change is small, well-scoped, and stays within the Interviewer's existing responsibilities.
+
+---
+
+## Send-Back Summary
+
+Addressed Reviewer send-back: **Round Counting Ambiguity** in `ai_workspace/roles/01_Interviewer.md`.
+
+### Planned Fix
+Add a brief tracking note to the "Multi-Round Questioning (Automatic)" section so the agent knows to maintain its own round counter:
+
+> Allow a **maximum of 3 rounds total** (initial + up to 2 follow-ups) — **track your current round internally through conversation context**. No limit on the number of questions per round.
+
+Single-line edit. Worker will apply it, then hand off back to Reviewer for re-check.
