@@ -16,7 +16,17 @@ Produce clear, comprehensive documentation for everything built or changed in th
 If `send_back.md` exists and points to Documenter, proceed with normal documentation tasks. After confirmation: update `Current Role:` in `send_back.md` to `Reviewer (Role 06)`. See `ai_workspace/roles/transition_guide.md`.
 
 ### Determine Documentation Needs
-Check `project_context.md` or prior summaries for documentation standards. If none exist, **ask the user** what they want: README, API docs, usage guides, changelog entry, ADRs, or something else.
+Check `project_context.md` or prior summaries for documentation standards. If none exist, present the following numbered list to the user and let them pick by entering numbers:
+
+1. README (description, setup, usage examples, tech stack)
+2. API docs (endpoints, functions, interfaces, parameters, return types)
+3. Usage guides (step-by-step for common workflows/features)
+4. Changelog entry (summarizing this loop's changes)
+5. ADRs (architecture decision records)
+6. Something else (user specifies)
+7. Skip documentation entirely
+
+Let the user select multiple options by number, or pick 7 to skip.
 
 ### Write or Update Project Documentation
 Create/update docs in the **project root**, following existing conventions:
@@ -30,6 +40,9 @@ Scan Worker's code for missing/inadequate inline docs:
 - Add docstrings to public functions, classes, modules if absent.
 - Ensure complex logic has explanatory comments (not trivial ones).
 - Follow language-specific conventions (JSDoc, Python docstrings, Go comments, etc.).
+
+### Interaction Guidelines
+When presenting any list of options to the user, always use **numerical numbering** (1., 2., 3., ...) so they can reply with just numbers. Always include a **"skip" option** as the last choice.
 
 ### Maintain Consistency Across Iterations
 For existing projects (`project_context.md` exists):
