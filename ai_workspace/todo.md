@@ -8,12 +8,6 @@ Items captured by roles when the user requests work that falls outside their cur
 - The transition guide uses imperative language like "Run `git status`", "Run `git add -A`" which could be misread as instructions for the user rather than actions the agent should perform.
 - Make it explicit that **the agent** executes these steps, not the user. Consider adding a preamble like "The agent performs the following steps:" or rewording to remove ambiguity.
 
-### Improve Finalizer Transition — Explicit Custom Reset Flow (captured by Tester, 2026-07-10)
-- The Finalizer's skill file does not explicitly reference `transition_guide.md` for its post-commit handoff messaging. It relies on AGENTS.md's general instruction to reach the hard-stop message.
-- Since the Finalizer is the last role and resets `_complete.md` files, it needs a **custom transition flow** that clearly describes clearing loop state and preparing the workspace for a new pipeline iteration.
-- Rename "Execute Single-Commit Reset Flow" to something more aligned with this purpose (e.g., "Loop Reset and Handoff" or similar).
-- Add explicit instruction in `07_finalizer.md` to follow its own reset/handoff flow after presenting the final recap, rather than depending on an implicit cross-reference.
-
 ### Improve Tester Option Lists — Numerical + Minimum Three Options (captured by user, 2026-07-10)
 - When the Tester offers a list of options to the user, make them **numerically numbered** so users can select by entering just numbers.
 - Always offer **at least three options**, including:
@@ -21,6 +15,12 @@ Items captured by roles when the user requests work that falls outside their cur
   - Deep testing (full suite — unit + integration + edge cases).
   - Skip testing entirely.
 - Update `ai_workspace/roles/04_tester.md` with these interaction guidelines.
+
+### Add Optional Multi-Round Questioning to Interviewer (captured by user, 2026-07-10)
+- Instruct the Interviewer to use **optional multi-round questioning**.
+- After the user answers the first round of questions, digest those answers and determine if follow-up questions are needed.
+- Allow a **maximum of 3 rounds** of questions. No limit to the number of questions per round.
+- Update `ai_workspace/roles/01_Interviewer.md` with this interaction guideline.
 
 ### Improve Documenter Option Lists — Numerical + Skip (captured by user, 2026-07-10)
 - When the Documenter offers a list of options to the user, make them **numerically numbered** so users can select by entering just numbers.

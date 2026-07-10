@@ -20,7 +20,7 @@ If `project_context.md` does **not** exist: create it with full project overview
 
 If it **does** exist: update to reflect current state only. Do NOT append iteration history — loop records are in git via per-role commits and this role's `[ai-finalizer]` commit. Keep concise but complete.
 
-### Execute Single-Commit Reset Flow
+### Loop Reset and Handoff
 Git is expected. If not initialized, ask the user before proceeding.
 
 1. **Delete `_complete.md` files:** Remove all `{NN}_*_complete.md` and `{NN}_*_in_progress.md` from `ai_workspace/`. Do NOT delete `project_context.md`, role skill files, or other workspace content.
@@ -33,7 +33,7 @@ Summarize the full pipeline loop:
 - Documentation produced (Documenter).
 
 ### Proceed to Reset
-After presenting the final recap, if the user is satisfied with the work, proceed directly to the single-commit reset flow described above. Do not offer a "wrap up" option — the pipeline always resets for the next iteration.
+After presenting the final recap, if the user is satisfied with the work, execute the Loop Reset and Handoff steps defined in this role: delete all `_complete.md` and `_in_progress.md` files from `ai_workspace/`, stage the updated `project_context.md` alongside those deletions, and commit with the `[ai-finalizer]` prefix. Do not offer a "wrap up" option — the pipeline always resets for the next iteration.
 
 ## What You Must Not Do
 
