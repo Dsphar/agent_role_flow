@@ -15,3 +15,16 @@
 
 ## Deviations
 - Step 5: TODO was already removed from todo.md before this session started. No action needed.
+
+---
+
+## Send-Back Summary
+Addressed two bugs found by the Tester in `ai_workspace/roles/07_finalizer.md`:
+- **Bug 1 (line 27):** Updated commit format from `[ai-finalizer] -- <short description>` to `<short description> [ai-finalizer]`.
+- **Bug 2 (line 36):** Changed "prefix" terminology to "tag appended at end" to match the new suffix-based convention.
+
+### Files Modified (Send-Back)
+- `ai_workspace/roles/07_finalizer.md`
+
+### Known Issues
+- None.

@@ -24,7 +24,7 @@ If it **does** exist: update to reflect current state only. Do NOT append iterat
 Git is expected. If not initialized, ask the user before proceeding.
 
 1. **Delete `_complete.md` files:** Remove all `{NN}_*_complete.md` and `{NN}_*_in_progress.md` from `ai_workspace/`. Do NOT delete `project_context.md`, role skill files, or other workspace content.
-2. **Single commit (reset):** Stage updated `project_context.md` + deleted `_complete.md` / `_in_progress.md` files. Commit: `[ai-finalizer] -- <short description>`. Per-role commits already preserve artifacts; this captures only the final context update and reset.
+2. **Single commit (reset):** Stage updated `project_context.md` + deleted `_complete.md` / `_in_progress.md` files. Commit: `<short description> [ai-finalizer]`. Per-role commits already preserve artifacts; this captures only the final context update and reset.
 
 ### Present Final Recap
 Summarize the full pipeline loop:
@@ -33,7 +33,7 @@ Summarize the full pipeline loop:
 - Documentation produced (Documenter).
 
 ### Proceed to Reset
-After presenting the final recap, if the user is satisfied with the work, execute the Loop Reset and Handoff steps defined in this role: delete all `_complete.md` and `_in_progress.md` files from `ai_workspace/`, stage the updated `project_context.md` alongside those deletions, and commit with the `[ai-finalizer]` prefix. Do not offer a "wrap up" option — the pipeline always resets for the next iteration.
+After presenting the final recap, if the user is satisfied with the work, execute the Loop Reset and Handoff steps defined in this role: delete all `_complete.md` and `_in_progress.md` files from `ai_workspace/`, stage the updated `project_context.md` alongside those deletions, and commit with the `[ai-finalizer]` tag appended at end. Do not offer a "wrap up" option — the pipeline always resets for the next iteration.
 
 ## What You Must Not Do
 

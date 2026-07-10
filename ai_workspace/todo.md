@@ -26,6 +26,14 @@ Items captured by roles when the user requests work that falls outside their cur
 - The "Proceed to Reset" section in `ai_workspace/roles/07_finalizer.md` largely repeats the steps already described in "Loop Reset and Handoff".
 - Consider consolidating these sections or having "Proceed to Reset" reference the named section without restating all steps.
 
+### Finalizer: Multi-Line Commit Message + Squash Loop Commits (captured by user, 2026-07-10)
+- Change the Finalizer's commit process to use a **multi-line commit message**:
+  - First line: short summary of what was built/changed in this loop.
+  - Subsequent lines: full summary of work done across the entire pipeline loop (Interviewer through Reviewer outcomes).
+- After writing the multi-line commit, **squash all per-role commits from the current loop** (Interviewer → Planner → Worker → Tester → Documenter → Reviewer) into this single Finalizer commit. The result is one clean commit per pipeline iteration instead of 6–7 incremental ones.
+- Update `ai_workspace/roles/07_finalizer.md` with the new multi-line message format and squash steps.
+- Update `ai_workspace/roles/transition_guide.md` if it references Finalizer commit expectations.
+
 ### Improve Documenter Option Lists — Numerical + Skip (captured by user, 2026-07-10)
 - When the Documenter offers a list of options to the user, make them **numerically numbered** so users can select by entering just numbers.
 - Always include a "skip" option in any such list.
