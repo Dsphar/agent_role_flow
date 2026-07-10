@@ -9,5 +9,10 @@ Items captured by roles when the user requests work that falls outside their cur
 - Instead, inform the user that the handoff is ready and instruct them to clear their session to start the next role.
 - This requires updates to `AGENTS.md` (session startup / role detection flow) and possibly `transition_guide.md`.
 
+### Make Documenter Role More Rigid About Completing Tasks (captured by user, 2026-07-10)
+- The Documenter skipped its actual documentation duties and transitioned early after capturing a TODO.
+- Update `ai_workspace/roles/05_documenter.md` to enforce that the role must complete its core tasks before transitioning.
+- Consider adding explicit completion criteria or guardrails preventing premature transitions.
+
 
 
