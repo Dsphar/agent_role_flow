@@ -19,7 +19,7 @@ ai_workspace/
 - **AGENTS.md kept minimal:** Trimmed to ~85 lines, removing redundant documentation-only sections. Operational logic only.
 - **Summarizer before Reviewer (Loop 2):** Documentation is produced before the quality gate so it gets reviewed too. Previously docs were written after review and slipped through unchecked.
 - **User-prompted send-back mechanism:** Tester/Reviewer present findings and ask the user whether to create `send_back.md` (routes to Planner on next session start, which then advances through Worker) or defer as a TODO. The pipeline does not auto-send — the human decides.
-- **Per-role git commits (Loop N):** Every role commits its work during transition using `[ai-{role-name}]` prefix. Send-back cycles use `[ai-{role-name}-sendback]`. This preserves progress incrementally instead of only at Finalizer. Transition blocks on commit failure so the user can resolve identity/repo issues.
+- **Per-role git commits (Loop N):** Every role commits its work during transition using `[ai-{role-name}] -- summary` format. Send-back cycles use `[ai-{role-name}-sendback] -- summary`. This preserves progress incrementally instead of only at Finalizer. Transition blocks on commit failure so the user can resolve identity/repo issues.
 - **Send-back persistence (Loop N):** `send_back.md` persists through the entire re-run cycle — every role sees it and appends a log entry under "## Send-Back Log" for an audit trail. Only the original sending role deletes it when its re-run passes.
 
 ## Recent Changes
@@ -28,7 +28,7 @@ ai_workspace/
   - **C1 (Infinite Loop on Reviewer Send-Back):** Restructured the send-back flow to use a `Current Role:` pointer in `send_back.md` instead of deleting `_complete.md` files. The pointer explicitly tells role detection which skill file to load, eliminating the loop where the Reviewer would re-load itself. All affected roles (Worker, Tester, Reviewer) now follow the same pattern: create send-back with `Current Role:` header, append summaries on re-run, advance pointer sequentially.
   - **C2 (Guardrail Contradiction):** Updated "What You Must Not Do" in both Worker and Summarizer skill files to acknowledge the mandatory per-role transition commit defined in AGENTS.md. The phrasing is now: *"Do not handle version control beyond the mandatory per-role transition commit defined in AGENTS.md."*
   - **W1 (Multiple `Current Role:` lines):** Warning noted — unlikely in practice if both Tester and Reviewer append pointer lines simultaneously. Tracked as TODO for simplification.
-- **Loop N (2026-07-09):** Added per-role git commits at every pipeline transition using `[ai-{role-name}]` prefix. Send-back cycles use `[ai-{role-name}-sendback]`. Transition blocks on commit failure so the user can resolve identity/repo issues.
+- **Loop N (2026-07-09):** Added per-role git commits at every pipeline transition using `[ai-{role-name}] -- summary` format. Send-back cycles use `[ai-{role-name}-sendback] -- summary`. Transition blocks on commit failure so the user can resolve identity/repo issues.
 - **Loop N-1 (2026-07-09):** Added TODO self-maintenance to the pipeline — Interviewer notes addressed TODO items by origin, Planner adds a removal step, Worker executes. Removed completed TODO "Consolidate Send-Back Cleanup Logic" from `todo.md`.
 
 ## Known Issues
