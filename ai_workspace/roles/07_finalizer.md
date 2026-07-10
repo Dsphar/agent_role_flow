@@ -1,7 +1,7 @@
 # 07 — Finalizer
 
 ## Purpose
-Finalize the pipeline loop. Capture an accurate record of what was built or changed, update project context for future iterations, handle version control (commits, tags), and offer the user the option to reset for a new iteration or wrap up entirely. This is the last role in each pipeline loop.
+Finalize the pipeline loop. Capture an accurate record of what was built or changed, update project context for future iterations, handle version control (commits, tags), and perform the two-commit reset flow so the pipeline can start a new iteration. The pipeline is designed to loop continuously — there is no "wrap up" option. This is the last role in each pipeline loop.
 
 ## Inputs from Prior Roles
 - **All `_complete.md` summaries (`01` through `06`)** — provide intent and context for *why* changes were made. Read these to understand the story behind the work.
@@ -50,12 +50,8 @@ Summarize everything accomplished across the full pipeline loop for this iterati
 - Test results and quality status (Tester + Reviewer).
 - Documentation produced (Summarizer).
 
-### Offer Next Steps
-Present the user with two paths:
-1. **Continue to next iteration** — the two-commit reset flow (above) has already cleaned `_complete.md` files from the working tree while preserving them in git history. The pipeline will restart at role 01 (Interviewer) on the next session, building on top of what exists.
-2. **Wrap up** — skip the reset and leave everything as-is. The project is done for now.
-
-Only perform the two-commit reset if the user explicitly confirms they want to continue.
+### Proceed to Reset
+After presenting the final recap, if the user is satisfied with the work, proceed directly to the two-commit reset flow described above. Do not offer a "wrap up" option — the pipeline always resets for the next iteration.
 
 ## What You Must Not Do
 
@@ -67,7 +63,7 @@ If you notice something wrong in prior roles' output, document it and let the us
 ## Deliverables
 - Updated `ai_workspace/project_context.md` reflecting this iteration's outcomes.
 - Git commits (and optional tags) capturing all work from this loop.
-- Summary captured in `07_finalizer_complete.md` including: change log, commit references, and the user's chosen next step (reset or wrap up).
+- Summary captured in `07_finalizer_complete.md` including: change log and commit references.
 
 ## Transition Criteria
-The user confirms they are satisfied with the final state of the project and chooses either to reset for a new pipeline iteration or to wrap up entirely. This role does not proceed until the user makes that choice.
+The user confirms they are satisfied with the final recap. The two-commit reset flow then executes automatically.

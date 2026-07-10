@@ -9,21 +9,6 @@ Items captured by roles when the user requests work that falls outside their cur
 With incremental git commits now happening at every pipeline stage via AGENTS.md, the Finalizer's own commit/summary behavior should be reviewed. Consider whether the Finalizer needs to avoid duplicate commits, reference existing per-role commits in its recap, or adjust its workflow accordingly.
 
 
-## From Reviewer — Loop 2 Pipeline-Wide Review (2026-07-09)
-
-### Handle Partial/Re-Run Loops in Finalizer (Suggestion)
-**Proposed by:** Reviewer
-**Should be handled by:** Planner → Worker
-
-After a send-back, some `_complete.md` files are deleted and re-created. The Finalizer has no guidance on recognizing that a loop was interrupted and re-run. Add a note to acknowledge send-backs in the final recap if they occurred.
-
-
-### Finalizer Should Always Reset, Never Offer Wrap-Up
-**Proposed by:** User (via Finalizer, 2026-07-09)
-**Should be handled by:** Planner → Worker
-
-The Finalizer currently offers the user two paths: reset for a new iteration or wrap up and leave everything as-is. Remove the "wrap up" option — the Finalizer should always perform the two-commit reset flow (summary + delete `_complete.md` files) without asking. The pipeline is designed to loop continuously; if the user truly wants to stop, they can simply not start a new session.
-
 ---
 
 ### Tester in Send-Back Mode Must Run Full Test Suite
