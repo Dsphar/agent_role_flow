@@ -1,5 +1,5 @@
 Source: Reviewer (Role 06)
-Current Role: Tester (Role 04)
+Current Role: Summarizer (Role 05)
 
 ## Issues to Fix
 

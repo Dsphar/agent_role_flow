@@ -49,3 +49,14 @@ Verified `transition_guide.md` contains all content extracted from AGENTS.md:
 
 ## Recommendation
 **Proceed to Summarizer (Role 05).** All pipeline functionality preserved. No bugs found. The trim achieved its goal (~30-35% line reduction) without losing any operational behavior.
+
+---
+
+## Send-Back Summary (2026-07-10)
+
+Validated Reviewer send-back fixes S1 and S2 in `transition_guide.md`:
+- **S1** (filename casing note): ✅ Added, accurate, with concrete example
+- **S2** (send-back routing diagram): ✅ Added, clear ASCII + text summary
+- No regressions introduced; all existing transition flow intact
+
+Routing next role: Summarizer (Role 05).
