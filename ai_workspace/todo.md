@@ -22,6 +22,12 @@ Items captured by roles when the user requests work that falls outside their cur
 - Allow a **maximum of 3 rounds** of questions. No limit to the number of questions per round.
 - Update `ai_workspace/roles/01_Interviewer.md` with this interaction guideline.
 
+### Reorder Commit Message Format — Tag at End, Remove Double Dash (captured by user, 2026-07-10)
+- Move the `[ai-{role-name}]` tag from the **beginning** to the **end** of commit messages.
+- Remove the double-dash separator `--` between the tag and the message body.
+- New format: `{message body} [ai-{role-name}]` (e.g., `Improve Finalizer reset flow [ai-tester]`).
+- Update all references in `AGENTS.md`, `transition_guide.md`, and any role skill files that mention commit message formatting.
+
 ### Improve Documenter Option Lists — Numerical + Skip (captured by user, 2026-07-10)
 - When the Documenter offers a list of options to the user, make them **numerically numbered** so users can select by entering just numbers.
 - Always include a "skip" option in any such list.
