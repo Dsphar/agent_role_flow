@@ -32,4 +32,12 @@ After a send-back, some `_complete.md` files are deleted and re-created. The Fin
 
 The Finalizer currently offers the user two paths: reset for a new iteration or wrap up and leave everything as-is. Remove the "wrap up" option — the Finalizer should always perform the two-commit reset flow (summary + delete `_complete.md` files) without asking. The pipeline is designed to loop continuously; if the user truly wants to stop, they can simply not start a new session.
 
+---
+
+### Tester in Send-Back Mode Must Run Full Test Suite
+**Proposed by:** User (via Tester, 2026-07-09)
+**Should be handled by:** Planner → Worker
+
+When the Tester is in send-back mode and verifies that previously reported bugs are fixed, it should also run a full test suite covering **both** the original work from the first pass **and** the send-back fixes. Currently the Tester's send-back re-run logic only checks whether the specific reported bugs are resolved — it does not mandate re-running all tests to ensure no regressions were introduced by the fix. Update `04_tester.md`'s "Running Again During Send-Back Mode" section to require a complete test run before advancing.
+
 

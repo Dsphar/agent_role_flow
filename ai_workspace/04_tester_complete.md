@@ -17,3 +17,24 @@
 
 ### Action Taken
 Both bugs sent back to Planner via `send_back.md` for additional implementation steps.
+
+---
+
+## Send-Back Summary (2026-07-09)
+
+Re-ran full test suite after Worker addressed both send-back bugs. All 10 tests passed:
+
+| # | Test | Result |
+|---|------|--------|
+| 1 | No stale `send_back_to_worker.md` in operational files | ✅ Pass |
+| 2 | TODOs #3 and #6 removed from todo.md | ✅ Pass |
+| 3 | Send-back chain: Planner→Worker→Tester (routes to Planner on fail) | ✅ Pass |
+| 4 | Reviewer send-back routes to Planner, deletes file if original sender | ✅ Pass |
+| 5 | Summarizer has send-back section, advances to Reviewer (06) | ✅ Pass |
+| 6 | Finalizer has send-back section, correct delete/loop logic | ✅ Pass |
+| 7 | `project_context.md` Pending TODOs match `todo.md` | ✅ Pass |
+| 8 | All roles 02–07 have send-back mode sections; Role 01 correctly doesn't | ✅ Pass |
+| 9 | AGENTS.md uses `send_back.md` consistently (no stale refs) | ✅ Pass |
+| 10 | Commit prefix conventions consistent across all files | ✅ Pass |
+
+No regressions detected. Send-back cycle verified — advancing to Summarizer.
