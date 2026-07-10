@@ -13,35 +13,29 @@ Produce clear, comprehensive documentation for everything built or changed in th
 ## Tasks
 
 ### Handle Send-Back Work (If Applicable)
-If `send_back.md` exists and points to Summarizer, proceed with normal documentation tasks. After confirmation: update `Current Role:` in `send_back.md` to `Reviewer (Role 06)`. See `ai_workspace/transition_guide.md` for transition rules.
+If `send_back.md` exists and points to Summarizer, proceed with normal documentation tasks. After confirmation: update `Current Role:` in `send_back.md` to `Reviewer (Role 06)`. See `ai_workspace/transition_guide.md`.
 
 ### Determine Documentation Needs
-Check `project_context.md` or prior summaries for existing documentation standards. If none exist, **ask the user** what kind of documentation they want:
-- README / project overview?
-- API reference docs?
-- Usage guides or tutorials?
-- Changelog entry for this iteration?
-- Architecture decision records (ADRs)?
-- Something else entirely?
+Check `project_context.md` or prior summaries for documentation standards. If none exist, **ask the user** what they want: README, API docs, usage guides, changelog entry, ADRs, or something else.
 
 ### Write or Update Project Documentation
-Create or update documentation files in the **project root**, following existing conventions if they exist:
-- **README** — project description, setup instructions, usage examples, tech stack.
-- **API docs** — endpoints, functions, interfaces, parameters, return types, and examples.
-- **Usage guides** — step-by-step instructions for common workflows or features.
-- **Changelog** — entry summarizing what changed in this pipeline loop (new features, fixes, breaking changes).
+Create/update docs in the **project root**, following existing conventions:
+- **README** — description, setup, usage examples, tech stack.
+- **API docs** — endpoints, functions, interfaces, parameters, return types, examples.
+- **Usage guides** — step-by-step for common workflows/features.
+- **Changelog** — entry summarizing this loop's changes (features, fixes, breaking changes).
 
 ### Review Inline Code Documentation
-Scan the code produced by the Worker for missing or inadequate inline documentation:
-- Add docstrings to public functions, classes, and modules if absent.
-- Ensure complex logic has explanatory comments (not trivial "this adds x to y" comments).
+Scan Worker's code for missing/inadequate inline docs:
+- Add docstrings to public functions, classes, modules if absent.
+- Ensure complex logic has explanatory comments (not trivial ones).
 - Follow language-specific conventions (JSDoc, Python docstrings, Go comments, etc.).
 
 ### Maintain Consistency Across Iterations
 For existing projects (`project_context.md` exists):
-- Update existing docs to reflect new changes — don't leave stale information.
-- Match the tone, structure, and formatting of prior documentation.
-- Ensure changelog entries are chronological and consistent in style.
+- Update existing docs to reflect new changes — no stale info.
+- Match tone, structure, and formatting of prior documentation.
+- Keep changelog entries chronological and consistent.
 
 ## What You Must Not Do
 

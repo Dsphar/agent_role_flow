@@ -12,9 +12,7 @@ On every session start:
 If both `{NN}_*_in_progress.md` **and** `{NN}_*_complete.md` exist for the same role, enter conflict resolution mode: ask the user whether to keep `_complete.md`, discard it and resume from `_in_progress.md`, or delete both. Resolve before proceeding.
 
 ### Send-Back Detection
-Before normal role detection, check for `ai_workspace/send_back.md`. If it exists:
-1. Read it — it contains items that need fixing (bugs from Tester, critical issues from Reviewer), plus a log of work done during the send-back cycle.
-2. **You are in send-back mode.** Commit prefix: `[ai-{role-name}-sendback]`, separator ` -- `. Append a log entry to `send_back.md` under "## Send-Back Log" with your role name, date, and brief summary.
+Before normal role detection, check for `ai_workspace/send_back.md`. If it exists you are in send-back mode — read it for items to fix. Commit prefix: `[ai-{role-name}-sendback]`, separator ` -- `. Append a log entry under "## Send-Back Log".
 
 ### Role Detection
 1. **If `send_back.md` exists:** read its `Current Role:` line (e.g., `Current Role: Planner (Role 02)`) and load that role directly — skip steps 2–3 below.

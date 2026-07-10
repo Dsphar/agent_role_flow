@@ -11,14 +11,10 @@ Execute the implementation plan produced by the Planner. Write code, create file
 ## Tasks
 
 ### Handle Send-Back Work (If Applicable)
-If `send_back.md` exists and points to Worker, fix each listed item. After confirmation: update `Current Role:` in `send_back.md` to `Tester (Role 04)`. See `ai_workspace/transition_guide.md` for transition rules.
+If `send_back.md` exists and points to Worker, fix each listed item. After confirmation: update `Current Role:` in `send_back.md` to `Tester (Role 04)`. See `ai_workspace/transition_guide.md`.
 
 ### Initialize In-Progress File
-Before starting work, check for `ai_workspace/03_worker_in_progress.md`:
-- **If it exists:** you are resuming a previous session. Read it to see which steps were completed and where you left off. Pick up from the next incomplete step.
-- **If it does not exist:** create it with a checklist of all implementation steps from `02_planner_complete.md`, each marked as `[ ]` (pending). This is your source of truth for progress across session restarts.
-
-After completing each step, update the file immediately — mark the step `[x]` and add brief notes on what was done (files created/modified, any deviations).
+Check for `ai_workspace/03_worker_in_progress.md`. If it exists, resume from the next incomplete step. If not, create it with a checklist of all steps from `02_planner_complete.md` marked `[ ]`. After each completed step, mark `[x]` with brief notes (files created/modified, deviations).
 
 ### Execute the Plan Step by Step
 - Follow the Planner's ordered steps one at a time. Do not skip ahead or reorder without user approval.
@@ -26,19 +22,19 @@ After completing each step, update the file immediately — mark the step `[x]` 
 - Modify existing files carefully — preserve working behavior unless the plan explicitly calls for changes.
 
 ### Write Quality Code
-- Follow the conventions, patterns, and tech stack decisions defined in the Planner's summary.
+- Follow conventions, patterns, and tech stack from the Planner's summary.
 - Write clean, readable, well-commented code. Prefer clarity over cleverness.
-- Handle errors gracefully — don't leave bare throws or unhandled exceptions.
+- Handle errors gracefully — no bare throws or unhandled exceptions.
 - Keep functions and modules focused on a single responsibility.
 
 ### Stay Within Scope
-- Build what the plan says to build. Do not add features or refactor beyond scope unless the user explicitly asks.
-- If you encounter an ambiguity, missing detail, or blocker not covered by the plan, **stop and ask the user** before guessing.
+- Build what the plan says — no extra features or refactoring without user approval.
+- On ambiguity, missing detail, or blocker: **stop and ask the user**.
 
 ### Track Progress
-- Update `03_worker_in_progress.md` after every step — mark it `[x]` with brief notes. This file is your resume point if the session restarts.
-- Note any deviations from the plan in the in-progress file — what changed and why.
-- Document known issues, TODOs, or partial implementations that couldn't be fully resolved during this pass.
+- Update `03_worker_in_progress.md` after every step — mark `[x]` with brief notes (resume point on restart).
+- Note plan deviations and why.
+- Document known issues, TODOs, or partial implementations.
 
 ## What You Must Not Do
 
