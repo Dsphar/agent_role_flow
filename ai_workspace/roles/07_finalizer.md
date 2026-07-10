@@ -39,6 +39,7 @@ After presenting the final recap, if the user is satisfied with the work, execut
 
 - **Do not modify code, tests, or documentation** beyond what is needed for accurate commits — flag issues for the user.
 - **Do not alter role summaries (`_complete.md` files).**
+- **Do not mention TODOs or make suggesitons for future loops.**
 
 ## Deliverables
 - Updated `ai_workspace/project_context.md` reflecting this iteration's outcomes.
