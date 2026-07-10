@@ -20,6 +20,14 @@ Items captured by roles when the user requests work that falls outside their cur
 - Update `ai_workspace/roles/05_documenter.md` to enforce that the role must complete its core tasks before transitioning.
 - Consider adding explicit completion criteria or guardrails preventing premature transitions.
 
+### Improve Tester Option Lists — Numerical + Minimum Three Options (captured by user, 2026-07-10)
+- When the Tester offers a list of options to the user, make them **numerically numbered** so users can select by entering just numbers.
+- Always offer **at least three options**, including:
+  - Quick/change-only testing (verify only what was modified in this loop).
+  - Deep testing (full suite — unit + integration + edge cases).
+  - Skip testing entirely.
+- Update `ai_workspace/roles/04_tester.md` with these interaction guidelines.
+
 ### Improve Documenter Option Lists — Numerical + Skip (captured by user, 2026-07-10)
 - When the Documenter offers a list of options to the user, make them **numerically numbered** so users can select by entering just numbers.
 - Always include a "skip" option in any such list.
