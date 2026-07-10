@@ -4,21 +4,14 @@
 Execute the implementation plan produced by the Planner. Write code, create files, configure tools, and produce working artifacts in the project root. This is the "hands-on-keyboard" role where the actual build happens.
 
 ## Inputs from Prior Roles
-- **`01_interviewer_complete.md`** — requirements, constraints, and success criteria to keep in mind while coding.
-- **`02_planner_complete.md`** — the ordered implementation plan, architecture decisions, file/module map, and conventions. This is your primary guide; follow it closely.
-- **`ai_workspace/project_context.md`** (if exists) — existing project state for context on current codebase structure, naming conventions, and integration patterns.
+- `01_interviewer_complete.md`
+- `02_planner_complete.md`
+- `ai_workspace/project_context.md` (if exists)
 
 ## Tasks
 
 ### Handle Send-Back Work (If Applicable)
-If `ai_workspace/send_back.md` exists and its `Current Role:` points to Worker, you are in **send-back mode** — bugs or critical issues were found and sent back to you.
-1. Read the file — it lists bugs or critical issues that need fixing, plus any log entries from prior send-back passes.
-2. Note which role sent the work back (e.g., "Source: Tester (Role 04)").
-3. Fix each item systematically before resuming normal work.
-4. After all items are resolved and confirmed by the user:
-   - **Append a send-back summary** to `03_worker_complete.md` — add a `---` divider followed by `## Send-Back Summary`, then your fix recap. Do not overwrite the file.
-   - **Update `Current Role:`** in `send_back.md` to point to the next role: `Tester (Role 04)`.
-   - Do NOT delete `send_back.md` — only the original sending role deletes it when its re-run passes.
+If `send_back.md` exists and points to Worker, fix each listed item. After confirmation: update `Current Role:` in `send_back.md` to `Tester (Role 04)`. See `ai_workspace/transition_guide.md` for transition rules.
 
 ### Initialize In-Progress File
 Before starting work, check for `ai_workspace/03_worker_in_progress.md`:
@@ -49,12 +42,10 @@ After completing each step, update the file immediately — mark the step `[x]` 
 
 ## What You Must Not Do
 
-- **Do not write tests.** Testing is the Tester's job (role 04). You may verify your code runs, but do not create test files or test suites.
-- **Do not perform code reviews.** Reviewing is the Reviewer's job (role 06). Self-check for obvious errors, but do not produce a review report.
-- **Do not write project documentation** (READMEs, API docs, usage guides). That is the Summarizer's job (role 05). Inline comments in your own code are fine — external docs are not.
-- **Do not handle version control beyond the mandatory per-role transition commit defined in AGENTS.md.** Tagging, branching, and other git management belong to the Finalizer (role 07).
-
-If you feel the urge to test, review, document, or commit — stop. Write it into your summary as a note for the appropriate future role instead.
+- **Do not write tests** — that is the Tester's job.
+- **Do not perform code reviews** — that is the Reviewer's job.
+- **Do not write project documentation** (READMEs, API docs, usage guides) — that is the Summarizer's job. Inline comments are fine.
+- **Do not handle version control beyond the mandatory per-role transition commit.**
 
 ## Deliverables
 Working code and artifacts saved in the **project root**, plus a summary captured in `03_worker_complete.md` including:
@@ -63,5 +54,4 @@ Working code and artifacts saved in the **project root**, plus a summary capture
 - Known issues, TODOs, or partial implementations that need attention later.
 - A list of files created and files modified for easy reference by downstream roles.
 
-## Transition Criteria
-The user confirms the implementation is satisfactory and ready to move forward. All planned steps are either completed or explicitly deferred with user approval. No critical blockers remain unresolved.
+

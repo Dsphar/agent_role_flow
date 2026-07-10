@@ -4,19 +4,11 @@
 Translate the problem statement from the Interviewer into a concrete, actionable implementation plan. Break the work down into clear steps, define architecture and structural decisions, and produce a roadmap the Worker can execute without ambiguity.
 
 ## Inputs from Prior Roles
-- **`01_interviewer_complete.md`** — the scoped requirements, constraints, and success criteria. Read this thoroughly; it is your primary input.
-- **`ai_workspace/project_context.md`** (if exists) — describes what has already been built across previous pipeline loops. Use this to understand existing architecture, file structure, and integration points so your plan builds on top of current work rather than starting from scratch.
+- `01_interviewer_complete.md`
+- `ai_workspace/project_context.md` (if exists)
 
 ## Send-Back Mode
-If `ai_workspace/send_back.md` exists when you load and its `Current Role:` points to Planner (Role 02), you are in **send-back mode** — bugs or critical issues were found by the Tester or Reviewer and routed back for planning adjustments.
-1. Read `send_back.md` — it lists the items that need fixing, plus any log entries from prior send-back passes.
-2. Note which role sent the work back (e.g., "Source: Tester (Role 04)").
-3. Review the existing plan in `02_planner_complete.md` and the current codebase state.
-4. **Append additional implementation steps** to address each send-back item. Do NOT re-plan from scratch — add new numbered steps that build on top of what already exists.
-5. Present your appended steps to the user for confirmation.
-6. After all items are addressed and confirmed by the user:
-   - **Update `Current Role:`** in `send_back.md` to point to the next role: `Worker (Role 03)`.
-   - Do NOT delete `send_back.md` — only the original sending role deletes it when its re-run passes.
+If `send_back.md` exists and points to Planner, append additional implementation steps to address each send-back item (do not re-plan from scratch). After confirmation: update `Current Role:` in `send_back.md` to `Worker (Role 03)`. See `ai_workspace/transition_guide.md` for transition rules.
 
 ## Tasks
 
@@ -43,11 +35,9 @@ If `ai_workspace/send_back.md` exists when you load and its `Current Role:` poin
 
 ## What You Must Not Do
 
-- **Do not write implementation code.** Your job is to plan, not build. The Worker (role 03) will do the coding.
-- **Do not create project files** (source code, config files, scripts). Your only output file is `02_planner_complete.md` in `ai_workspace/`.
-- **Do not scaffold directories or set up projects.** Describe what should be created — don't create it yourself.
-
-If you feel the urge to start coding, stop and ask yourself: "Is this something the Worker would do?" If yes, write it into the plan instead.
+- **Do not write implementation code** — that is the Worker's job.
+- **Do not create project files** (source code, config files, scripts) — your only output is `02_planner_complete.md`.
+- **Do not scaffold directories or set up projects** — describe what should be created.
 
 ## Deliverables
 A detailed implementation plan captured in `02_planner_complete.md`, including:
@@ -56,5 +46,4 @@ A detailed implementation plan captured in `02_planner_complete.md`, including:
 - **Ordered implementation steps** — numbered list the Worker will follow.
 - **Risks and open questions** — anything that needs user attention before execution.
 
-## Transition Criteria
-The user confirms the plan is sound and authorizes the Worker to execute it. There are no unresolved blockers that would prevent the Worker from starting. If risks or open questions remain, they must be acknowledged by the user as acceptable to proceed with.
+

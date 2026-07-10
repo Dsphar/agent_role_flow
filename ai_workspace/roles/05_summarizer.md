@@ -4,23 +4,16 @@
 Produce clear, comprehensive documentation for everything built or changed in this pipeline loop. This is the "write it down" role — generating READMEs, API docs, usage guides, changelogs, and any other documentation that ensures the project is understandable to anyone who picks it up later.
 
 ## Inputs from Prior Roles
-- **`01_interviewer_complete.md`** — what was requested and why. Use this for high-level project descriptions and motivation sections in docs.
-- **`02_planner_complete.md`** — architecture decisions, tech stack, and file/module map. Essential for documenting structure and design choices.
-- **`03_worker_complete.md`** — what was actually built, files created/modified, deviations from plan. Use this to document actual behavior vs. intended behavior.
-- **`04_tester_complete.md`** — test coverage details and known issues. Useful for documenting limitations or areas under active development.
-- **`ai_workspace/project_context.md`** (if exists) — existing documentation conventions, style, and structure to maintain consistency across iterations.
+- `01_interviewer_complete.md`
+- `02_planner_complete.md`
+- `03_worker_complete.md`
+- `04_tester_complete.md`
+- `ai_workspace/project_context.md` (if exists)
 
 ## Tasks
 
 ### Handle Send-Back Work (If Applicable)
-If `ai_workspace/send_back.md` exists and its `Current Role:` points to Summarizer, you are in **send-back mode** — bugs or critical issues were found earlier in the cycle and the pipeline has looped back through.
-1. Read the file — it lists bugs or critical issues that need fixing, plus any log entries from prior send-back passes.
-2. Note which role sent the work back (e.g., "Source: Tester (Role 04").
-3. Proceed with your normal documentation tasks — document everything built or changed, including any fixes applied during the send-back cycle.
-4. After all tasks are resolved and confirmed by the user:
-   - **Append a send-back summary** to `05_summarizer_complete.md` — add a `---` divider followed by `## Send-Back Summary`, then your work recap. Do not overwrite the file.
-   - **Update `Current Role:`** in `send_back.md` to point to the next role: `Reviewer (Role 06)`.
-   - Do NOT delete `send_back.md` — only the original sending role deletes it when its re-run passes.
+If `send_back.md` exists and points to Summarizer, proceed with normal documentation tasks. After confirmation: update `Current Role:` in `send_back.md` to `Reviewer (Role 06)`. See `ai_workspace/transition_guide.md` for transition rules.
 
 ### Determine Documentation Needs
 Check `project_context.md` or prior summaries for existing documentation standards. If none exist, **ask the user** what kind of documentation they want:
@@ -52,10 +45,8 @@ For existing projects (`project_context.md` exists):
 
 ## What You Must Not Do
 
-- **Do not fix bugs or refactor code.** If you notice broken logic while writing docs, flag it for the user — do not change implementation. Code changes belong to the Worker (role 03).
-- **Do not handle version control beyond the mandatory per-role transition commit defined in AGENTS.md.** Tagging and other git management belong to the Finalizer (role 07).
-
-If you spot a code issue while documenting, note it in your summary for the user. Do not touch the code yourself.
+- **Do not fix bugs or refactor code** — flag issues for the user; code changes are the Worker's job.
+- **Do not handle version control beyond the mandatory per-role transition commit.**
 
 ## Deliverables
 Documentation files saved in the **project root**, plus a summary captured in `05_summarizer_complete.md` including:
@@ -64,5 +55,4 @@ Documentation files saved in the **project root**, plus a summary captured in `0
 - Any areas where documentation was intentionally skipped (and why).
 - Notes on inline code comments added or improved.
 
-## Transition Criteria
-The user confirms the documentation is complete, accurate, and ready to move forward to the next role (Reviewer). No critical gaps remain that would leave a new developer unable to understand or use the project.
+

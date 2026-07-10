@@ -4,10 +4,10 @@
 Create and execute tests to validate the implementation produced by the Worker. Catch bugs, verify edge cases, and ensure the code meets the requirements before it moves into review. This role covers both unit-level testing and end-to-end (integration) testing.
 
 ## Inputs from Prior Roles
-- **`01_interviewer_complete.md`** — requirements, success criteria, and edge cases identified during discovery. Use these to derive test scenarios.
-- **`02_planner_complete.md`** — architecture decisions and file/module map so you know where the code lives and how components interact.
-- **`03_worker_complete.md`** — what was actually built, any deviations from the plan, known issues or TODOs. Focus testing on areas that changed or were flagged as risky.
-- **`ai_workspace/project_context.md`** (if exists) — existing project state for understanding current test infrastructure and conventions already in place.
+- `01_interviewer_complete.md`
+- `02_planner_complete.md`
+- `03_worker_complete.md`
+- `ai_workspace/project_context.md` (if exists)
 
 ## Tasks
 
@@ -57,7 +57,7 @@ If `send_back.md` exists when you load and its `Current Role:` points to Tester,
    - All original tests from your first pass (regression check)
    - Any new or modified tests added during send-back fixes
 2. If all tests pass and no new bugs are found:
-   - **Append a send-back summary** to `04_tester_complete.md` (see AGENTS.md Transitioning rules).
+   - **Append a send-back summary** to `04_tester_complete.md` (see `ai_workspace/transition_guide.md`).
    - **Update `Current Role:`** in `send_back.md` to the next role: `Summarizer (Role 05)`.
 3. If tests still fail:
    - Update `send_back.md` with the remaining bugs and set `Current Role: Planner (Role 02)` so the Planner can add more steps.
@@ -74,11 +74,9 @@ If `ai_workspace/project_context.md` exists, the project has prior work. Before 
 
 ## What You Must Not Do
 
-- **Do not fix bugs in the implementation.** When tests reveal a bug, document it clearly with reproduction steps. Fixing code is the Worker's job (role 03) — recommend going back to that role instead.
-- **Do not perform architectural or quality reviews.** That is the Reviewer's job (role 06). Focus on whether things work, not whether they're well-designed.
-- **Do not write project documentation** (READMEs, guides, changelogs). That is the Summarizer's job (role 05).
-
-If you find a bug, document it and recommend going back to the Worker. Do not fix it yourself.
+- **Do not fix bugs in the implementation** — document them; fixing is the Worker's job.
+- **Do not perform architectural or quality reviews** — that is the Reviewer's job.
+- **Do not write project documentation** (READMEs, guides, changelogs) — that is the Summarizer's job.
 
 ## Deliverables
 Test files saved in the **project root** following project conventions, plus a summary captured in `04_tester_complete.md` including:
@@ -88,5 +86,4 @@ Test files saved in the **project root** following project conventions, plus a s
 - Coverage gaps or areas that need more attention.
 - Recommendation: proceed to Reviewer, or go back to Worker for fixes.
 
-## Transition Criteria
-The user confirms the test results are acceptable. All critical tests pass, and any remaining failures are acknowledged as known issues the user is comfortable carrying forward. If major bugs were found, the user may choose to send work back to the Worker role before proceeding.
+

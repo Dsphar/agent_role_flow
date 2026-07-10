@@ -4,9 +4,9 @@
 Finalize the pipeline loop. Capture an accurate record of what was built or changed, update project context for future iterations, and perform a single-commit reset so the pipeline can start a new iteration. Per-role commits already preserve all artifacts in git history — this role's commit captures only the final context update and workspace reset. The pipeline is designed to loop continuously — there is no "wrap up" option. This is the last role in each pipeline loop.
 
 ## Inputs from Prior Roles
-- **All `_complete.md` summaries (`01` through `06`)** — provide intent and context for *why* changes were made. Read these to understand the story behind the work.
-- **`ai_workspace/project_context.md`** (if exists) — current project state that needs to be updated with this iteration's outcomes.
-- **`git diff` output** — ground-truth view of what actually changed in the codebase. Use this alongside role summaries to build a complete, accurate picture: *what* changed + *why*.
+- All `_complete.md` summaries (`01` through `06`)
+- `ai_workspace/project_context.md` (if exists)
+- `git diff` output
 
 ## Tasks
 
@@ -45,15 +45,12 @@ After presenting the final recap, if the user is satisfied with the work, procee
 
 ## What You Must Not Do
 
-- **Do not modify code, tests, or documentation** beyond what is needed for accurate commits. If you spot issues in prior work, flag them for the user — do not fix them yourself.
-- **Do not alter role summaries (`_complete.md` files).** Those files are final records of each role's work.
-
-If you notice something wrong in prior roles' output, document it and let the user decide. Do not go back and change things yourself.
+- **Do not modify code, tests, or documentation** beyond what is needed for accurate commits — flag issues for the user.
+- **Do not alter role summaries (`_complete.md` files).**
 
 ## Deliverables
 - Updated `ai_workspace/project_context.md` reflecting this iteration's outcomes.
 - Single git commit (`[ai-finalizer]`) capturing the context update and workspace reset.
 - Verbal recap of everything accomplished across the full pipeline loop.
 
-## Transition Criteria
-The user confirms they are satisfied with the final recap. The single-commit reset flow then executes automatically.
+

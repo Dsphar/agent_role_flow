@@ -14,14 +14,7 @@ If both `{NN}_*_in_progress.md` **and** `{NN}_*_complete.md` exist for the same 
 ### Send-Back Detection
 Before normal role detection, check for `ai_workspace/send_back.md`. If it exists:
 1. Read it — it contains items that need fixing (bugs from Tester, critical issues from Reviewer), plus a log of work done during the send-back cycle.
-2. **You are in send-back mode.** This affects your behavior (see below).
-3. The sending role is noted in the file header (e.g., `Source: Tester (Role 04)`).
-4. Read the `Current Role:` line — it tells you which role to load this session.
-
-**Send-back mode rules for every role:**
-- **Commit prefix:** Use `[ai-{role-name}-sendback]` instead of `[ai-{role-name}]` on all git commits during transition.
-- **Separator format:** All commit messages use ` -- ` between the prefix and body (e.g., `[ai-worker] -- added feature`).
-- **Append a log entry to `send_back.md`:** At the bottom of the file, under an existing "## Send-Back Log" heading (or create one), add a section with your role name, date, and a brief summary of what you did. This builds an audit trail across all roles in the cycle.
+2. **You are in send-back mode.** Commit prefix: `[ai-{role-name}-sendback]`, separator ` -- `. Append a log entry to `send_back.md` under "## Send-Back Log" with your role name, date, and brief summary.
 
 ### Role Detection
 1. **If `send_back.md` exists:** read its `Current Role:` line (e.g., `Current Role: Planner (Role 02)`) and load that role directly — skip steps 2–3 below.
@@ -46,53 +39,10 @@ Before normal role detection, check for `ai_workspace/send_back.md`. If it exist
 
 ## Transitioning Between Roles
 
-When you believe the current role's work is complete:
-
-1. **Summarize** what was accomplished — clear recap of outcomes and deliverables.
-2. **Ask** the user if they are satisfied or want adjustments before moving on.
-3. Address any requested changes, then re-prompt when ready.
-4. Once confirmed:
-   - **Normal mode:** If `{NN}_rolename_in_progress.md` exists, **rename** it to `{NN}_rolename_complete.md`. Otherwise, create `{NN}_rolename_complete.md` with the full summary.
-   - **Send-back mode (you are NOT the original sending role):**
-     1. **Append your send-back summary** to the existing `{NN}_rolename_complete.md` — add a `---` divider followed by `## Send-Back Summary`, then your work recap. Do not overwrite the file.
-     2. **Update `Current Role:`** in `send_back.md` to point to the next role in the pipeline (e.g., Worker → Tester, Tester → Summarizer).
-   - **Send-back mode (you ARE the original sending role and your work passes):**
-     1. **Append your send-back summary** to the existing `{NN}_rolename_complete.md` as above.
-     2. **Delete `send_back.md`** — the send-back cycle is complete.
-   - **Git commit:** Commit all changed files so progress is preserved incrementally.
-     1. Run `git status`. If not in a git repo or there are no changes, skip this step silently.
-     2. Determine prefix: if you are in send-back mode (`send_back.md` exists now, **or you just deleted it** as the original sending role), use `[ai-{role-name}-sendback]`; otherwise use `[ai-{role-name}]`. Extract `{role-name}` from the `_complete.md` filename (e.g., `03_worker_complete.md` → `worker`).
-     3. Run `git add -A`.
-     4. Determine the commit body: read `## Goal Summary` from `ai_workspace/01_interviewer_complete.md`. If it exists, use its content as the body (truncate to <100 chars if needed). If not, generate a concise ad-hoc summary of what was accomplished.
-     5. Run `git commit -m "{prefix determined in step 2} -- {commit body from step 4}"`.
-     6. **If the commit fails** (identity not configured, merge conflict, etc.), **block transition** — present the error to the user and ask how to proceed. Do not mark the role complete until the commit succeeds or the user explicitly says to skip it.
-   - Announce the role is complete and introduce the next role.
-5. On the next interaction, re-run **Session Startup** to load the new current role.
-
-### In-Progress Files
-
-Optionally create `{NN}_rolename_in_progress.md` in `ai_workspace/` during a role for early notes. It is temporary and renamed to `_complete.md` upon confirmation.
+When ready to transition, read and follow `ai_workspace/transition_guide.md`.
 
 ---
 
 ## Going Back
 
-The user may request to revisit a previous role at any time:
-
-1. If an `_in_progress.md` exists for that role, keep it — do not overwrite.
-2. Load the requested role's skill file and resume work.
-3. Do **not** delete `_complete.md` files from roles ahead of the one being revisited.
-
----
-
-## Role Pipeline (Order)
-
-| Step | File | Summary File |
-|------|------|-------------|
-| 01 | `ai_workspace/roles/01_Interviewer.md` | `ai_workspace/01_interviewer_complete.md` |
-| 02 | `ai_workspace/roles/02_planner.md` | `ai_workspace/02_planner_complete.md` |
-| 03 | `ai_workspace/roles/03_worker.md` | `ai_workspace/03_worker_complete.md` |
-| 04 | `ai_workspace/roles/04_tester.md` | `ai_workspace/04_tester_complete.md` |
-| 05 | `ai_workspace/roles/05_summarizer.md` | `ai_workspace/05_summarizer_complete.md` |
-| 06 | `ai_workspace/roles/06_reviewer.md` | `ai_workspace/06_reviewer_complete.md` |
-| 07 | `ai_workspace/roles/07_finalizer.md` | (none — Finalizer resets for next loop) |
+If the user requests a previous role: keep any `_in_progress.md`, load that role's skill file, do not delete ahead-of-role `_complete.md` files.

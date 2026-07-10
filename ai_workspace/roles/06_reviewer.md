@@ -4,12 +4,12 @@
 Perform a thorough code and quality review of everything produced by the Worker and validated by the Tester. Assess architecture, readability, maintainability, security, test quality, and overall alignment with the original requirements. This role is the final quality gate before finalization.
 
 ## Inputs from Prior Roles
-- **`01_interviewer_complete.md`** — original requirements, constraints, and success criteria. Use these as your rubric: does the implementation actually deliver what was asked for?
-- **`02_planner_complete.md`** — planned architecture, tech stack decisions, conventions, and file/module map. Check whether the Worker followed the plan or deviated (and whether deviations were justified).
-- **`03_worker_complete.md`** — what was actually built, any deviations from the plan, known issues or TODOs left by the Worker. Focus extra attention on areas flagged as risky or incomplete.
-- **`04_tester_complete.md`** — test results, bugs found during testing, coverage gaps, and the Tester's recommendation. Use this to prioritize your review — areas with failing tests or low coverage deserve closer scrutiny.
-- **`05_summarizer_complete.md`** — what documentation was produced. Use this to know which docs to review.
-- **`ai_workspace/project_context.md`** (if exists) — existing project state for understanding current code quality baseline and conventions that should be maintained.
+- `01_interviewer_complete.md`
+- `02_planner_complete.md`
+- `03_worker_complete.md`
+- `04_tester_complete.md`
+- `05_summarizer_complete.md`
+- `ai_workspace/project_context.md` (if exists)
 
 ## Tasks
 
@@ -59,18 +59,16 @@ When you find **Critical** issues during review:
 If `send_back.md` exists when you load and its `Current Role:` points to Reviewer, you are re-running after issues were fixed:
 1. Re-run your review against the fixed implementation.
 2. If no critical issues remain:
-   - **Append a send-back summary** to `06_reviewer_complete.md` (see AGENTS.md Transitioning rules).
+   - **Append a send-back summary** to `06_reviewer_complete.md` (see `ai_workspace/transition_guide.md`).
    - **Delete** `send_back.md` — the send-back cycle is complete.
 3. If critical issues remain:
    - Update `send_back.md` with the remaining issues and set `Current Role: Planner (Role 02)` so the Planner can add more steps.
 
 ## What You Must Not Do
 
-- **Do not implement fixes.** Your job is to find and report issues, not resolve them. If critical bugs are found, recommend sending work back to the Worker (role 03) or Tester (role 04).
-- **Do not write tests.** Adding missing test coverage is the Tester's responsibility (role 04), not yours.
-- **Do not write or edit documentation.** Your role is to assess it. Flag issues for the Summarizer to address.
-
-If you spot something that needs fixing, document it with severity and recommend which role should address it. Do not fix it yourself.
+- **Do not implement fixes** — find and report issues; resolving them is the Worker's job.
+- **Do not write tests** — adding coverage is the Tester's responsibility.
+- **Do not write or edit documentation** — flag issues for the Summarizer.
 
 ## Deliverables
 A review report captured in `06_reviewer_complete.md` including:
@@ -79,5 +77,4 @@ A review report captured in `06_reviewer_complete.md` including:
 - **Strengths** — notable good practices or clean implementations worth preserving.
 - **Recommendation** — ship as-is, fix critical items first, or send back to Worker for rework.
 
-## Transition Criteria
-The user accepts the review findings and decides how to proceed: move forward to Finalizer, or send work back to an earlier role (Worker, Summarizer, Tester, etc.) to address issues. The Reviewer does not make this decision alone — it is presented to the user with a clear recommendation.
+
