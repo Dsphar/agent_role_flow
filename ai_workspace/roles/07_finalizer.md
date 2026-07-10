@@ -10,6 +10,15 @@ Finalize the pipeline loop. Capture an accurate record of what was built or chan
 
 ## Tasks
 
+### Handle Send-Back Work (If Applicable)
+If `ai_workspace/send_back.md` exists and its `Current Role:` points to Finalizer, you are in **send-back mode** — the pipeline has looped back through all roles including yourself.
+1. Read the file — it lists bugs or critical issues that need fixing, plus any log entries from prior send-back passes.
+2. Note which role sent the work back (e.g., "Source: Tester (Role 04").
+3. Proceed with your normal finalization tasks — capture an accurate record of everything built or changed, including fixes applied during the send-back cycle.
+4. After all tasks are resolved and confirmed by the user:
+   - **If you ARE the original sending role** (i.e., `Source:` in `send_back.md` says "Finalizer"): append a send-back summary to `07_finalizer_complete.md`, then **delete `send_back.md`** — the send-back cycle is complete.
+   - **If you are NOT the original sending role:** append a send-back summary to `07_finalizer_complete.md`, then **update `Current Role:`** in `send_back.md` to point back to `Summarizer (Role 05)` for another pass through documentation and review.
+
 ### Determine What Changed This Iteration
 - Run `git diff` (or equivalent) to see all file-level changes since the start of this pipeline loop. If git is not initialized, list all files in the project root and compare against what existed before this loop (use role summaries as a reference).
 - Cross-reference the diff output with the `_complete.md` summaries from prior roles:

@@ -12,6 +12,16 @@ Produce clear, comprehensive documentation for everything built or changed in th
 
 ## Tasks
 
+### Handle Send-Back Work (If Applicable)
+If `ai_workspace/send_back.md` exists and its `Current Role:` points to Summarizer, you are in **send-back mode** — bugs or critical issues were found earlier in the cycle and the pipeline has looped back through.
+1. Read the file — it lists bugs or critical issues that need fixing, plus any log entries from prior send-back passes.
+2. Note which role sent the work back (e.g., "Source: Tester (Role 04").
+3. Proceed with your normal documentation tasks — document everything built or changed, including any fixes applied during the send-back cycle.
+4. After all tasks are resolved and confirmed by the user:
+   - **Append a send-back summary** to `05_summarizer_complete.md` — add a `---` divider followed by `## Send-Back Summary`, then your work recap. Do not overwrite the file.
+   - **Update `Current Role:`** in `send_back.md` to point to the next role: `Reviewer (Role 06)`.
+   - Do NOT delete `send_back.md` — only the original sending role deletes it when its re-run passes.
+
 ### Determine Documentation Needs
 Check `project_context.md` or prior summaries for existing documentation standards. If none exist, **ask the user** what kind of documentation they want:
 - README / project overview?

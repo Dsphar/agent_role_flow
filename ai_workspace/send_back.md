@@ -1,5 +1,5 @@
 Source: Tester (Role 04)
-Current Role: Worker (Role 03)
+Current Role: Tester (Role 04)
 
 ## Bugs Found During Testing
 
@@ -27,3 +27,6 @@ They need send-back sections consistent with the other roles, advancing sequenti
 
 ### Planner (Role 02) — 2026-07-09
 Appended 3 implementation steps to address Tester's send-back: (1) update `project_context.md` stale references, (2) add send-back section to Summarizer skill file, (3) add send-back section to Finalizer skill file.
+
+### Worker (Role 03) — 2026-07-09
+Fixed both bugs: updated all `send_back_to_worker.md` → `send_back.md` references in `project_context.md`, cleaned up stale TODO list, and added send-back mode sections to Summarizer (05) and Finalizer (07).

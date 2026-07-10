@@ -26,3 +26,18 @@ None — all steps executed as planned.
 
 ### Known Issues / TODOs
 None.
+
+---
+
+## Send-Back Summary (2026-07-09)
+
+Addressed two bugs found by Tester:
+
+**Bug 1 — `project_context.md` stale references:** Updated all remaining `send_back_to_worker.md` → `send_back.md` references. Cleaned up "Pending TODOs" section to match current `todo.md` (4 items, removed completed #5 and #6).
+
+**Bug 2 — Summarizer/Finalizer missing send-back sections:** Added "Handle Send-Back Work" sections to both `05_summarizer.md` and `07_finalizer.md`, consistent with roles 02–04 and 06. Summarizer advances to Reviewer (06); Finalizer deletes `send_back.md` if original sender, otherwise loops back to Summarizer (05).
+
+### Files Modified
+- `ai_workspace/project_context.md`
+- `ai_workspace/roles/05_summarizer.md`
+- `ai_workspace/roles/07_finalizer.md`
