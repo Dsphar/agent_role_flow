@@ -4,6 +4,10 @@ Items captured by roles when the user requests work that falls outside their cur
 
 ## Pending
 
+### Move transition_guide.md into the roles folder (captured by user, 2026-07-10)
+- The `transition_guide.md` file currently lives at `ai_workspace/transition_guide.md` alongside role summaries and other workspace files.
+- Move it into `ai_workspace/roles/` to keep all operational skill/guide files together in one directory.
+
 ### Improve Finalizer Transition — Explicit Custom Reset Flow (captured by Tester, 2026-07-10)
 - The Finalizer's skill file does not explicitly reference `transition_guide.md` for its post-commit handoff messaging. It relies on AGENTS.md's general instruction to reach the hard-stop message.
 - Since the Finalizer is the last role and resets `_complete.md` files, it needs a **custom transition flow** that clearly describes clearing loop state and preparing the workspace for a new pipeline iteration.
