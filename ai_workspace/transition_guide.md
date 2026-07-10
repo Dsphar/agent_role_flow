@@ -10,7 +10,7 @@ When you believe the current role's work is complete:
 2. **Ask** the user if they are satisfied or want adjustments before moving on.
 3. Address any requested changes, then re-prompt when ready.
 4. Once confirmed:
-   - **Normal mode:** If `{NN}_rolename_in_progress.md` exists, **rename** it to `{NN}_rolename_complete.md`. Otherwise, create `{NN}_rolename_complete.md` with the full summary.
+   - **Normal mode:** If `{NN}_rolename_in_progress.md` exists, **rename** it to `{NN}_rolename_complete.md`. Otherwise, create `{NN}_rolename_complete.md` with the full summary. Summary filenames always use **lowercase** role names, regardless of how the role skill file is cased (e.g., `06_reviewer_complete.md`, not `06_Reviewer_complete.md`).
    - **Send-back mode (you are NOT the original sending role):**
      1. **Append your send-back summary** to the existing `{NN}_rolename_complete.md` — add a `---` divider followed by `## Send-Back Summary`, then your work recap. Do not overwrite the file.
      2. **Update `Current Role:`** in `send_back.md` to point to the next role in the pipeline (e.g., Worker → Tester, Tester → Documenter).
@@ -24,13 +24,7 @@ When you believe the current role's work is complete:
      4. Determine the commit body: read `## Goal Summary` from `ai_workspace/01_interviewer_complete.md`. If it exists, use its content as the body (truncate to <100 chars if needed). If not, generate a concise ad-hoc summary of what was accomplished.
      5. Run `git commit -m "{prefix determined in step 2} -- {commit body from step 4}"`.
      6. **If the commit fails** (identity not configured, merge conflict, etc.), **block transition** — present the error to the user and ask how to proceed. Do not mark the role complete until the commit succeeds or the user explicitly says to skip it.
-   - Inform the user that the handoff is ready and instruct them to start a **new** session so the next role wil load, via normal startup detection.
-
-### In-Progress Files
-
-Optionally create `{NN}_rolename_in_progress.md` in `ai_workspace/` during a role for early notes. It is temporary and renamed to `_complete.md` upon confirmation.
-
-> **Filename casing note:** Summary filenames (`*_complete.md`, `*_in_progress.md`) always use **lowercase** role names, regardless of how the role skill file is cased (e.g., `06_reviewer_complete.md` not `06_Reviewer_complete.md`).
+   - Inform user: handoff ready. Start **new** session and the next role wil load.
 
 ### Pipeline and Send-Back Routes
 
