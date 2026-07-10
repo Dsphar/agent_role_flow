@@ -19,3 +19,13 @@ Single-file edit to `07_finalizer.md` plus TODO cleanup in `todo.md`. No new fil
 ## Risks / Notes
 - AGENTS.md role detection should still work correctly since no `_complete.md` for role 07 is ever created (it's always the first missing after 01–06).
 - Only `07_finalizer.md` and `todo.md` are modified — no other files touched.
+
+---
+
+## Send-Back Summary
+
+**Triggered by:** Tester (Role 04) — Bug B1: AGENTS.md Role Pipeline table still references `07_finalizer_complete.md`.
+
+### Step 8 — Fix AGENTS.md Role Pipeline table
+- **File:** `AGENTS.md`, line ~97 (Role Pipeline table)
+- **Change:** Replace `` `ai_workspace/07_finalizer_complete.md` `` with `(none — Finalizer resets for next loop)` to accurately reflect that the Finalizer no longer produces a `_complete.md` artifact.
