@@ -1,7 +1,7 @@
 # Send-Back
 
 Source: Tester (Role 04)
-Current Role: Planner (Role 02)
+Current Role: Worker (Role 03)
 
 ## Bugs Found During Deep Testing
 
@@ -21,4 +21,5 @@ Current Role: Planner (Role 02)
 The Planner's implementation plan (step 4) listed `project_context.md` for format updates but did not include `07_finalizer.md`, which also contains commit format references. The Worker correctly followed the plan — the gap originated in planning.
 
 ## Send-Back Log
+- **Planner (Role 02):** Updated implementation plan with Step 6 to fix `07_finalizer.md` lines 27 and 36. File map expanded to include the previously missed file.
 

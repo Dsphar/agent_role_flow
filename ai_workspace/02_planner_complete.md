@@ -33,3 +33,11 @@ This is a documentation/formatting change only. No code or behavioral logic is m
 
 ## Risks and Open Questions
 - **None identified.** This is a well-scoped text replacement across 4-5 files with no behavioral changes. The Tester should verify all references are caught (grep for `[ai-{role-name}] --` or `-- {commit body` patterns).
+
+---
+
+## Send-Back Summary
+Addressed two bugs found by the Tester that originated from an incomplete file map:
+- Added **Step 6** to update `ai_workspace/roles/07_finalizer.md` (line 27: old commit format `[ai-finalizer] -- <short description>` → `<short description> [ai-finalizer]`; line 36: "prefix" terminology → "tag appended at end").
+- Updated file/module map to include `07_finalizer.md` as a sixth modified file.
+- No new risks introduced — same straightforward text replacement pattern.
