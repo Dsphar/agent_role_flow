@@ -25,7 +25,7 @@ ai_workspace/
 - **Finalizer always resets:** Single `[ai-finalizer]` commit, no "wrap up" option. Pipeline loops continuously.
 
 ## Recent Changes
-- **Loop N+5 — Context loading trim (2026-07-09):** Reduced `AGENTS.md` and all 7 role files by ~98 lines total (~30-35%). Extracted transition flow to `transition_guide.md`. Trimmed prose in Inputs, Tasks, guardrails, and Transition Criteria sections. All operational behavior preserved — verified by Tester with zero bugs found.
+- **Context loading trim (2026-07-09):** Reduced `AGENTS.md` and all 7 role files by ~98 lines total (~30-35%). Extracted transition flow to `transition_guide.md`. Trimmed prose in Inputs, Tasks, guardrails, and Transition Criteria sections. All operational behavior preserved — verified by Tester with zero bugs found. Reviewer sent back two suggestions (filename casing note, send-back routing diagram) — both resolved via Planner send-back.
 
 ## Known Issues
 - **W1:** Ambiguity if both Tester and Reviewer append `Current Role:` lines to `send_back.md` simultaneously. Unlikely in practice.
