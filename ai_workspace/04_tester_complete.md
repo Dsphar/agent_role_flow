@@ -28,3 +28,23 @@ N/A — This is a behavioral guideline change in a role skill file, not executab
 
 ## Recommendation
 Proceed to Documenter (Role 05). Implementation is clean and matches specification exactly.
+
+---
+
+## Send-Back Summary — Round Counting Ambiguity Fix Verification
+
+Re-tested `ai_workspace/roles/01_Interviewer.md` after Worker applied the Reviewer's send-back fix.
+
+### Test Results — 7/7 Passed, Zero Bugs
+
+| # | Test | Result |
+|---|------|--------|
+| 1 | Round-tracking phrase present after "3 rounds total" mention | ✅ Pass |
+| 2 | Guidance instructs agent to track internally (not externally/announced) | ✅ Pass |
+| 3 | No conflict with existing "do not announce 'Round N'" rule above it | ✅ Pass |
+| 4 | No conflict with round 3 hard-stop instruction below it | ✅ Pass |
+| 5 | Parenthetical "(initial + up to 2 follow-ups)" clarifies what "3 rounds" means | ✅ Pass |
+| 6 | No unintended changes elsewhere in the file | ✅ Pass |
+| 7 | File structure and formatting intact (headings, bullets, bold) | ✅ Pass |
+
+**Verdict:** Fix verified. Advancing to Documenter (Role 05).
