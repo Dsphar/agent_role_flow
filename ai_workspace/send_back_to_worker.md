@@ -1,5 +1,5 @@
 Source: Reviewer (Role 06)
-Current Role: Summarizer (Role 05)
+Current Role: Reviewer (Role 06)
 
 ## Critical Issues Found During Review
 
@@ -32,6 +32,9 @@ The Worker's skill file states: *"Do not handle version control. Committing, tag
 
 ### Worker (Role 03) — 2026-07-09
 Fixed C1 (infinite loop) by restructuring send-back flow to use `Current Role:` pointer instead of deleting `_complete.md` files. Fixed C2 (guardrail contradiction) in Worker and Summarizer skill files. Updated AGENTS.md, all affected role files, project_context.md, and todo.md.
+
+### Summarizer (Role 05) — 2026-07-09
+Updated `project_context.md` with send-back cycle documentation: C1/C2 fix details, W1 known issue, and pending TODOs section.
 
 ### Tester (Role 04) — 2026-07-09
 Re-ran verification after Worker fixes. Both C1 and C2 confirmed resolved. Added TODO for simplifying send-back advancement logic.

@@ -23,12 +23,26 @@ ai_workspace/
 - **Send-back persistence (Loop N):** `send_back_to_worker.md` persists through the entire re-run cycle — every role sees it and appends a log entry under "## Send-Back Log" for an audit trail. Only the original sending role deletes it when its re-run passes, and also clears `_complete.md` files for roles after itself so they re-run.
 
 ## Recent Changes
-- **Loop N (2026-07-09):** Added per-role git commits at every pipeline transition. Restructured send-back flow to use `Current Role:` pointer in `send_back_to_worker.md` — no `_complete.md` files are deleted during send-back; instead, each role appends its send-back summary to the existing file and advances the pointer. Fixed infinite-loop bug (C1) and guardrail contradiction (C2).
+- **Loop N — Send-back cycle (2026-07-09):** Reviewer found two critical issues; Worker fixed both; Tester confirmed resolution.
+  - **C1 (Infinite Loop on Reviewer Send-Back):** Restructured the send-back flow to use a `Current Role:` pointer in `send_back_to_worker.md` instead of deleting `_complete.md` files. The pointer explicitly tells role detection which skill file to load, eliminating the loop where the Reviewer would re-load itself. All three affected roles (Worker, Tester, Reviewer) now follow the same pattern: create send-back with `Current Role:` header, append summaries on re-run, advance pointer sequentially.
+  - **C2 (Guardrail Contradiction):** Updated "What You Must Not Do" in both Worker and Summarizer skill files to acknowledge the mandatory per-role transition commit defined in AGENTS.md. The phrasing is now: *"Do not handle version control beyond the mandatory per-role transition commit defined in AGENTS.md."*
+  - **W1 (Multiple `Current Role:` lines):** Warning noted — unlikely in practice if both Tester and Reviewer append pointer lines simultaneously. Tracked as TODO for simplification.
+- **Loop N (2026-07-09):** Added per-role git commits at every pipeline transition using `[ai-{role-name}]` prefix. Send-back cycles use `[ai-{role-name}-sendback]`. Transition blocks on commit failure so the user can resolve identity/repo issues.
 - **Loop N-1 (2026-07-09):** Added TODO self-maintenance to the pipeline — Interviewer notes addressed TODO items by origin, Planner adds a removal step, Worker executes. Removed completed TODO "Consolidate Send-Back Cleanup Logic" from `todo.md`.
 
 ## Known Issues
-- Guardrail enforcement is imperfect — roles can still break their own boundaries when directly prompted by the user. Remaining items in `ai_workspace/todo.md` track proposed improvements.
+- **W1:** Ambiguity if both Tester and Reviewer append `Current Role:` lines to `send_back_to_worker.md`. Unlikely in practice but tracked as TODO: "Simplify Send-Back Advancement."
+- Guardrail enforcement is imperfect — roles can still break their own boundaries when directly prompted by the user.
 - Finalizer's commit behavior may need review now that every role already commits (tracked as TODO for next loop).
+
+## Pending TODOs (from `ai_workspace/todo.md`)
+Six items are tracked for future pipeline loops:
+1. **Review Finalizer Flow After Per-Role Commits** — adjust Finalizer to avoid duplicate commits.
+2. **Handle Partial/Re-Run Loops in Finalizer** — acknowledge send-backs in the final recap.
+3. **Validate Complete Role Chain on Startup** — warn if a prior role's `_complete.md` is missing.
+4. **Remove Redundant _complete.md Deletion Instruction** — clean up unnecessary AGENTS.md guidance.
+5. **Include Planner in Send-Back Cycle** — allow architectural send-backs to start at the Planner.
+6. **Simplify Send-Back Advancement** — every role advances only to the next sequential role, removing sender-aware logic.
 
 > **Note:** Loop/iteration records are preserved in git via Finalizer summary commits tagged `[pi-summary]` / `[pi-reset]`. This file tracks current project state only — no iteration history.
 
