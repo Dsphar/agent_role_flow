@@ -37,10 +37,6 @@ Items captured by roles when the user requests work that falls outside their cur
 ### Fix Typo in 07_finalizer.md (captured by Reviewer, 2026-07-10)
 - `ai_workspace/roles/07_finalizer.md` line 42: "suggesitons" → should be "**suggestions**".
 
-### Finalizer: Use Interviewer Summary for Commit Message (captured by user, 2026-07-10)
-- The Finalizer's commit message should use the **Goal Summary** that the Interviewer defines at the start of the pipeline (from `## Goal Summary` in `01_interviewer_complete.md`).
-- Ensure `ai_workspace/roles/07_finalizer.md` explicitly instructs the Finalizer to source the short summary line from the Interviewer's goal summary rather than composing its own.
-- This keeps commit messages consistent with how the work was originally scoped.
 
 
 

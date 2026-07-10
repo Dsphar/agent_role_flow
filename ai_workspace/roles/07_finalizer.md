@@ -23,8 +23,9 @@ If it **does** exist: update to reflect current state only. Do NOT append iterat
 ### Loop Reset and Handoff
 Git is expected. If not initialized, ask the user before proceeding.
 
-1. **Delete `_complete.md` files:** Remove all `{NN}_*_complete.md` and `{NN}_*_in_progress.md` from `ai_workspace/`. Do NOT delete `project_context.md`, role skill files, or other workspace content.
-2. **Single commit (reset):** Stage updated `project_context.md` + deleted `_complete.md` / `_in_progress.md` files. Commit: `<short description> [ai-finalizer]`. Per-role commits already preserve artifacts; this captures only the final context update and reset.
+1. **Capture goal summary:** Read the `## Goal Summary` section from `01_interviewer_complete.md` to use as the short commit description. If `01_interviewer_complete.md` does not exist, compose your own short description (or ask the user).
+2. **Delete `_complete.md` files:** Remove all `{NN}_*_complete.md` and `{NN}_*_in_progress.md` from `ai_workspace/`. Do NOT delete `project_context.md`, role skill files, or other workspace content.
+3. **Single commit (reset):** Stage updated `project_context.md` + deleted `_complete.md` / `_in_progress.md` files. Commit: `<short description> [ai-finalizer]` where `<short description>` is the goal summary captured in step 1. Per-role commits already preserve artifacts; this captures only the final context update and reset.
 
 ### Present Final Recap
 Summarize the full pipeline loop:
