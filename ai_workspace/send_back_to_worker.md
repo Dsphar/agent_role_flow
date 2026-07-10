@@ -1,4 +1,5 @@
 Source: Reviewer (Role 06)
+Current Role: Tester (Role 04)
 
 ## Critical Issues Found During Review
 
@@ -24,3 +25,10 @@ The Reviewer enters "Running Again During Send-Back Mode", re-runs its review, f
 The Worker's skill file states: *"Do not handle version control. Committing, tagging, and git management belong to the Finalizer (role 07)."* But AGENTS.md now requires every role — including the Worker — to run `git add -A && git commit` during transition. This is a direct contradiction.
 
 **Fix:** Update the Worker's "What You Must Not Do" section to acknowledge that per-role transition commits are handled by AGENTS.md and are exempt from this guardrail. E.g., *"Do not handle version control beyond the mandatory per-role transition commit defined in AGENTS.md."* Check other role skill files for similar contradictions.
+
+---
+
+## Send-Back Log
+
+### Worker (Role 03) — 2026-07-09
+Fixed C1 (infinite loop) by restructuring send-back flow to use `Current Role:` pointer instead of deleting `_complete.md` files. Fixed C2 (guardrail contradiction) in Worker and Summarizer skill files. Updated AGENTS.md, all affected role files, project_context.md, and todo.md.

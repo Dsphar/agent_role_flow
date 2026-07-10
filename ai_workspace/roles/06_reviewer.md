@@ -51,19 +51,18 @@ Perform a thorough code and quality review of everything produced by the Worker 
 When you find **Critical** issues during review:
 1. Present your findings to the user — list each critical issue with file references, descriptions, and recommended fixes.
 2. Ask the user how to proceed:
-   - **(a) Send back to Worker** — Create `ai_workspace/send_back_to_worker.md` starting with a header line `Source: Reviewer (Role 06)`, followed by the issue list. If items already exist in that file (e.g., from the Tester), append your findings — do not overwrite existing entries. Then:
-     - **Delete `_complete.md` files for roles at and after yourself:** delete `06_reviewer_complete.md` and `07_finalizer_complete.md`. This ensures the pipeline re-runs from Worker through to the end.
-     - **Git commit** with prefix `[ai-reviewer-sendback]` to anchor the send-back state in version history. Commit `send_back_to_worker.md` plus any deleted `_complete.md` files.
+   - **(a) Send back to Worker** — Create `ai_workspace/send_back_to_worker.md` starting with a header line `Source: Reviewer (Role 06)`, then add `Current Role: Worker (Role 03)`, followed by the issue list. If items already exist in that file (e.g., from the Tester), append your findings — do not overwrite existing entries. Do NOT delete any `_complete.md` files — the send-back file's `Current Role:` field controls pipeline position. Commit `send_back_to_worker.md` with prefix `[ai-reviewer-sendback]` to anchor the send-back state in version history.
    - **(b) Defer as TODO** — Add each critical issue to `ai_workspace/todo.md` for a future pipeline loop. The current run continues without interruption.
 3. If option (a) is chosen, inform the user that work will be sent back to the Worker on next session start.
 
 ### Running Again During Send-Back Mode
-If `ai_workspace/send_back_to_worker.md` exists when you load (and you are the source noted in its header), you are re-running after fixes:
+If `send_back_to_worker.md` exists when you load and its `Current Role:` points to Reviewer, you are re-running after the Worker fixed critical issues:
 1. Re-run your review against the fixed implementation.
 2. If no critical issues remain:
+   - **Append a send-back summary** to `06_reviewer_complete.md` (see AGENTS.md Transitioning rules).
    - **Delete** `send_back_to_worker.md` — the send-back cycle is complete.
-   - **Delete `_complete.md` files for roles after yourself:** `07_finalizer_complete.md` (so it re-runs).
-   - Transition normally with `[ai-reviewer-sendback]` commit prefix.
+3. If critical issues remain:
+   - Update `send_back_to_worker.md` with the remaining issues and set `Current Role: Worker (Role 03)` so the Worker gets another pass.
 
 ## What You Must Not Do
 

@@ -43,7 +43,7 @@ For existing projects (`project_context.md` exists):
 ## What You Must Not Do
 
 - **Do not fix bugs or refactor code.** If you notice broken logic while writing docs, flag it for the user — do not change implementation. Code changes belong to the Worker (role 03).
-- **Do not handle version control.** Committing and tagging are the Finalizer's job (role 07).
+- **Do not handle version control beyond the mandatory per-role transition commit defined in AGENTS.md.** Tagging and other git management belong to the Finalizer (role 07).
 
 If you spot a code issue while documenting, note it in your summary for the user. Do not touch the code yourself.
 

@@ -14,21 +14,18 @@ If both `{NN}_*_in_progress.md` **and** `{NN}_*_complete.md` exist for the same 
 ### Send-Back Detection
 Before normal role detection, check for `ai_workspace/send_back_to_worker.md`. If it exists:
 1. Read it — it contains items that need fixing (bugs from Tester, critical issues from Reviewer), plus a log of work done during the send-back cycle.
-2. **You are in send-back mode.** This affects your behavior (see below). Proceed to normal role detection to determine which role you play this session — do NOT force-load Worker.
+2. **You are in send-back mode.** This affects your behavior (see below).
 3. The sending role is noted in the file header (e.g., `Source: Tester (Role 04)`).
+4. Read the `Current Role:` line — it tells you which role to load this session.
 
 **Send-back mode rules for every role:**
 - **Commit prefix:** Use `[ai-{role-name}-sendback]` instead of `[ai-{role-name}]` on all git commits during transition.
 - **Append a log entry to `send_back_to_worker.md`:** At the bottom of the file, under an existing "## Send-Back Log" heading (or create one), add a section with your role name, date, and a brief summary of what you did. This builds an audit trail across all roles in the cycle.
-- **Deleting the send-back file:** Only the *original sending role* deletes `send_back_to_worker.md` — and only when it runs again during send-back mode and its work passes (no more bugs/issues to send back). At that point, the send-back cycle is complete. The sending role also deletes `_complete.md` files for roles *after itself* in the pipeline so they re-run. For example, if Tester (04) is the source and now passes: delete `send_back_to_worker.md`, then delete `05_summarizer_complete.md`, `06_reviewer_complete.md`, and `07_finalizer_complete.md`.
-- **All other roles** during send-back mode leave `send_back_to_worker.md` untouched (they only append to it).
-
-> The file persists through the entire re-run cycle so every role knows it is in send-back mode. It was committed by the sending role when created, so deleting it later does not lose history.
 
 ### Role Detection
-1. **Scan** `ai_workspace/` for files matching `{nn}_*_complete.md`. All summary filenames use **lowercase**.
-2. **List** role skill files in `ai_workspace/roles/` sorted by numeric prefix (`01_`, `02_`, etc.).
-3. **Find** the first role whose `_complete.md` does not exist — that is your current role. If none exist, start at `01`.
+1. **If `send_back_to_worker.md` exists:** read its `Current Role:` line (e.g., `Current Role: Worker (Role 03)`) and load that role directly — skip steps 2–3 below.
+2. **Otherwise, scan** `ai_workspace/` for files matching `{nn}_*_complete.md`. All summary filenames use **lowercase**.
+3. **List** role skill files in `ai_workspace/roles/` sorted by numeric prefix (`01_`, `02_`, etc.), then **find** the first role whose `_complete.md` does not exist — that is your current role. If none are missing, start at `07` (Finalizer).
 4. **Read** all prior `_complete.md` summaries to load cross-role context.
 5. **Check for `ai_workspace/project_context.md`.** If it exists, read it — it describes what has been built across previous pipeline loops.
 6. **Read** the current role's skill file from `ai_workspace/roles/{NN}_rolename.md`.
@@ -53,8 +50,13 @@ When you believe the current role's work is complete:
 2. **Ask** the user if they are satisfied or want adjustments before moving on.
 3. Address any requested changes, then re-prompt when ready.
 4. Once confirmed:
-   - If `{NN}_rolename_in_progress.md` exists, **rename** it to `{NN}_rolename_complete.md`. Otherwise, create `{NN}_rolename_complete.md` with the full summary.
-   - **Send-back log (if applicable):** If `ai_workspace/send_back_to_worker.md` exists and you are NOT the original sending role completing its re-run, append a brief work summary to the bottom of that file under a "## Send-Back Log" heading. If you ARE the original sending role and your work passes, delete `send_back_to_worker.md` and `_complete.md` files for roles after yourself (see Send-Back Detection rules).
+   - **Normal mode:** If `{NN}_rolename_in_progress.md` exists, **rename** it to `{NN}_rolename_complete.md`. Otherwise, create `{NN}_rolename_complete.md` with the full summary.
+   - **Send-back mode (you are NOT the original sending role):**
+     1. **Append your send-back summary** to the existing `{NN}_rolename_complete.md` — add a `---` divider followed by `## Send-Back Summary`, then your work recap. Do not overwrite the file.
+     2. **Update `Current Role:`** in `send_back_to_worker.md` to point to the next role in the pipeline (e.g., Worker → Tester, Tester → Summarizer).
+   - **Send-back mode (you ARE the original sending role and your work passes):**
+     1. **Append your send-back summary** to the existing `{NN}_rolename_complete.md` as above.
+     2. **Delete `send_back_to_worker.md`** — the send-back cycle is complete.
    - **Git commit:** Commit all changed files so progress is preserved incrementally.
      1. Run `git status`. If not in a git repo or there are no changes, skip this step silently.
      2. Determine prefix: if you are in send-back mode (`send_back_to_worker.md` exists now, **or you just deleted it** as the original sending role), use `[ai-{role-name}-sendback]`; otherwise use `[ai-{role-name}]`. Extract `{role-name}` from the `_complete.md` filename (e.g., `03_worker_complete.md` → `worker`).

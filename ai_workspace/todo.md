@@ -31,6 +31,14 @@ Role Detection step 3 finds "the first role whose `_complete.md` does not exist"
 
 When the sending role (Tester/Reviewer) completes its re-run and deletes `send_back_to_worker.md`, AGENTS.md instructs it to also delete `_complete.md` files for roles after itself. This is unnecessary — since the send-back halts the pipeline at the sending role, no downstream roles have run yet, so those `_complete.md` files will never exist. The instruction can be removed from both AGENTS.md and the relevant role skill files.
 
+### Include Planner in Send-Back Cycle
+**Proposed by:** User (via Worker, 2026-07-09)
+**Should be handled by:** Planner → Worker
+
+The current send-back flow routes issues back to the Worker (Role 03), skipping the Planner. But some critical issues — especially architectural or design-level problems found by the Reviewer — may require plan changes before re-implementing. Consider whether the send-back cycle should sometimes start at the Planner instead of the Worker, and how to decide which entry point is appropriate.
+
+---
+
 ### Add Non-Code Iteration Guidance to Summarizer (Suggestion)
 **Proposed by:** Reviewer
 **Should be handled by:** Planner → Worker

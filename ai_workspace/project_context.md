@@ -23,7 +23,7 @@ ai_workspace/
 - **Send-back persistence (Loop N):** `send_back_to_worker.md` persists through the entire re-run cycle — every role sees it and appends a log entry under "## Send-Back Log" for an audit trail. Only the original sending role deletes it when its re-run passes, and also clears `_complete.md` files for roles after itself so they re-run.
 
 ## Recent Changes
-- **Loop N (2026-07-09):** Added per-role git commits at every pipeline transition. Every role now runs `git add -A && git commit` during its transition step, using `[ai-{role-name}]` prefix (or `[ai-{role-name}-sendback]` in send-back mode). Also restructured the send-back flow: `send_back_to_worker.md` persists through the full cycle with a per-role audit log; only the original sending role deletes it on passing re-run. Discovered and fixed a bug where the `-sendback` prefix could never apply because the file was deleted too early.
+- **Loop N (2026-07-09):** Added per-role git commits at every pipeline transition. Restructured send-back flow to use `Current Role:` pointer in `send_back_to_worker.md` — no `_complete.md` files are deleted during send-back; instead, each role appends its send-back summary to the existing file and advances the pointer. Fixed infinite-loop bug (C1) and guardrail contradiction (C2).
 - **Loop N-1 (2026-07-09):** Added TODO self-maintenance to the pipeline — Interviewer notes addressed TODO items by origin, Planner adds a removal step, Worker executes. Removed completed TODO "Consolidate Send-Back Cleanup Logic" from `todo.md`.
 
 ## Known Issues

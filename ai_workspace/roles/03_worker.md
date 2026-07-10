@@ -11,14 +11,14 @@ Execute the implementation plan produced by the Planner. Write code, create file
 ## Tasks
 
 ### Handle Send-Back Work (If Applicable)
-If `ai_workspace/send_back_to_worker.md` exists, you are in **send-back mode** — bugs or critical issues were found and sent back to you.
+If `ai_workspace/send_back_to_worker.md` exists and its `Current Role:` points to Worker, you are in **send-back mode** — bugs or critical issues were found and sent back to you.
 1. Read the file — it lists bugs or critical issues that need fixing, plus any log entries from prior send-back passes.
 2. Note which role sent the work back (e.g., "Source: Tester (Role 04)").
 3. Fix each item systematically before resuming normal work.
 4. After all items are resolved and confirmed by the user:
-   - **Delete your own `_complete.md`** (`03_worker_complete.md`) so the pipeline advances past you to the next role.
-   - Do NOT delete `send_back_to_worker.md` — it persists for downstream roles to know they are in send-back mode. Only the original sending role deletes it when its re-run passes.
-   - Do NOT delete `_complete.md` files for other roles — the sending role already handled that when it created the send-back file.
+   - **Append a send-back summary** to `03_worker_complete.md` — add a `---` divider followed by `## Send-Back Summary`, then your fix recap. Do not overwrite the file.
+   - **Update `Current Role:`** in `send_back_to_worker.md` to point to the next role after yourself (determine this from who sent it back: if Source is Tester, set `Current Role: Tester (Role 04)`; if Source is Reviewer, set `Current Role: Summarizer (Role 05)`).
+   - Do NOT delete `send_back_to_worker.md` — only the original sending role deletes it when its re-run passes.
 
 ### Initialize In-Progress File
 Before starting work, check for `ai_workspace/03_worker_in_progress.md`:
@@ -52,7 +52,7 @@ After completing each step, update the file immediately — mark the step `[x]` 
 - **Do not write tests.** Testing is the Tester's job (role 04). You may verify your code runs, but do not create test files or test suites.
 - **Do not perform code reviews.** Reviewing is the Reviewer's job (role 06). Self-check for obvious errors, but do not produce a review report.
 - **Do not write project documentation** (READMEs, API docs, usage guides). That is the Summarizer's job (role 05). Inline comments in your own code are fine — external docs are not.
-- **Do not handle version control.** Committing, tagging, and git management belong to the Finalizer (role 07).
+- **Do not handle version control beyond the mandatory per-role transition commit defined in AGENTS.md.** Tagging, branching, and other git management belong to the Finalizer (role 07).
 
 If you feel the urge to test, review, document, or commit — stop. Write it into your summary as a note for the appropriate future role instead.
 

@@ -47,19 +47,18 @@ Before writing any tests, check whether testing preferences are already defined 
 When tests reveal bugs in the implementation:
 1. Present your findings to the user — list each bug with file references, descriptions, and severity.
 2. Ask the user how to proceed:
-   - **(a) Send back to Worker** — Create `ai_workspace/send_back_to_worker.md` starting with a header line `Source: Tester (Role 04)`, followed by the bug list. Then:
-     - **Delete `_complete.md` files for roles at and after yourself:** delete `04_tester_complete.md`, `05_summarizer_complete.md`, `06_reviewer_complete.md`, and `07_finalizer_complete.md`. This ensures the pipeline re-runs from Worker through to the end.
-     - **Git commit** with prefix `[ai-tester-sendback]` to anchor the send-back state in version history. Commit `send_back_to_worker.md` plus any deleted `_complete.md` files.
+   - **(a) Send back to Worker** — Create `ai_workspace/send_back_to_worker.md` starting with a header line `Source: Tester (Role 04)`, then add `Current Role: Worker (Role 03)`, followed by the bug list. Do NOT delete any `_complete.md` files — the send-back file's `Current Role:` field controls pipeline position. Commit `send_back_to_worker.md` with prefix `[ai-tester-sendback]` to anchor the send-back state in version history.
    - **(b) Defer as TODO** — Add each bug to `ai_workspace/todo.md` for a future pipeline loop. The current run continues without interruption.
 3. If option (a) is chosen, inform the user that work will be sent back to the Worker on next session start.
 
 ### Running Again During Send-Back Mode
-If `ai_workspace/send_back_to_worker.md` exists when you load (and you are the source noted in its header), you are re-running after fixes:
+If `send_back_to_worker.md` exists when you load and its `Current Role:` points to Tester, you are re-running after the Worker fixed bugs:
 1. Re-run your tests against the fixed implementation.
 2. If all tests pass and no new bugs are found:
-   - **Delete** `send_back_to_worker.md` — the send-back cycle is complete.
-   - **Delete `_complete.md` files for roles after yourself:** `05_summarizer_complete.md`, `06_reviewer_complete.md`, `07_finalizer_complete.md` (so they re-run).
-   - Transition normally with `[ai-tester-sendback]` commit prefix.
+   - **Append a send-back summary** to `04_tester_complete.md` (see AGENTS.md Transitioning rules).
+   - **Update `Current Role:`** in `send_back_to_worker.md` to the next role: `Summarizer (Role 05)`.
+3. If tests still fail:
+   - Update `send_back_to_worker.md` with the remaining bugs and set `Current Role: Worker (Role 03)` so the Worker gets another pass.
 
 ### Run Regression Tests (Existing Projects)
 If `ai_workspace/project_context.md` exists, the project has prior work. Before focusing on new tests:
