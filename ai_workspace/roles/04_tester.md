@@ -47,18 +47,18 @@ Before writing any tests, check whether testing preferences are already defined 
 When tests reveal bugs in the implementation:
 1. Present your findings to the user — list each bug with file references, descriptions, and severity.
 2. Ask the user how to proceed:
-   - **(a) Send back to Worker** — Create `ai_workspace/send_back_to_worker.md` starting with a header line `Source: Tester (Role 04)`, then add `Current Role: Worker (Role 03)`, followed by the bug list. Do NOT delete any `_complete.md` files — the send-back file's `Current Role:` field controls pipeline position. Commit `send_back_to_worker.md` with prefix `[ai-tester-sendback]` to anchor the send-back state in version history.
+   - **(a) Send back to Planner** — Create `ai_workspace/send_back.md` starting with a header line `Source: Tester (Role 04)`, then add `Current Role: Planner (Role 02)`, followed by the bug list. Do NOT delete any `_complete.md` files — the send-back file's `Current Role:` field controls pipeline position. Commit `send_back.md` with prefix `[ai-tester-sendback]` to anchor the send-back state in version history.
    - **(b) Defer as TODO** — Add each bug to `ai_workspace/todo.md` for a future pipeline loop. The current run continues without interruption.
 3. If option (a) is chosen, inform the user that work will be sent back to the Worker on next session start.
 
 ### Running Again During Send-Back Mode
-If `send_back_to_worker.md` exists when you load and its `Current Role:` points to Tester, you are re-running after the Worker fixed bugs:
+If `send_back.md` exists when you load and its `Current Role:` points to Tester, you are re-running after issues were fixed:
 1. Re-run your tests against the fixed implementation.
 2. If all tests pass and no new bugs are found:
    - **Append a send-back summary** to `04_tester_complete.md` (see AGENTS.md Transitioning rules).
-   - **Update `Current Role:`** in `send_back_to_worker.md` to the next role: `Summarizer (Role 05)`.
+   - **Update `Current Role:`** in `send_back.md` to the next role: `Summarizer (Role 05)`.
 3. If tests still fail:
-   - Update `send_back_to_worker.md` with the remaining bugs and set `Current Role: Worker (Role 03)` so the Worker gets another pass.
+   - Update `send_back.md` with the remaining bugs and set `Current Role: Planner (Role 02)` so the Planner can add more steps.
 
 ### Run Regression Tests (Existing Projects)
 If `ai_workspace/project_context.md` exists, the project has prior work. Before focusing on new tests:

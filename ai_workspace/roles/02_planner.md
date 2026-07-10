@@ -7,6 +7,17 @@ Translate the problem statement from the Interviewer into a concrete, actionable
 - **`01_interviewer_complete.md`** — the scoped requirements, constraints, and success criteria. Read this thoroughly; it is your primary input.
 - **`ai_workspace/project_context.md`** (if exists) — describes what has already been built across previous pipeline loops. Use this to understand existing architecture, file structure, and integration points so your plan builds on top of current work rather than starting from scratch.
 
+## Send-Back Mode
+If `ai_workspace/send_back.md` exists when you load and its `Current Role:` points to Planner (Role 02), you are in **send-back mode** — bugs or critical issues were found by the Tester or Reviewer and routed back for planning adjustments.
+1. Read `send_back.md` — it lists the items that need fixing, plus any log entries from prior send-back passes.
+2. Note which role sent the work back (e.g., "Source: Tester (Role 04)").
+3. Review the existing plan in `02_planner_complete.md` and the current codebase state.
+4. **Append additional implementation steps** to address each send-back item. Do NOT re-plan from scratch — add new numbered steps that build on top of what already exists.
+5. Present your appended steps to the user for confirmation.
+6. After all items are addressed and confirmed by the user:
+   - **Update `Current Role:`** in `send_back.md` to point to the next role: `Worker (Role 03)`.
+   - Do NOT delete `send_back.md` — only the original sending role deletes it when its re-run passes.
+
 ## Tasks
 
 ### Analyze the Problem Statement

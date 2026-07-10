@@ -51,18 +51,18 @@ Perform a thorough code and quality review of everything produced by the Worker 
 When you find **Critical** issues during review:
 1. Present your findings to the user — list each critical issue with file references, descriptions, and recommended fixes.
 2. Ask the user how to proceed:
-   - **(a) Send back to Worker** — Create `ai_workspace/send_back_to_worker.md` starting with a header line `Source: Reviewer (Role 06)`, then add `Current Role: Worker (Role 03)`, followed by the issue list. If items already exist in that file (e.g., from the Tester), append your findings — do not overwrite existing entries. Do NOT delete any `_complete.md` files — the send-back file's `Current Role:` field controls pipeline position. Commit `send_back_to_worker.md` with prefix `[ai-reviewer-sendback]` to anchor the send-back state in version history.
+   - **(a) Send back to Planner** — Create `ai_workspace/send_back.md` starting with a header line `Source: Reviewer (Role 06)`, then add `Current Role: Planner (Role 02)`, followed by the issue list. If items already exist in that file (e.g., from the Tester), append your findings — do not overwrite existing entries. Do NOT delete any `_complete.md` files — the send-back file's `Current Role:` field controls pipeline position. Commit `send_back.md` with prefix `[ai-reviewer-sendback]` to anchor the send-back state in version history.
    - **(b) Defer as TODO** — Add each critical issue to `ai_workspace/todo.md` for a future pipeline loop. The current run continues without interruption.
 3. If option (a) is chosen, inform the user that work will be sent back to the Worker on next session start.
 
 ### Running Again During Send-Back Mode
-If `send_back_to_worker.md` exists when you load and its `Current Role:` points to Reviewer, you are re-running after the Worker fixed critical issues:
+If `send_back.md` exists when you load and its `Current Role:` points to Reviewer, you are re-running after issues were fixed:
 1. Re-run your review against the fixed implementation.
 2. If no critical issues remain:
    - **Append a send-back summary** to `06_reviewer_complete.md` (see AGENTS.md Transitioning rules).
-   - **Delete** `send_back_to_worker.md` — the send-back cycle is complete.
+   - **Delete** `send_back.md` — the send-back cycle is complete.
 3. If critical issues remain:
-   - Update `send_back_to_worker.md` with the remaining issues and set `Current Role: Worker (Role 03)` so the Worker gets another pass.
+   - Update `send_back.md` with the remaining issues and set `Current Role: Planner (Role 02)` so the Planner can add more steps.
 
 ## What You Must Not Do
 

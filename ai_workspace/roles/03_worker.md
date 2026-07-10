@@ -11,14 +11,14 @@ Execute the implementation plan produced by the Planner. Write code, create file
 ## Tasks
 
 ### Handle Send-Back Work (If Applicable)
-If `ai_workspace/send_back_to_worker.md` exists and its `Current Role:` points to Worker, you are in **send-back mode** — bugs or critical issues were found and sent back to you.
+If `ai_workspace/send_back.md` exists and its `Current Role:` points to Worker, you are in **send-back mode** — bugs or critical issues were found and sent back to you.
 1. Read the file — it lists bugs or critical issues that need fixing, plus any log entries from prior send-back passes.
 2. Note which role sent the work back (e.g., "Source: Tester (Role 04)").
 3. Fix each item systematically before resuming normal work.
 4. After all items are resolved and confirmed by the user:
    - **Append a send-back summary** to `03_worker_complete.md` — add a `---` divider followed by `## Send-Back Summary`, then your fix recap. Do not overwrite the file.
-   - **Update `Current Role:`** in `send_back_to_worker.md` to point to the next role after yourself (determine this from who sent it back: if Source is Tester, set `Current Role: Tester (Role 04)`; if Source is Reviewer, set `Current Role: Summarizer (Role 05)`).
-   - Do NOT delete `send_back_to_worker.md` — only the original sending role deletes it when its re-run passes.
+   - **Update `Current Role:`** in `send_back.md` to point to the next role: `Tester (Role 04)`.
+   - Do NOT delete `send_back.md` — only the original sending role deletes it when its re-run passes.
 
 ### Initialize In-Progress File
 Before starting work, check for `ai_workspace/03_worker_in_progress.md`:
