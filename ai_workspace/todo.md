@@ -39,8 +39,17 @@ The current send-back flow routes issues back to the Worker (Role 03), skipping 
 
 ---
 
-### Add Non-Code Iteration Guidance to Summarizer (Suggestion)
-**Proposed by:** Reviewer
+### Simplify Send-Back Advancement — Always Advance to Next Role Only
+**Proposed by:** User (via Tester, 2026-07-09)
 **Should be handled by:** Planner → Worker
 
-The Summarizer's "Review Inline Code Documentation" task assumes application code exists. On config-only iterations this is a dead end with no fallback guidance. Add the same non-code iteration note as proposed for the Reviewer.
+Each role in send-back mode should ONLY advance `Current Role:` to the role immediately after itself. Never skip ahead based on who the original sender is.
+
+Currently:
+- **Worker (Role 03)** checks who sent it back and sets `Current Role:` accordingly — Tester sends back → points to Tester; Reviewer sends back → points to Summarizer (skipping Tester).
+- This requires every role to know who the sender is, adding complexity.
+
+Proposed:
+- Every role simply advances to the next sequential role. Worker always → Tester, Tester always → Summarizer, etc.
+- No role needs to consider `Source:` — the workflow plays out naturally through single-step advancement.
+- Update AGENTS.md send-back transition rules and all affected role skill files (Worker, Tester, Reviewer) to remove sender-aware logic.
