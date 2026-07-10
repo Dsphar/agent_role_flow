@@ -27,6 +27,10 @@ Items captured by roles when the user requests work that falls outside their cur
   - Skip testing entirely.
 - Update `ai_workspace/roles/04_tester.md` with these interaction guidelines.
 
+### Add inline example to return-to-role rule in AGENTS.md (captured by Reviewer, 2026-07-10)
+- The two behavioral bullets under "During a Role Session" could include a brief inline example like `e.g., "Noted, logging to todo.md" then resume` to model the exact acknowledgment behavior expected.
+- This would reduce ambiguity further for agents encountering the rule for the first time.
+
 ### Improve Documenter Option Lists — Numerical + Skip (captured by user, 2026-07-10)
 - When the Documenter offers a list of options to the user, make them **numerically numbered** so users can select by entering just numbers.
 - Always include a "skip" option in any such list.
