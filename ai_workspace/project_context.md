@@ -23,6 +23,7 @@ ai_workspace/
 - **Send-back persistence (Loop N):** `send_back.md` persists through the entire re-run cycle — every role sees it and appends a log entry under "## Send-Back Log" for an audit trail. Only the original sending role deletes it when its re-run passes.
 
 ## Recent Changes
+- **Loop N+1 — Finalizer always reset, never wrap up (2026-07-09):** Removed the "wrap up" option from `07_finalizer.md`. The Finalizer now unconditionally performs the two-commit reset flow after presenting the final recap. No user choice offered — the pipeline always resets for the next iteration.
 - **Loop N — Send-back restructure (2026-07-09):** Renamed `send_back_to_worker.md` → `send_back.md` and routed all send-backs to Planner instead of Worker. Added send-back sections to Summarizer (05) and Finalizer (07). Removed completed TODOs #3 and #6.
 - **Loop N — Send-back cycle (2026-07-09):** Reviewer found two critical issues; Worker fixed both; Tester confirmed resolution.
   - **C1 (Infinite Loop on Reviewer Send-Back):** Restructured the send-back flow to use a `Current Role:` pointer in `send_back.md` instead of deleting `_complete.md` files. The pointer explicitly tells role detection which skill file to load, eliminating the loop where the Reviewer would re-load itself. All affected roles (Worker, Tester, Reviewer) now follow the same pattern: create send-back with `Current Role:` header, append summaries on re-run, advance pointer sequentially.
@@ -41,4 +42,4 @@ ai_workspace/
 ## How to Use
 1. Start a session — the agent reads AGENTS.md and auto-detects current role from `_complete.md` files.
 2. Work through roles sequentially, confirming completion at each step.
-3. At Role 07 (Finalizer), choose to reset for next iteration or wrap up.
+3. At Role 07 (Finalizer), the pipeline automatically resets for the next iteration.
