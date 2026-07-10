@@ -4,10 +4,6 @@ Items captured by roles when the user requests work that falls outside their cur
 
 ## Pending
 
-### Clarify Transition Guide — Agent vs User Actions (captured by user, 2026-07-10)
-- The transition guide uses imperative language like "Run `git status`", "Run `git add -A`" which could be misread as instructions for the user rather than actions the agent should perform.
-- Make it explicit that **the agent** executes these steps, not the user. Consider adding a preamble like "The agent performs the following steps:" or rewording to remove ambiguity.
-
 ### Improve Tester Option Lists — Numerical + Minimum Three Options (captured by user, 2026-07-10)
 - When the Tester offers a list of options to the user, make them **numerically numbered** so users can select by entering just numbers.
 - Always offer **at least three options**, including:

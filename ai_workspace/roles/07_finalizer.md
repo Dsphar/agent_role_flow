@@ -11,7 +11,7 @@ Finalize the pipeline loop: update project context, present a recap of what was 
 ## Tasks
 
 ### Determine What Changed This Iteration
-- Run `git diff` to see file-level changes since the start of this loop. If no git, list project root files and compare against role summaries.
+- I run `git diff` to see file-level changes since the start of this loop. If no git, list project root files and compare against role summaries.
 - Cross-reference diffs with `_complete.md` summaries — match changed files to their purpose, flag unexplained changes for user review.
 - Build a comprehensive change log.
 
