@@ -20,11 +20,13 @@ ai_workspace/
 - **AGENTS.md minimal (~50 lines):** Transition flow, send-back rules, and guardrail prose extracted to `transition_guide.md` (loaded only at role completion). Role skill files trimmed similarly. Operational logic only.
 - **Documenter before Reviewer:** Docs produced before the quality gate so they get reviewed too.
 - **User-prompted send-back:** Tester/Reviewer present findings and ask whether to create `send_back.md` (routes to Planner) or defer as TODO. Human decides — no auto-send.
-- **Per-role git commits:** Every role transitions with `<goal summary> [ai-{role-name}]`. Send-back cycles append `[ai-{role-name}-sendback]` at the end. Transition blocks on commit failure. Goal body sourced from `## Goal Summary` in `01_interviewer_complete.md`.
+- **Per-role git commits (pre-squash):** Every role transitions with `<goal summary> [ai-{role-name}]`. Send-back cycles append `[ai-{role-name}-sendback]` at the end. Transition blocks on commit failure. Goal body sourced from `## Goal Summary` in `01_interviewer_complete.md`.
+- **Finalizer squash:** The Finalizer squashes all per-role commits from a loop into a single multi-line `[ai-finalizer]` commit using subject-line matching + `git reset --soft`. One clean commit per pipeline iteration.
 - **Send-back persistence:** `send_back.md` persists through the full re-run cycle with a `Current Role:` pointer and per-role log entries under "## Send-Back Log". Only the original sending role deletes it.
-- **Finalizer always resets:** Single `[ai-finalizer]` commit, no "wrap up" option. Pipeline loops continuously.
+- **Finalizer always resets and squashes:** All per-role commits from a loop are squashed into a single multi-line `[ai-finalizer]` commit via `git reset --soft`. No "wrap up" option. Pipeline loops continuously.
 
 ## Recent Changes
+- **Finalizer squash flow implemented (2026-07-10):** Rewrote `07_finalizer.md` "Loop Reset and Handoff" to squash all per-role commits from a pipeline loop into a single multi-line `[ai-finalizer]` commit. Uses subject-line matching against the Interviewer's goal summary to identify current-loop commits, then `git reset --soft` to the pre-loop parent hash. Falls back to normal single commit if no matches found. Two send-back cycles resolved BUG-1 (cross-loop squashing), BUG-2 (stale per-role reference), and BUG-3 (step numbering). Updated `project_context.md` to reflect squash model.
 - **Tester option lists improved with numeric numbering (2026-07-10):** Added a 3-option numbered testing-depth prompt (Quick/Deep/Skip) to the "Clarify Testing Expectations" section in `04_tester.md`. Converted send-back bug options from `(a)`/`(b)` labels to numeric `1.`/`2.` format. Minor formatting-only change — verified 4/4 tests, zero bugs.
 - **Finalizer sources commit description from Interviewer Goal Summary (2026-07-10):** Added step 1 to "Loop Reset and Handoff" in `07_finalizer.md` — read `## Goal Summary` from `01_interviewer_complete.md` before deleting `_complete.md` files, with fallback if file missing. Renumbered existing steps accordingly. Removed completed TODO from `todo.md`. Verified 5/5 tests, zero blocking bugs.
 - **Imperative shell commands clarified (2026-07-10):** Rewrote ambiguous "Run git ..." phrases in `transition_guide.md` and `07_finalizer.md` to first-person "I run git ..." for agent clarity. 4 planned changes across 2 files, verified by Tester with zero blocking bugs. One low-severity scope deviation (extra "I skip" change) deferred to todo.md.
@@ -42,7 +44,7 @@ ai_workspace/
 - **W1:** Ambiguity if both Tester and Reviewer append `Current Role:` lines to `send_back.md` simultaneously. Unlikely in practice.
 - Guardrail enforcement is imperfect — roles can break boundaries when directly prompted by the user.
 
-> Loop/iteration history preserved in git via per-role commits (tag `[ai-{role-name}]` appended at end of message) and Finalizer reset commits (`[ai-finalizer]`). This file tracks current state only.
+> Loop/iteration history preserved in git via squashed `[ai-finalizer]` commits — one per pipeline iteration. Per-role commits are absorbed into the squash. This file tracks current state only.
 
 ## How to Use
 1. Start a session — agent reads AGENTS.md, auto-detects current role from `_complete.md` files.
