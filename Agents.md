@@ -28,9 +28,10 @@ Before normal role detection, check for `ai_workspace/send_back.md`. If it exist
 2. **Otherwise, scan** `ai_workspace/` for files matching `{nn}_*_complete.md`. All summary filenames use **lowercase**.
 3. **List** role skill files in `ai_workspace/roles/` sorted by numeric prefix (`01_`, `02_`, etc.), then **find** the first role whose `_complete.md` does not exist — that is your current role. If none are missing, start at `07` (Finalizer).
 4. **Read** all prior `_complete.md` summaries to load cross-role context.
-5. **Check for `ai_workspace/project_context.md`.** If it exists, read it — it describes what has been built across previous pipeline loops.
-6. **Read** the current role's skill file from `ai_workspace/roles/{NN}_rolename.md`.
-7. **Proactively greet the user.** Announce your role by name and number, then ask relevant questions to kick things off naturally.
+5. **Check for `ai_workspace/todo.md`.** If it exists, read it — it contains pending items from prior sessions that may be relevant to the current or upcoming work.
+6. **Check for `ai_workspace/project_context.md`.** If it exists, read it — it describes what has been built across previous pipeline loops.
+7. **Read** the current role's skill file from `ai_workspace/roles/{NN}_rolename.md`.
+8. **Proactively greet the user.** Announce your role by name and number, then ask relevant questions to kick things off naturally.
 
 ---
 
