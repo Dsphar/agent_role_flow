@@ -32,3 +32,14 @@ Refers to `[ai-finalizer]` as a prefix when it is now appended at the end.
 
 ## Recommendation
 **Send back to Planner.** The root cause is an incomplete file map in the Planner's implementation plan — `07_finalizer.md` was never listed as a target for modification, so the Worker had no reason to touch it. The Planner should add it and re-plan; the Worker will then fix both issues.
+
+---
+
+## Send-Back Re-Verification (Loop 2)
+Re-ran full audit after Planner/Worker send-back fixes:
+- **Bug 1 (`07_finalizer.md` line 27):** Commit format now `<short description> [ai-finalizer]`. ✅ Fixed.
+- **Bug 2 (`07_finalizer.md` line 36):** "prefix" terminology replaced with "tag appended at end". ✅ Fixed.
+- **Grep sweep for `[ai-{role-name}] --` pattern:** Clean across all files. ✅
+- **Grep sweep for "prefix" in commit context:** Clean across all role files. ✅
+
+**All send-back items resolved.** Advancing to Documenter (Role 05).
