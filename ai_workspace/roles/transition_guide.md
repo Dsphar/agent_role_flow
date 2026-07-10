@@ -18,7 +18,7 @@ When you believe the current role's work is complete:
      1. **Append your send-back summary** to the existing `{NN}_rolename_complete.md` as above.
      2. **Delete `send_back.md`** — the send-back cycle is complete.
    - **Git commit:** Commit all changed files so progress is preserved incrementally.
-     1. I run `git status`. If not in a git repo or there are no changes, I skip this step silently.
+     1. I run `git status`. If not in a git repo or there are no changes, skip this step silently.
      2. Determine prefix: if you are in send-back mode (`send_back.md` exists now, **or you just deleted it** as the original sending role), use `[ai-{role-name}-sendback]`; otherwise use `[ai-{role-name}]`. Extract `{role-name}` from the `_complete.md` filename (e.g., `03_worker_complete.md` → `worker`).
      3. I run `git add -A`.
      4. Determine the commit body: read `## Goal Summary` from `ai_workspace/01_interviewer_complete.md`. If it exists, use its content as the body (truncate to <100 chars if needed). If not, generate a concise ad-hoc summary of what was accomplished.
@@ -32,21 +32,16 @@ When you believe the current role's work is complete:
   ┌──────────┐     ┌──────────┐     ┌─────────┐     ┌────────┐     ┌────────────┐     ┌──────────┐     ┌───────────┐
   │ 01 Inter-│────▶│ 02 Plan-│────▶│ 03 Work-│────▶│ 04 Test-│────▶│ 05 Docu-   │────▶│ 06 Review-│────▶│ 07 Final-  │
   │  viewer  │     │   ner   │     │   er    │     │   er   │     │  menter    │     │   er     │     │   izer     │
-  └──────────┘     └────┬─────┘     └────┬────┘     └────────┘     └────────────┘     └────┬─────┘     └───────────┘
-                        │                 │                                                   │
-                        │          ┌──────┴──────────┐                                        │
-                        │          │  Send-back to:   │                                        │
-                        │          │  - Planner (02)  │◀───────────────────────────────────────│
-                        │          │  - Worker (03)    │                                        │
-                        │          └──────────────────┘                                        │
-                        │                                                   ┌──────────────────┴──┐
-                        │                                                   │  Send-back to:       │
-                        │                                                   │  - Planner (02)      │◀──────┐
-                        │                                                   │  - Worker (03)        │       │
-                        │                                                   └───────────────────────┘       │
+  └──────────┘     └────┬─────┘     └────────┘     └────┬───┘     └────────────┘     └────┬─────┘     └───────────┘
+                        │                                │                                   │
+                  ┌─────┴──────┐                         │                          ┌────────┴──────┐
+                  │Send-back to│                         │                          │Send-back to   │
+                  │- Planner   │◀────────────────────────┤                          │- Planner      │◀──────┐
+                  │  (02)      │                         │                          │  (02)         │       │
+                  └────────────┘                         │                          └───────────────┘       │
                         └───────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 **Send-back routing summary:**
-- **Tester → Planner / Worker:** Test failures can route back to the Planner (design issues) or Worker (implementation bugs).
-- **Reviewer → Any prior role:** The Reviewer can send work back to any earlier role in the pipeline via `send_back.md`.
+- **Tester → Planner:** Test failures route back to the Planner for re-planning.
+- **Reviewer → Planner:** Critical review findings route back to the Planner for re-planning.

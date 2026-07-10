@@ -47,7 +47,7 @@ Also ask about test types (unit/integration/e2e), priority areas, and framework/
 When tests reveal bugs:
 1. Present findings to the user — list each bug with file references, descriptions, and severity.
 2. Ask how to proceed:
-   - **1. Send back** — Create `send_back.md` with `Source: Tester (Role 04)`, then `Current Role: Planner (Role 02)`, followed by the bug list. Do NOT delete `_complete.md` files. Commit with `[ai-tester-sendback]`.
+   - **1. Send back** — Create `send_back.md` with `Source: Tester (Role 04)`, then `Current Role: Planner (Role 02)`, followed by the bug list. Do NOT delete `_complete.md` files. For the commit message, read `## Goal Summary` from `ai_workspace/01_interviewer_complete.md` and use it as the body, with `[ai-tester-sendback]` appended at end.
    - **2. Defer as TODO** — Add bugs to `ai_workspace/todo.md`. Continue without interruption.
 
 ### Running Again During Send-Back Mode

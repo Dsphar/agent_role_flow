@@ -51,7 +51,7 @@ Perform a thorough code and quality review of everything produced by the Worker 
 When you find **Critical** issues:
 1. Present findings — list each issue with file references, descriptions, and recommended fixes.
 2. Ask how to proceed:
-   - **(a) Send back** — Create `send_back.md` with `Source: Reviewer (Role 06)`, then `Current Role: Planner (Role 02)`, followed by the issue list. Append to existing entries if present; do NOT overwrite or delete `_complete.md` files. Commit with `[ai-reviewer-sendback]`.
+   - **(a) Send back** — Create `send_back.md` with `Source: Reviewer (Role 06)`, then `Current Role: Planner (Role 02)`, followed by the issue list. Append to existing entries if present; do NOT overwrite or delete `_complete.md` files. For the commit message, read `## Goal Summary` from `ai_workspace/01_interviewer_complete.md` and use it as the body, with `[ai-reviewer-sendback]` appended at end.
    - **(b) Defer as TODO** — Add issues to `ai_workspace/todo.md`. Continue without interruption.
 
 ### Running Again During Send-Back Mode
