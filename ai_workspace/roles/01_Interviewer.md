@@ -44,6 +44,7 @@ If you feel the urge to start planning or building, stop. Capture what you've le
 
 ## Deliverables
 A clear, well-scoped problem statement captured in `01_interviewer_complete.md`. This summary should include:
+- **`## Goal Summary`** — A concise (<100 character) description of what this pipeline loop is building or changing. All subsequent roles read this heading and use it as the body portion of their transition commit messages (after `[ai-{role-name}] -- `). Place this at the top of the file.
 - What is being built or changed.
 - Why it matters (goals / success criteria).
 - Technical constraints and preferences.
