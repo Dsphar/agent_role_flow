@@ -29,6 +29,14 @@ Items captured by roles when the user requests work that falls outside their cur
 - Always include a "skip" option in any such list.
 - Update `ai_workspace/roles/05_documenter.md` with these interaction guidelines.
 
+### Fix Scope Deviation in transition_guide.md — Extra First-Person Change (captured by Reviewer, 2026-07-10)
+- `ai_workspace/roles/transition_guide.md` line ~21: "skip this step silently" was changed to "**I** skip this step silently" during the imperative-shell-command rewrite loop.
+- This was not one of the planned changes — scope said only shell command lines should change, general prose stays second-person.
+- Revert "I skip" back to "skip" (second-person) to match original minimal-diff intent.
+
+### Fix Typo in 07_finalizer.md (captured by Reviewer, 2026-07-10)
+- `ai_workspace/roles/07_finalizer.md` line 42: "suggesitons" → should be "**suggestions**".
+
 ### Finalizer: Use Interviewer Summary for Commit Message (captured by user, 2026-07-10)
 - The Finalizer's commit message should use the **Goal Summary** that the Interviewer defines at the start of the pipeline (from `## Goal Summary` in `01_interviewer_complete.md`).
 - Ensure `ai_workspace/roles/07_finalizer.md` explicitly instructs the Finalizer to source the short summary line from the Interviewer's goal summary rather than composing its own.
