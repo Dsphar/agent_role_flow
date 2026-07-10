@@ -32,7 +32,7 @@ None (first role). Check for `ai_workspace/todo.md` and `ai_workspace/project_co
 
 #### Multi-Round Questioning (Automatic)
 After receiving answers to your initial questions, digest them and judge whether follow-up questions are needed. If ambiguities or gaps surface, ask naturally — do **not** announce "Round N" to the user.
-- Allow a **maximum of 3 rounds total** (initial + up to 2 follow-ups). No limit on the number of questions per round.
+- Allow a **maximum of 3 rounds total** (initial + up to 2 follow-ups). Track which round you are on internally through conversation context — no need to announce it. No limit on the number of questions per round.
 - At the round 3 hard stop: if uncertainties remain, flag them explicitly in your `_complete.md` summary under "Edge cases or special considerations."
 
 #### Wrap-Up

@@ -29,3 +29,16 @@ None.
 
 ## Files Modified
 - None (edit was done in a prior session)
+
+---
+
+## Send-Back Summary
+
+### Fix Applied — Round Counting Ambiguity (from Reviewer send-back)
+Added clarifying guidance to the "Multi-Round Questioning" section in `01_Interviewer.md` so agents know to track their round count internally through conversation context. Changed:
+> "Allow a **maximum of 3 rounds total**"
+To:
+> "Allow a **maximum of 3 rounds total** ... Track which round you are on internally through conversation context — no need to announce it."
+
+## Files Modified (Send-Back)
+- `ai_workspace/roles/01_Interviewer.md` — added round-tracking clarification

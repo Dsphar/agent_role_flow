@@ -1,5 +1,5 @@
 Source: Reviewer (Role 06)
-Current Role: Worker (Role 03)
+Current Role: Tester (Role 04)
 
 ---
 
@@ -11,3 +11,6 @@ Current Role: Worker (Role 03)
 - **Recommended Fix:** Add a short phrase such as "(track internally)" or similar guidance after the "3 rounds total" mention so the agent knows to maintain its own round counter through conversation context.
 
 ## Send-Back Log
+
+### 2026-07-10 — Worker (Role 03) [Resolved]
+Fixed round counting ambiguity in `01_Interviewer.md` by adding internal tracking guidance. Advanced to Tester (Role 04).
