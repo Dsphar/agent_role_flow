@@ -28,6 +28,10 @@ Items captured by roles when the user requests work that falls outside their cur
 - New format: `{message body} [ai-{role-name}]` (e.g., `Improve Finalizer reset flow [ai-tester]`).
 - Update all references in `AGENTS.md`, `transition_guide.md`, and any role skill files that mention commit message formatting.
 
+### Consolidate Overlapping Sections in Finalizer Skill File (captured by Reviewer, 2026-07-10)
+- The "Proceed to Reset" section in `ai_workspace/roles/07_finalizer.md` largely repeats the steps already described in "Loop Reset and Handoff".
+- Consider consolidating these sections or having "Proceed to Reset" reference the named section without restating all steps.
+
 ### Improve Documenter Option Lists — Numerical + Skip (captured by user, 2026-07-10)
 - When the Documenter offers a list of options to the user, make them **numerically numbered** so users can select by entering just numbers.
 - Always include a "skip" option in any such list.

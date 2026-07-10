@@ -24,7 +24,7 @@ When you believe the current role's work is complete:
      4. Determine the commit body: read `## Goal Summary` from `ai_workspace/01_interviewer_complete.md`. If it exists, use its content as the body (truncate to <100 chars if needed). If not, generate a concise ad-hoc summary of what was accomplished.
      5. Run `git commit -m "{prefix determined in step 2} -- {commit body from step 4}"`.
      6. **If the commit fails** (identity not configured, merge conflict, etc.), **block transition** — present the error to the user and ask how to proceed. Do not mark the role complete until the commit succeeds or the user explicitly says to skip it.
-   - Inform user: handoff ready. Pipeline loop complete — all `_complete.md` files have been cleared and project context updated. Start a new session and the next role will load.
+   - Inform user: "[clear/new]" handoff ready. Start a new session and the next role will load.
 
 ### Pipeline and Send-Back Routes
 
