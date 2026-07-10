@@ -23,6 +23,7 @@ ai_workspace/
 - **Send-back persistence (Loop N):** `send_back.md` persists through the entire re-run cycle — every role sees it and appends a log entry under "## Send-Back Log" for an audit trail. Only the original sending role deletes it when its re-run passes.
 
 ## Recent Changes
+- **Loop N — Send-back restructure (2026-07-09):** Renamed `send_back_to_worker.md` → `send_back.md` and routed all send-backs to Planner instead of Worker. Added send-back sections to Summarizer (05) and Finalizer (07). Removed completed TODOs #3 and #6.
 - **Loop N — Send-back cycle (2026-07-09):** Reviewer found two critical issues; Worker fixed both; Tester confirmed resolution.
   - **C1 (Infinite Loop on Reviewer Send-Back):** Restructured the send-back flow to use a `Current Role:` pointer in `send_back.md` instead of deleting `_complete.md` files. The pointer explicitly tells role detection which skill file to load, eliminating the loop where the Reviewer would re-load itself. All affected roles (Worker, Tester, Reviewer) now follow the same pattern: create send-back with `Current Role:` header, append summaries on re-run, advance pointer sequentially.
   - **C2 (Guardrail Contradiction):** Updated "What You Must Not Do" in both Worker and Summarizer skill files to acknowledge the mandatory per-role transition commit defined in AGENTS.md. The phrasing is now: *"Do not handle version control beyond the mandatory per-role transition commit defined in AGENTS.md."*
@@ -34,13 +35,6 @@ ai_workspace/
 - **W1:** Ambiguity if both Tester and Reviewer append `Current Role:` lines to `send_back.md`. Unlikely in practice.
 - Guardrail enforcement is imperfect — roles can still break their own boundaries when directly prompted by the user.
 - Finalizer's commit behavior may need review now that every role already commits (tracked as TODO for next loop).
-
-## Pending TODOs (from `ai_workspace/todo.md`)
-Four items are tracked for future pipeline loops:
-1. **Review Finalizer Flow After Per-Role Commits** — adjust Finalizer to avoid duplicate commits.
-2. **Add `--` Separator in Git Commit Messages** — improve readability of `[ai-{role-name}]` commit prefixes.
-3. **Handle Partial/Re-Run Loops in Finalizer** — acknowledge send-backs in the final recap.
-4. **Finalizer Should Always Reset, Never Offer Wrap-Up** — remove the "wrap up" option from Finalizer.
 
 > **Note:** Loop/iteration records are preserved in git via Finalizer summary commits tagged `[pi-summary]` / `[pi-reset]`. This file tracks current project state only — no iteration history.
 
