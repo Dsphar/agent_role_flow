@@ -39,6 +39,14 @@ The current send-back flow routes issues back to the Worker (Role 03), skipping 
 
 ---
 
+### Finalizer Should Always Reset, Never Offer Wrap-Up
+**Proposed by:** User (via Finalizer, 2026-07-09)
+**Should be handled by:** Planner → Worker
+
+The Finalizer currently offers the user two paths: reset for a new iteration or wrap up and leave everything as-is. Remove the "wrap up" option — the Finalizer should always perform the two-commit reset flow (summary + delete `_complete.md` files) without asking. The pipeline is designed to loop continuously; if the user truly wants to stop, they can simply not start a new session.
+
+---
+
 ### Simplify Send-Back Advancement — Always Advance to Next Role Only
 **Proposed by:** User (via Tester, 2026-07-09)
 **Should be handled by:** Planner → Worker
