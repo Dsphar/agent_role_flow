@@ -1,47 +1,39 @@
 # Project Context
 
 ## What This Is
-A sequential agent role pipeline for building software projects. The pipeline runs through 7 roles in order: Interviewer → Planner → Worker → Tester → Summarizer → Reviewer → Finalizer. Each role is defined by a skill file in `ai_workspace/roles/`.
+A sequential agent role pipeline for building software projects. Seven roles run in order: Interviewer → Planner → Worker → Tester → Summarizer → Reviewer → Finalizer. Each role is defined by a skill file in `ai_workspace/roles/`.
 
 ## File Structure
 ```
-AGENTS.md                          — Pipeline workflow instructions (read on every session start)
+AGENTS.md                          — Pipeline workflow instructions (read every session start)
 ai_workspace/
   roles/                           — Role skill files (01_Interviewer.md through 07_finalizer.md)
   project_context.md               — This file
-  todo.md                          — Out-of-scope requests captured during role sessions
-  *_complete.md                    — Per-role session summaries (deleted on pipeline reset)
+  todo.md                          — Out-of-scope requests from prior sessions
+  transition_guide.md              — Transition flow + send-back rules (loaded at role completion only)
+  *_complete.md                    — Per-role session summaries (deleted on Finalizer reset)
 ```
 
 ## Key Design Decisions
-- **Role isolation:** Each role has explicit "What You Must Not Do" guardrails to prevent bleeding into other roles' responsibilities.
-- **State via files:** Pipeline state is inferred from `_complete.md` and `_in_progress.md` files — no external state tracking.
-- **AGENTS.md kept minimal:** Trimmed to ~85 lines, removing redundant documentation-only sections. Operational logic only.
-- **Summarizer before Reviewer (Loop 2):** Documentation is produced before the quality gate so it gets reviewed too. Previously docs were written after review and slipped through unchecked.
-- **User-prompted send-back mechanism:** Tester/Reviewer present findings and ask the user whether to create `send_back.md` (routes to Planner on next session start, which then advances through Worker) or defer as a TODO. The pipeline does not auto-send — the human decides.
-- **Per-role git commits (Loop N):** Every role commits its work during transition using `[ai-{role-name}] -- summary` format. Send-back cycles use `[ai-{role-name}-sendback] -- summary`. This preserves progress incrementally instead of only at Finalizer. Transition blocks on commit failure so the user can resolve identity/repo issues.
-- **Send-back persistence (Loop N):** `send_back.md` persists through the entire re-run cycle — every role sees it and appends a log entry under "## Send-Back Log" for an audit trail. Only the original sending role deletes it when its re-run passes.
+- **Role isolation:** Each role has "What You Must Not Do" guardrails to prevent bleeding into other roles.
+- **State via files:** Pipeline state inferred from `_complete.md` / `_in_progress.md` — no external tracking.
+- **AGENTS.md minimal (~50 lines):** Transition flow, send-back rules, and guardrail prose extracted to `transition_guide.md` (loaded only at role completion). Role skill files trimmed similarly. Operational logic only.
+- **Summarizer before Reviewer:** Docs produced before the quality gate so they get reviewed too.
+- **User-prompted send-back:** Tester/Reviewer present findings and ask whether to create `send_back.md` (routes to Planner) or defer as TODO. Human decides — no auto-send.
+- **Per-role git commits:** Every role transitions with `[ai-{role-name}] -- <goal summary>`. Send-back cycles use `-sendback` suffix. Transition blocks on commit failure. Goal body sourced from `## Goal Summary` in `01_interviewer_complete.md`.
+- **Send-back persistence:** `send_back.md` persists through the full re-run cycle with a `Current Role:` pointer and per-role log entries under "## Send-Back Log". Only the original sending role deletes it.
+- **Finalizer always resets:** Single `[ai-finalizer]` commit, no "wrap up" option. Pipeline loops continuously.
 
 ## Recent Changes
-- **Loop N+4 — Tester send-back mandates full test suite (2026-07-09):** Updated `04_tester.md`'s "Running Again During Send-Back Mode" section to explicitly require running the complete test suite (all original tests + send-back related tests) before advancing. This prevents regressions from being missed when only bug-specific tests are re-run. Removed completed TODO item from `todo.md`.
-- **Loop N+3 — Shared goal summaries for commit messages (2026-07-09):** Added `## Goal Summary` deliverable to the Interviewer skill file so each loop produces a concise (<100 char) description of its goal. Updated AGENTS.md transition block to read this shared summary as the body of every role's commit message, with fallback to ad-hoc generation if missing. Removed completed TODO #2 from `todo.md`.
-- **Loop N+2 — Simplified Finalizer (2026-07-09):** Replaced the Finalizer's two-commit flow (`[pi-summary]` + `[pi-reset]`) with a single `[ai-finalizer]` commit. Removed send-back support from `07_finalizer.md`. The Finalizer no longer creates `07_finalizer_complete.md`. Fixed stale reference in AGENTS.md role pipeline table via send-back cycle (B1). Removed completed TODO "Review Finalizer Flow After Per-Role Commits".
-- **Loop N+1 — Finalizer always reset, never wrap up (2026-07-09):** Removed the "wrap up" option from `07_finalizer.md`. The Finalizer now unconditionally performs its single-commit reset after presenting the final recap. No user choice offered — the pipeline always resets for the next iteration.
-- **Loop N — Send-back restructure (2026-07-09):** Renamed `send_back_to_worker.md` → `send_back.md` and routed all send-backs to Planner instead of Worker. Added send-back sections to Summarizer (05) and Finalizer (07). Removed completed TODOs #3 and #6.
-- **Loop N — Send-back cycle (2026-07-09):** Reviewer found two critical issues; Worker fixed both; Tester confirmed resolution.
-  - **C1 (Infinite Loop on Reviewer Send-Back):** Restructured the send-back flow to use a `Current Role:` pointer in `send_back.md` instead of deleting `_complete.md` files. The pointer explicitly tells role detection which skill file to load, eliminating the loop where the Reviewer would re-load itself.
-  - **C2 (Guardrail Contradiction):** Updated "What You Must Not Do" in both Worker and Summarizer skill files to acknowledge the mandatory per-role transition commit defined in AGENTS.md.
-  - **W1 (Multiple `Current Role:` lines):** Warning noted — unlikely in practice if both Tester and Reviewer append pointer lines simultaneously. Tracked as TODO for simplification.
-- **Loop N (2026-07-09):** Added per-role git commits at every pipeline transition using `[ai-{role-name}] -- summary` format. Send-back cycles use `[ai-{role-name}-sendback] -- summary`. Transition blocks on commit failure so the user can resolve identity/repo issues.
-- **Loop N-1 (2026-07-09):** Added TODO self-maintenance to the pipeline — Interviewer notes addressed TODO items by origin, Planner adds a removal step, Worker executes. Removed completed TODO "Consolidate Send-Back Cleanup Logic" from `todo.md`.
+- **Loop N+5 — Context loading trim (2026-07-09):** Reduced `AGENTS.md` and all 7 role files by ~98 lines total (~30-35%). Extracted transition flow to `transition_guide.md`. Trimmed prose in Inputs, Tasks, guardrails, and Transition Criteria sections. All operational behavior preserved — verified by Tester with zero bugs found.
 
 ## Known Issues
-- **W1:** Ambiguity if both Tester and Reviewer append `Current Role:` lines to `send_back.md`. Unlikely in practice.
-- Guardrail enforcement is imperfect — roles can still break their own boundaries when directly prompted by the user.
+- **W1:** Ambiguity if both Tester and Reviewer append `Current Role:` lines to `send_back.md` simultaneously. Unlikely in practice.
+- Guardrail enforcement is imperfect — roles can break boundaries when directly prompted by the user.
 
-> **Note:** Loop/iteration records are preserved in git via per-role transition commits (`[ai-{role-name}]`) and the Finalizer's single reset commit (`[ai-finalizer]`). This file tracks current project state only — no iteration history.
+> Loop/iteration history preserved in git via per-role commits (`[ai-{role-name}]`) and Finalizer reset commits (`[ai-finalizer]`). This file tracks current state only.
 
 ## How to Use
-1. Start a session — the agent reads AGENTS.md and auto-detects current role from `_complete.md` files.
+1. Start a session — agent reads AGENTS.md, auto-detects current role from `_complete.md` files.
 2. Work through roles sequentially, confirming completion at each step.
-3. At Role 07 (Finalizer), the pipeline automatically resets for the next iteration.
+3. At Role 07 (Finalizer), the pipeline resets for the next iteration.
