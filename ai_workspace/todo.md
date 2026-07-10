@@ -4,14 +4,6 @@ Items captured by roles when the user requests work that falls outside their cur
 
 ## Pending
 
-### Improve Tester Option Lists — Numerical + Minimum Three Options (captured by user, 2026-07-10)
-- When the Tester offers a list of options to the user, make them **numerically numbered** so users can select by entering just numbers.
-- Always offer **at least three options**, including:
-  - Quick/change-only testing (verify only what was modified in this loop).
-  - Deep testing (full suite — unit + integration + edge cases).
-  - Skip testing entirely.
-- Update `ai_workspace/roles/04_tester.md` with these interaction guidelines.
-
 ### Consolidate Overlapping Sections in Finalizer Skill File (captured by Reviewer, 2026-07-10)
 - The "Proceed to Reset" section in `ai_workspace/roles/07_finalizer.md` largely repeats the steps already described in "Loop Reset and Handoff".
 - Consider consolidating these sections or having "Proceed to Reset" reference the named section without restating all steps.

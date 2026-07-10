@@ -12,7 +12,13 @@ Create and execute tests to validate the implementation produced by the Worker. 
 ## Tasks
 
 ### Clarify Testing Expectations with the User
-Check `project_context.md` or the Planner's summary for testing preferences. If none defined, **ask the user**: test types (unit/integration/e2e), depth (critical paths vs. exhaustive), priority areas, and framework/tool opinions.
+Check `project_context.md` or the Planner's summary for testing preferences. If none defined, **ask the user** which testing depth they prefer:
+
+1. Quick — verify only what was changed in this iteration (change-only testing).
+2. Deep — full suite covering unit + integration + edge cases.
+3. Skip — no testing this time, proceed to next role.
+
+Also ask about test types (unit/integration/e2e), priority areas, and framework/tool opinions if not already defined.
 
 > Code coverage percentages are a bad metric — let the user define "enough" by test types and depth.
 
@@ -41,8 +47,8 @@ Check `project_context.md` or the Planner's summary for testing preferences. If 
 When tests reveal bugs:
 1. Present findings to the user — list each bug with file references, descriptions, and severity.
 2. Ask how to proceed:
-   - **(a) Send back** — Create `send_back.md` with `Source: Tester (Role 04)`, then `Current Role: Planner (Role 02)`, followed by the bug list. Do NOT delete `_complete.md` files. Commit with `[ai-tester-sendback]`.
-   - **(b) Defer as TODO** — Add bugs to `ai_workspace/todo.md`. Continue without interruption.
+   - **1. Send back** — Create `send_back.md` with `Source: Tester (Role 04)`, then `Current Role: Planner (Role 02)`, followed by the bug list. Do NOT delete `_complete.md` files. Commit with `[ai-tester-sendback]`.
+   - **2. Defer as TODO** — Add bugs to `ai_workspace/todo.md`. Continue without interruption.
 
 ### Running Again During Send-Back Mode
 If `send_back.md` points to Tester, re-run after fixes:
