@@ -10,6 +10,12 @@ With incremental git commits now happening at every pipeline stage via AGENTS.md
 
 ---
 
+### Add `--` Separator in Git Commit Messages for Readability
+**Proposed by:** User (via Planner, 2026-07-09)
+**Should be handled by:** Planner → Worker
+
+Git commit messages currently use format `[ai-{role-name}] summary text`, which can be hard to read. Change the format to `[ai-{role-name}] -- summary text` with a double-dash separator between the prefix and the message body for better visual separation. This affects AGENTS.md transition rules and any role skill files that reference commit message formatting.
+
 
 ## From Reviewer — Loop 2 Pipeline-Wide Review (2026-07-09)
 
