@@ -22,3 +22,7 @@
 - **Net -37 lines** from this session alone; combined with prior Worker session: ~98 lines removed total
 - All operational behavior preserved — rules still enforced, just more concisely
 - No broken cross-references
+
+---
+## Send-Back Summary (2026-07-09)
+No implementation work required — S1 and S2 were documentation fixes already resolved by the Planner in a prior send-back pass. Verified `transition_guide.md` contains both the filename casing note and the send-back routing diagram. Routing forward to Tester.
