@@ -1,5 +1,5 @@
 Source: Reviewer (Role 06)
-Current Role: Planner (Role 02)
+Current Role: Worker (Role 03)
 
 ## Issues to Fix
 
@@ -14,3 +14,6 @@ The send-back chain is described in text across multiple roles but not visualize
 **Recommended fix:** Add an ASCII diagram in `ai_workspace/transition_guide.md` showing the full pipeline and send-back routes (e.g., Tester→Planner, Reviewer→Planner).
 
 ## Send-Back Log
+
+### 2026-07-09 — Planner (Role 02) send-back complete
+Fixed S1 (filename casing note) and S2 (send-back routing diagram) in `transition_guide.md`. Appended summary to `02_planner_complete.md`. Routing next role: Worker.

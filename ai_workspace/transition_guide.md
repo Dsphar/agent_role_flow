@@ -30,3 +30,30 @@ When you believe the current role's work is complete:
 ### In-Progress Files
 
 Optionally create `{NN}_rolename_in_progress.md` in `ai_workspace/` during a role for early notes. It is temporary and renamed to `_complete.md` upon confirmation.
+
+> **Filename casing note:** Summary filenames (`*_complete.md`, `*_in_progress.md`) always use **lowercase** role names, regardless of how the role skill file is cased (e.g., `06_reviewer_complete.md` not `06_Reviewer_complete.md`).
+
+### Pipeline and Send-Back Routes
+
+```
+  ┌──────────┐     ┌──────────┐     ┌─────────┐     ┌────────┐     ┌────────────┐     ┌──────────┐     ┌───────────┐
+  │ 01 Inter-│────▶│ 02 Plan-│────▶│ 03 Work-│────▶│ 04 Test-│────▶│ 05 Summa-  │────▶│ 06 Review-│────▶│ 07 Final-  │
+  │  viewer  │     │   ner   │     │   er    │     │   er   │     │  rizer     │     │   er     │     │   izer     │
+  └──────────┘     └────┬─────┘     └────┬────┘     └────────┘     └────────────┘     └────┬─────┘     └───────────┘
+                        │                 │                                                   │
+                        │          ┌──────┴──────────┐                                        │
+                        │          │  Send-back to:   │                                        │
+                        │          │  - Planner (02)  │◀───────────────────────────────────────│
+                        │          │  - Worker (03)    │                                        │
+                        │          └──────────────────┘                                        │
+                        │                                                   ┌──────────────────┴──┐
+                        │                                                   │  Send-back to:       │
+                        │                                                   │  - Planner (02)      │◀──────┐
+                        │                                                   │  - Worker (03)        │       │
+                        │                                                   └───────────────────────┘       │
+                        └───────────────────────────────────────────────────────────────────────────────────┘
+```
+
+**Send-back routing summary:**
+- **Tester → Planner / Worker:** Test failures can route back to the Planner (design issues) or Worker (implementation bugs).
+- **Reviewer → Any prior role:** The Reviewer can send work back to any earlier role in the pipeline via `send_back.md`.

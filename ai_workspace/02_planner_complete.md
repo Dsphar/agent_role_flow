@@ -17,3 +17,12 @@ Minimize context loading across pipeline files
 
 ## Risks / Open Questions
 - Removing motivational language from guardrails is a judgment call on how much to cut — keep prohibitions explicit but remove the "if you feel the urge" framing
+
+---
+
+## Send-Back Summary (from Reviewer)
+
+Addressed two send-back items from the Reviewer:
+
+- **S1:** Added a filename casing note in `transition_guide.md` clarifying that summary filenames (`*_complete.md`, `*_in_progress.md`) always use lowercase role names.
+- **S2:** Added an ASCII pipeline diagram and send-back routing summary to `transition_guide.md` showing the full 7-role flow and all send-back routes (Tester→Planner/Worker, Reviewer→any prior role).
