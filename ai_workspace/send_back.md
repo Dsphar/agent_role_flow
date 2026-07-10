@@ -1,5 +1,5 @@
 Source: Tester (Role 04)
-Current Role: Planner (Role 02)
+Current Role: Worker (Role 03)
 
 ## Bugs Found During Testing
 
@@ -24,3 +24,6 @@ The new send-back flow routes through Planner → Worker → Tester → Summariz
 They need send-back sections consistent with the other roles, advancing sequentially (Summarizer → Reviewer/06, Finalizer → Summarizer/05 or delete if original sender).
 
 ## Send-Back Log
+
+### Planner (Role 02) — 2026-07-09
+Appended 3 implementation steps to address Tester's send-back: (1) update `project_context.md` stale references, (2) add send-back section to Summarizer skill file, (3) add send-back section to Finalizer skill file.

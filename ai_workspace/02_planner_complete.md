@@ -36,3 +36,13 @@
 
 ### Risks and Open Questions
 - **Planner send-back mode is new territory:** No role before the Planner has handled send-backs. Edge cases will be caught by Tester/Reviewer in subsequent pipeline loops.
+
+---
+
+## Send-Back Summary (2026-07-09)
+
+Addressed two bugs found by Tester:
+
+**Bug 1 — `project_context.md` stale references:** Added Step 7 to update all remaining `send_back_to_worker.md` → `send_back.md` references and clean up the "Pending TODOs" section to match current `todo.md` state.
+
+**Bug 2 — Summarizer/Finalizer missing send-back sections:** Added Steps 8 and 9 to add send-back mode guidance to both role skill files, consistent with roles 02–04 and 06.
