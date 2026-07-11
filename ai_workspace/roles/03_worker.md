@@ -11,7 +11,7 @@ Execute the implementation plan produced by the Planner. Write code, create file
 ## Tasks
 
 ### Handle Send-Back Work (If Applicable)
-If `send_back.md` exists and points to Worker, fix each listed item. After confirmation: update `Current Role:` in `send_back.md` to `Tester (Role 04)`. See `ai_workspace/roles/transition_guide.md`.
+See [`sendback_guide.md`](./sendback_guide.md) for full send-back instructions. In brief: if `send_back.md` exists and points to Worker, fix each listed item. After confirmation: update `Current Role:` in `send_back.md` to `Tester (Role 04)`.
 
 ### Initialize In-Progress File
 Check for `ai_workspace/03_worker_in_progress.md`. If it exists, resume from the next incomplete step. If not, create it with a checklist of all steps from `02_planner_complete.md` marked `[ ]`. After each completed step, mark `[x]` with brief notes (files created/modified, deviations).

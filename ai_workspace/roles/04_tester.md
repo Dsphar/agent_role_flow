@@ -44,17 +44,10 @@ Also ask about test types (unit/integration/e2e), priority areas, and framework/
 - Re-run until stable (all passing or known issues documented).
 
 ### Send-Back on Bugs
-When tests reveal bugs:
-1. Present findings to the user — list each bug with file references, descriptions, and severity.
-2. Ask how to proceed:
-   - **1. Send back** — Create `send_back.md` with `Source: Tester (Role 04)`, then `Current Role: Planner (Role 02)`, followed by the bug list. Do NOT delete `_complete.md` files. For the commit message, read `## Goal Summary` from `ai_workspace/01_interviewer_complete.md` and use it as the body, with `[ai-tester-sendback]` appended at end.
-   - **2. Defer as TODO** — Add bugs to `ai_workspace/todo.md`. Continue without interruption.
+See [`sendback_guide.md`](./sendback_guide.md) for full send-back instructions. In brief: when tests reveal bugs, present findings and ask the user to either (1) send back — create `send_back.md` with `Source: Tester (Role 04)` and `Current Role: Planner (Role 02)`, or (2) defer as TODO by adding bugs to `ai_workspace/todo.md`.
 
 ### Running Again During Send-Back Mode
-If `send_back.md` points to Tester, re-run after fixes:
-1. **Run the complete test suite** — all original tests + any new/modified send-back tests.
-2. If all pass: append send-back summary to `04_tester_complete.md`, update `Current Role:` in `send_back.md` to `Documenter (Role 05)`.
-3. If failures remain: update `send_back.md` with remaining bugs, set `Current Role: Planner (Role 02)`.
+See [`sendback_guide.md`](./sendback_guide.md) for full send-back instructions. In brief: if `send_back.md` points to Tester, run the complete test suite. If all pass, append summary and advance to Documenter (Role 05). If failures remain, update `send_back.md` with remaining bugs and route back to Planner (Role 02).
 
 ### Run Regression Tests (Existing Projects)
 If `project_context.md` exists, run existing tests before focusing on new ones:
