@@ -10,7 +10,9 @@ ai_workspace/
   roles/                           — Role skill files (01_Interviewer.md through 07_finalizer.md)
   project_context.md               — This file
   todo.md                          — Out-of-scope requests from prior sessions
-    roles/transition_guide.md      — Transition flow + send-back rules (loaded at role completion only)
+  skill_helpers/
+    transition_guide.md            — Transition flow + send-back rules (loaded at role completion only)
+    sendback_guide.md              — Send-back mode instructions
   *_complete.md                    — Per-role session summaries (deleted on Finalizer reset)
 ```
 
@@ -26,6 +28,7 @@ ai_workspace/
 - **Finalizer always resets and squashes:** All per-role commits from a loop are squashed into a single multi-line `[ai-finalizer]` commit via `git reset --soft`. No "wrap up" option. Pipeline loops continuously.
 
 ## Recent Changes
+- **Move skill-assist guides out of roles folder (2026-07-12):** Created `ai_workspace/skill_helpers/` sister directory and relocated `transition_guide.md` and `sendback_guide.md` there from `roles/` to improve workspace organization. Updated all 13 path references across 7 active files (`AGENTS.md`, role files `02_planner.md` through `06_reviewer.md`, and `project_context.md`). Removed completed TODO item W3, and captured two new out-of-scope requests (W4 and W5) in `todo.md`.
 - **Interviewer scoped git log truncation fix for Finalizer (2026-07-10):** Identified that `git log --oneline` in `07_finalizer.md` truncates subject lines to ~52 characters, breaking prefix matching when goal summaries exceed ~40 chars. Fix: replace with `git log --format="%H %s"`. No code changes produced this loop — Interviewer only (roles 02-06 had no file-level work). W1 and W2 remain in todo.md for next iteration.
 - **transition_guide fixes: scope deviation revert, send-back routing, commit conventions (2026-07-10):** Reverted unintended first-person prose in `transition_guide.md` git section back to second-person. Fixed send-back routing so Tester and Reviewer arrows point only to Planner (02), removing Worker (03) as a target in both ASCII diagram and text summary. Enforced commit message convention across role files — all roles now reference `## Goal Summary` from `01_interviewer_complete.md` as the commit body source, with `[ai-{role-name}]` or `[ai-{role-name}-sendback]` appended at end. Removed 3 completed TODO items (W1 and W2 remain). Verified 12/12 tests, zero bugs.
 - **Documenter option lists improved with numeric numbering + skip (2026-07-10):** Completed TODO cleanup — removed stale "Improve Documenter Option Lists" entry from `todo.md`. The actual skill file changes were applied out-of-band in a prior loop. Verified 4/4 tests, zero bugs.

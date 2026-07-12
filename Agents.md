@@ -15,7 +15,7 @@ If both `{NN}_*_in_progress.md` **and** `{NN}_*_complete.md` exist for the same 
 Optionally create `{NN}_rolename_in_progress.md` in `ai_workspace/` during a role for early notes and progress tracking. It is temporary — rename it to `{NN}_rolename_complete.md` upon confirmation of completion (see Transition Guide). Summary filenames always use **lowercase** role names.
 
 ### Send-Back Detection
-Before normal role detection, check for `ai_workspace/send_back.md`. If it exists you are in send-back mode — read it for context and items to fix. Then read `ai_workspace/roles/sendback_guide.md` for the master set of send-back instructions that govern all roles in send-back mode.
+Before normal role detection, check for `ai_workspace/send_back.md`. If it exists you are in send-back mode — read it for context and items to fix. Then read `ai_workspace/skill_helpers/sendback_guide.md` for the master set of send-back instructions that govern all roles in send-back mode.
 
 ### Role Detection
 1. **If `send_back.md` exists:** read its `Current Role:` line (e.g., `Current Role: Planner (Role 02)`) and load that role directly — skip steps 2–3 below.
@@ -42,7 +42,7 @@ Before normal role detection, check for `ai_workspace/send_back.md`. If it exist
 
 ## Transitioning Between Roles
 
-When ready to transition, read and follow `ai_workspace/roles/transition_guide.md`.
+When ready to transition, read and follow `ai_workspace/skill_helpers/transition_guide.md`.
 
 ---
 

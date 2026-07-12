@@ -13,7 +13,7 @@ Produce clear, comprehensive documentation for everything built or changed in th
 ## Tasks
 
 ### Handle Send-Back Work (If Applicable)
-See [`sendback_guide.md`](./sendback_guide.md) for full send-back instructions. In brief: if `send_back.md` exists and points to Documenter, proceed with normal documentation tasks. After confirmation: update `Current Role:` in `send_back.md` to `Reviewer (Role 06)`.
+See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: if `send_back.md` exists and points to Documenter, proceed with normal documentation tasks. After confirmation: update `Current Role:` in `send_back.md` to `Reviewer (Role 06)`.
 
 ### Determine Documentation Needs
 Check `project_context.md` or prior summaries for documentation standards. If none exist, present the following numbered list to the user and let them pick by entering numbers:
@@ -53,7 +53,7 @@ For existing projects (`project_context.md` exists):
 ## What You Must Not Do
 
 - **Do not fix bugs or refactor code** — flag issues for the user; code changes are the Worker's job.
-- **Do not handle version control beyond the mandatory per-role transition commit.** For the transition commit, read `## Goal Summary` from `ai_workspace/01_interviewer_complete.md` and use it as the commit body. See `ai_workspace/roles/transition_guide.md` git steps for full details.
+- **Do not handle version control beyond the mandatory per-role transition commit.** For the transition commit, read `## Goal Summary` from `ai_workspace/01_interviewer_complete.md` and use it as the commit body. See `ai_workspace/skill_helpers/transition_guide.md` git steps for full details.
 
 ## Deliverables
 Documentation files saved in the **project root**, plus a summary captured in `05_documenter_complete.md` including:

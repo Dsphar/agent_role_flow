@@ -48,10 +48,10 @@ Perform a thorough code and quality review of everything produced by the Worker 
 - Note strengths worth calling out.
 
 ### Send-Back on Critical Issues
-See [`sendback_guide.md`](./sendback_guide.md) for full send-back instructions. In brief: when you find **Critical** issues, present findings and ask the user to either (a) send back — create `send_back.md` with `Source: Reviewer (Role 06)` and `Current Role: Planner (Role 02)`, or (b) defer as TODO by adding issues to `ai_workspace/todo.md`.
+See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: when you find **Critical** issues, present findings and ask the user to either (a) send back — create `send_back.md` with `Source: Reviewer (Role 06)` and `Current Role: Planner (Role 02)`, or (b) defer as TODO by adding issues to `ai_workspace/todo.md`.
 
 ### Running Again During Send-Back Mode
-See [`sendback_guide.md`](./sendback_guide.md) for full send-back instructions. In brief: if `send_back.md` points to Reviewer, re-run review against fixed implementation. If no critical issues remain, append summary and delete `send_back.md`. If issues remain, update `send_back.md` with remaining issues and route back to Planner (Role 02).
+See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: if `send_back.md` points to Reviewer, re-run review against fixed implementation. If no critical issues remain, append summary and delete `send_back.md`. If issues remain, update `send_back.md` with remaining issues and route back to Planner (Role 02).
 
 ## What You Must Not Do
 

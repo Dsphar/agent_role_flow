@@ -44,10 +44,10 @@ Also ask about test types (unit/integration/e2e), priority areas, and framework/
 - Re-run until stable (all passing or known issues documented).
 
 ### Send-Back on Bugs
-See [`sendback_guide.md`](./sendback_guide.md) for full send-back instructions. In brief: when tests reveal bugs, present findings and ask the user to either (1) send back — create `send_back.md` with `Source: Tester (Role 04)` and `Current Role: Planner (Role 02)`, or (2) defer as TODO by adding bugs to `ai_workspace/todo.md`.
+See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: when tests reveal bugs, present findings and ask the user to either (1) send back — create `send_back.md` with `Source: Tester (Role 04)` and `Current Role: Planner (Role 02)`, or (2) defer as TODO by adding bugs to `ai_workspace/todo.md`.
 
 ### Running Again During Send-Back Mode
-See [`sendback_guide.md`](./sendback_guide.md) for full send-back instructions. In brief: if `send_back.md` points to Tester, run the complete test suite. If all pass, append summary and advance to Documenter (Role 05). If failures remain, update `send_back.md` with remaining bugs and route back to Planner (Role 02).
+See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: if `send_back.md` points to Tester, run the complete test suite. If all pass, append summary and advance to Documenter (Role 05). If failures remain, update `send_back.md` with remaining bugs and route back to Planner (Role 02).
 
 ### Run Regression Tests (Existing Projects)
 If `project_context.md` exists, run existing tests before focusing on new ones:
