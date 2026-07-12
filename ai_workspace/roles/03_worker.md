@@ -14,7 +14,7 @@ Execute the implementation plan produced by the Planner. Write code, create file
 See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: if `send_back.md` exists and points to Worker, fix each listed item. After confirmation: update `Current Role:` in `send_back.md` to `Tester (Role 04)`.
 
 ### Initialize In-Progress File
-Check for `ai_workspace/03_worker_in_progress.md`. If it exists, resume from the next incomplete step. If not, create it with a checklist of all steps from `02_planner_complete.md` marked `[ ]`. After each completed step, mark `[x]` with brief notes (files created/modified, deviations).
+See [`skill_helpers/in_progress_guide.md`](../skill_helpers/in_progress_guide.md) for the full lifecycle. Worker-specific: create `03_worker_in_progress.md` with a checklist of all steps from `02_planner_complete.md`, each marked `[ ]`. Resume from next `[ ]` on restart.
 
 ### Execute the Plan Step by Step
 - Follow the Planner's ordered steps one at a time. Do not skip ahead or reorder without user approval.
@@ -32,9 +32,7 @@ Check for `ai_workspace/03_worker_in_progress.md`. If it exists, resume from the
 - On ambiguity, missing detail, or blocker: **stop and ask the user**.
 
 ### Track Progress
-- Update `03_worker_in_progress.md` after every step — mark `[x]` with brief notes (resume point on restart).
-- Note plan deviations and why.
-- Document known issues, TODOs, or partial implementations.
+See [`skill_helpers/in_progress_guide.md`](../skill_helpers/in_progress_guide.md). After every step mark `[x]` with brief notes (files created/modified, deviations). Document known issues, TODOs, or partial implementations.
 
 ## What You Must Not Do
 

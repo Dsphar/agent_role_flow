@@ -1,28 +1,51 @@
 # 02 — Planner Complete
 
 ## Goal Summary
-Update project_context.md for squashed-commit model
+Extract in_progress guidance into a dedicated skill helper [ai-interviewer]
 
 ## Architecture Overview
-No architectural changes. This is a documentation-only edit to `ai_workspace/project_context.md` and cleanup of the associated todo file.
+New file `ai_workspace/skill_helpers/in_progress_guide.md` serves as the single source of truth for `_in_progress.md` lifecycle (creation, usage, resume-on-restart, rename at completion). All three current source files are trimmed to brief references pointing there. AGENTS.md retains a pointer rather than removing all mention.
 
 ## File/Module Map
-- **Modify:** `ai_workspace/project_context.md` — update "Key Design Decisions", "Known Issues", and loop-history notes.
-- **Delete:** `ai_workspace/todos/update-project-context-git-model.md` — completed todo per `todo_guide.md`.
+- **Create:** `ai_workspace/skill_helpers/in_progress_guide.md`
+- **Modify:** `AGENTS.md`, `ai_workspace/roles/03_worker.md`, `ai_workspace/skill_helpers/transition_guide.md`
+- **Delete:** `ai_workspace/todos/extract-in-progress-skill-helper.md`
 
 ## Ordered Implementation Steps
 
-1. **Update "Key Design Decisions" section** in `project_context.md`:
-   - Add a bullet clarifying the squashed-commit model: *"Only one `[ai-finalizer]` squash commit exists per pipeline loop; intermediate per-role commits are transient and do not persist post-Finalizer."*
+1. **Create `in_progress_guide.md`** with consolidated content:
+   - Purpose and naming convention (`{NN}_rolename_in_progress.md`, lowercase role names)
+   - When to create (optional for most roles; mandatory checklist for Worker from Planner steps)
+   - How to use during a session (notes, progress tracking, `[x]` marking for Worker)
+   - Resume-on-restart behavior (pick up from next incomplete step)
+   - Transition-time rename (`_in_progress.md` → `_complete.md`)
+   - "Going Back" rule (keep the file when reverting to a prior role)
 
-2. **Update "Known Issues" section** in `project_context.md`:
-   - Remove item #2 ("Stale references to per-role commit model in docs (`todos/update-project-context-git-model.md`)") since it is now resolved.
-   - Re-number remaining items if needed (items 1 and 3 become 1 and 2).
+2. **Update `AGENTS.md`:**
+   - Replace the entire "In-Progress Files" subsection under Session Startup with a brief reference pointing to `skill_helpers/in_progress_guide.md` for full details on in-progress file usage, naming, and lifecycle.
+   - In "Going Back", replace "keep any `_in_progress.md`" with "follow `skill_helpers/in_progress_guide.md`."
 
-3. **Update "Current Pipeline State" / loop-history notes** in `project_context.md`:
-   - Add a note under the current loop entry that this iteration corrected stale git model references to reflect the squashed-commit reality.
+3. **Update `03_worker.md`:**
+   - Replace "Initialize In-Progress File" task body with a reference to the new helper + brief Worker-specific note (checklist from Planner steps).
+   - Replace "Track Progress" task body with a reference to the new helper.
 
-4. **Delete completed todo file:** Remove `ai_workspace/todos/update-project-context-git-model.md` per `skill_helpers/todo_guide.md`.
+4. **Update `transition_guide.md`:**
+   - Replace the inline rename logic ("If `{NN}_rolename_in_progress.md` exists, rename it…") with a reference to the new helper.
+
+5. **Delete `todos/extract-in-progress-skill-helper.md`** (todo addressed this loop).
 
 ## Risks and Open Questions
-- None identified — straightforward documentation edit with clear before/after state.
+- None identified — straightforward content relocation with references replacing inline instructions.
+
+---
+
+## Send-Back Summary
+
+**Source:** Tester (Role 04) — missing in-progress file check in AGENTS.md startup sequence.
+
+**Fix applied:** Added step 5 to the Role Detection numbered list in `AGENTS.md`. Every role now checks for its own `{NN}_rolename_in_progress.md` on startup and reads it if present, with a reference to `skill_helpers/in_progress_guide.md` for full resume behavior. Existing steps renumbered 6–9.
+
+**Files modified:**
+- `AGENTS.md`
+
+[ai-planner-sendback]

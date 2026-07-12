@@ -10,7 +10,7 @@ When you believe the current role's work is complete:
 2. **Ask** the user if they are satisfied or want adjustments before moving on.
 3. Address any requested changes, then re-prompt when ready.
 4. Once confirmed:
-   - **Normal mode:** If `{NN}_rolename_in_progress.md` exists, **rename** it to `{NN}_rolename_complete.md`. Otherwise, create `{NN}_rolename_complete.md` with the full summary. Summary filenames always use **lowercase** role names, regardless of how the role skill file is cased (e.g., `06_reviewer_complete.md`, not `06_Reviewer_complete.md`).
+   - **Normal mode:** Follow [`skill_helpers/in_progress_guide.md`](in_progress_guide.md) for the rename-from-in-progress logic. In brief: if `{NN}_rolename_in_progress.md` exists, **rename** it to `{NN}_rolename_complete.md`; otherwise create `{NN}_rolename_complete.md` with the full summary. Summary filenames always use **lowercase** role names.
    - **Send-back mode (you are NOT the original sending role):**
      1. **Append your send-back summary** to the existing `{NN}_rolename_complete.md` — add a `---` divider followed by `## Send-Back Summary`, then your work recap. Do not overwrite the file.
      2. **Update `Current Role:`** in `send_back.md` to point to the next role in the pipeline (e.g., Worker → Tester, Tester → Documenter).

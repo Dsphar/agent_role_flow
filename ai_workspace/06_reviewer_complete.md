@@ -1,21 +1,30 @@
 # 06 — Reviewer Complete
 
 ## Goal Summary
-Update project_context.md for squashed-commit model
+Extract in_progress guidance into a dedicated skill helper [ai-interviewer]
 
 ## Overall Assessment
-Clean, focused documentation-only change. The Worker executed exactly what was planned and the Tester validated all checks with no failures. No code was written — only markdown edits to an internal orchestration file. Ready to ship.
+This pipeline loop successfully consolidated `_in_progress.md` lifecycle guidance from three scattered sources (`AGENTS.md`, `03_worker.md`, `transition_guide.md`) into a single skill helper at `ai_workspace/skill_helpers/in_progress_guide.md`. The extraction is clean, well-structured, and consistent with the project's existing pattern of skill helpers. All source files now reference the helper rather than embedding inline instructions.
 
 ## Issues Found
-- **Critical:** None
-- **Warnings:** None
-- **Suggestions:** Minor wording consistency note — the new bullet in "Key Design Decisions" uses backtick-fenced `[ai-finalizer]` while other bullets don't use code formatting for similar terms. Not actionable; just a style observation for future loops.
+
+### Warning — Stale known issue in `project_context.md`
+**File:** `ai_workspace/project_context.md` → "Known Issues" section
+
+The Known Issues list still includes:
+> 2. `_in_progress.md` instructions not extracted to a skill helper (`todos/extract-in-progress-skill-helper.md`)
+
+This was the entire point of this pipeline loop and is now **resolved**. The todo file was deleted by the Worker, and `in_progress_guide.md` exists and is functional. This entry should be removed during Finalizer's update pass.
+
+### Suggestion — Minor commit message inconsistency
+Earlier commits in this loop used `"into dedicated skill helper"` (missing article "a"), while later ones use `"into a dedicated skill helper"`. Not functionally relevant, but worth noting for consistency.
 
 ## Strengths
-1. Precise scoping prevented unnecessary edits (e.g., "Architecture Overview" correctly left as-is)
-2. Cross-reference integrity maintained — remaining Known Issues still point to valid todo files
-3. Completed todo file deleted per `todo_guide.md` rather than just checked off
-4. Zero deviations from plan
+- `in_progress_guide.md` is well-organized with clear sections covering all lifecycle aspects
+- AGENTS.md integration is clean — step 5 in Role Detection properly checks for `_in_progress.md` on startup
+- Worker role preserves specificity (checklist from Planner steps, `[x]` marking) while delegating lifecycle details to the helper
+- Transition guide maintains readability with inline summary alongside cross-reference
+- Send-back cycle handled well — Tester caught missing in-progress check, fix applied and verified cleanly
 
 ## Recommendation
-Ship as-is. No critical or warning-level issues found. Ready for Finalizer (Role 07).
+Ship as-is. No critical issues found — no send-back needed. Note for Finalizer: remove resolved known issue #2 from `project_context.md` during its update pass.

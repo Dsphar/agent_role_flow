@@ -1,25 +1,20 @@
-# 04 — Tester Complete
+## Send-Back Summary [ai-tester-sendback]
 
-## Goal Summary
-Update project_context.md for squashed-commit model
+### What Was Verified
+Send-back item from Tester: **Missing in-progress file check in AGENTS.md startup sequence**.
 
-## What Was Tested
-Quick validation of the Worker's documentation-only changes to `ai_workspace/project_context.md`.
+The fix added step 5 to the Role Detection flow in `AGENTS.md`:
+> Check for `{NN}_rolename_in_progress.md` in `ai_workspace/`. If it exists, read it — this is your role's resume file from a previous session. See `ai_workspace/skill_helpers/in_progress_guide.md` for full details on in-progress file usage and resume behavior.
 
-### Checks Performed
-1. **Key Design Decisions** — verified new squashed-commit bullet is present and accurately worded ✅
-2. **Known Issues** — verified stale item removed, remaining items re-numbered (1 & 2) ✅
-3. **Cross-reference integrity** — confirmed both Known Issues still point to existing todo files (`fix-git-log-truncation.md`, `extract-in-progress-skill-helper.md`) ✅
-4. **Current Pipeline State** — verified Loop 2 entry added with correct description ✅
-5. **Completed todo cleanup** — confirmed `todos/update-project-context-git-model.md` was deleted ✅
+### Verification Result
+- **PASS** — Step 5 now instructs all roles to check for their own `_in_progress.md` on startup, matching the "Resume-on-Restart Behavior" defined in `skill_helpers/in_progress_guide.md`.
+- The step is placed after reading prior `_complete.md` summaries (step 4) and before scanning todos (step 6), which is the correct position in the flow.
+- Cross-references `in_progress_guide.md` for full details, consistent with the project's skill helper pattern.
 
-## Test Results
-- **Passed:** 5/5 checks
-- **Failed:** 0
-- **Bugs found:** None
+### Test Coverage
+This is a workflow/orchestration fix — no runtime code to test. Verification performed by:
+1. Reading `AGENTS.md` Role Detection steps and confirming step 5 exists with correct content.
+2. Cross-referencing against `skill_helpers/in_progress_guide.md` "Resume-on-Restart Behavior" section for consistency.
 
-## Coverage Gaps
-This was a documentation-only change with no code modifications. Traditional unit/integration testing does not apply. Validation focused on content accuracy and cross-reference consistency.
-
-## Recommendation
-Proceed to Documenter (Role 05).
+### Recommendation
+Proceed to Documenter (Role 05). Send-back cycle complete — no remaining issues.

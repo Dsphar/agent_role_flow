@@ -45,14 +45,16 @@ ai_workspace/
 
 ## Known Issues
 1. `git log --oneline` truncation can break Finalizer's subject-line matching (`todos/fix-git-log-truncation.md`)
-2. `_in_progress.md` instructions not extracted to a skill helper (`todos/extract-in-progress-skill-helper.md`)
 
 ## Current Pipeline State
 - **Loop 1** — Complete. Squashed by Finalizer.
 - Work this loop: Restructured todo system from monolithic `todo.md` to per-file `todos/` folder with skill helper
 - **Loop 2** — Complete. Squashed by Finalizer.
 - Work this loop: Corrected stale git model references in project_context.md to reflect the squashed-commit reality
+- **Loop 3** — Complete. Squashed by Finalizer.
+- Work this loop: Extracted `_in_progress.md` lifecycle guidance into `skill_helpers/in_progress_guide.md`; added startup check for in-progress files in AGENTS.md Role Detection step 5
 
 ## Recent Changes
 - Restructured todo system: replaced monolithic `todo.md` with per-file `todos/` folder + `todo_guide.md` skill helper (2026-07-12)
+- Extracted in-progress file guidance into dedicated skill helper, updated AGENTS.md/Worker/Transition Guide references (2026-07-12)
 - Initial project context created (2026-07-12)

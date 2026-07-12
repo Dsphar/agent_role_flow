@@ -16,13 +16,14 @@ Before normal role detection, check for `ai_workspace/send_back.md`. If it exist
 2. **Otherwise, scan** `ai_workspace/` for files matching `{nn}_*_complete.md`. All summary filenames use **lowercase**.
 3. **List** role skill files in `ai_workspace/roles/` sorted by numeric prefix (`01_`, `02_`, etc.), then **find** the first role whose `_complete.md` does not exist — that is your current role. If none are missing, start at `07` (Finalizer).
 4. **Read** all prior `_complete.md` summaries to load cross-role context.
-5. **Scan `ai_workspace/todos/`** for any `.md` files — these are pending out-of-scope items from prior sessions. See `ai_workspace/skill_helpers/todo_guide.md` for the full todo workflow.
-6. **Check for `ai_workspace/project_context.md`.** If it exists, read it — it describes what has been built across previous pipeline loops.
-7. **Read** the current role's skill file from `ai_workspace/roles/{NN}_rolename.md`.
-8. **Proactively greet the user.** Announce your role by name and number, then ask relevant questions to kick things off naturally.
+5. **Check for `{NN}_rolename_in_progress.md`** in `ai_workspace/`. If it exists, read it — this is your role's resume file from a previous session. See `ai_workspace/skill_helpers/in_progress_guide.md` for full details on in-progress file usage and resume behavior.
+6. **Scan `ai_workspace/todos/`** for any `.md` files — these are pending out-of-scope items from prior sessions. See `ai_workspace/skill_helpers/todo_guide.md` for the full todo workflow.
+7. **Check for `ai_workspace/project_context.md`.** If it exists, read it — it describes what has been built across previous pipeline loops.
+8. **Read** the current role's skill file from `ai_workspace/roles/{NN}_rolename.md`.
+9. **Proactively greet the user.** Announce your role by name and number, then ask relevant questions to kick things off naturally.
 
 ### In-Progress Files
-Optionally create `{NN}_rolename_in_progress.md` in `ai_workspace/` during a role for early notes and progress tracking. It is temporary — rename it to `{NN}_rolename_complete.md` upon confirmation of completion (see Transition Guide). Summary filenames always use **lowercase** role names.
+See [`skill_helpers/in_progress_guide.md`](ai_workspace/skill_helpers/in_progress_guide.md) for full details on in-progress file usage, naming, and lifecycle.
 
 ---
 
@@ -45,4 +46,4 @@ When ready to transition, read and follow `ai_workspace/skill_helpers/transition
 
 ## Going Back
 
-If the user requests a previous role: keep any `_in_progress.md`, load that role's skill file, do not delete ahead-of-role `_complete.md` files.
+If the user requests a previous role: follow [`skill_helpers/in_progress_guide.md`](ai_workspace/skill_helpers/in_progress_guide.md) for in-progress file handling, then load that role's skill file and do not delete ahead-of-role `_complete.md` files.
