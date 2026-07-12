@@ -41,15 +41,17 @@ ai_workspace/
 - Goal summary from Interviewer used as commit subject across all roles
 - Out-of-scope requests are captured as individual files in `ai_workspace/todos/` per `skill_helpers/todo_guide.md`
 - Tool calling is LLM-driven — no hardcoded bash/shell assumptions
+- Only one `[ai-finalizer]` squash commit exists per pipeline loop; intermediate per-role commits are transient and do not persist post-Finalizer
 
 ## Known Issues
 1. `git log --oneline` truncation can break Finalizer's subject-line matching (`todos/fix-git-log-truncation.md`)
-2. Stale references to per-role commit model in docs (`todos/update-project-context-git-model.md`)
-3. `_in_progress.md` instructions not extracted to a skill helper (`todos/extract-in-progress-skill-helper.md`)
+2. `_in_progress.md` instructions not extracted to a skill helper (`todos/extract-in-progress-skill-helper.md`)
 
 ## Current Pipeline State
 - **Loop 1** — Complete. Squashed by Finalizer.
 - Work this loop: Restructured todo system from monolithic `todo.md` to per-file `todos/` folder with skill helper
+- **Loop 2** — Complete. Squashed by Finalizer.
+- Work this loop: Corrected stale git model references in project_context.md to reflect the squashed-commit reality
 
 ## Recent Changes
 - Restructured todo system: replaced monolithic `todo.md` with per-file `todos/` folder + `todo_guide.md` skill helper (2026-07-12)

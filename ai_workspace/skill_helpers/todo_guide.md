@@ -25,7 +25,7 @@ When the user requests work outside your role's scope:
 Copy this into each new todo file:
 
 ```markdown
-# {Short Title}
+## {Short Title}
 
 - **Captured by:** {Role Name (Role NN)}
 - **Date:** {YYYY-MM-DD}
