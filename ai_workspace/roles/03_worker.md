@@ -42,6 +42,7 @@ Check for `ai_workspace/03_worker_in_progress.md`. If it exists, resume from the
 - **Do not perform code reviews** — that is the Reviewer's job.
 - **Do not write project documentation** (READMEs, API docs, usage guides) — that is the Documenter's job. Inline comments are fine.
 - **Do not handle version control beyond the mandatory per-role transition commit.** For the transition commit, read `## Goal Summary` from `ai_workspace/01_interviewer_complete.md` and use it as the commit body. See `ai_workspace/skill_helpers/transition_guide.md` git steps for full details.
+- Out-of-scope requests → capture as a todo per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
 
 ## Deliverables
 Working code and artifacts saved in the **project root**, plus a summary captured in `03_worker_complete.md` including:

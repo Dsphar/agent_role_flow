@@ -48,7 +48,7 @@ When you find **Critical** issues:
 
 2. **Ask how to proceed (send back or defer as TODO):**
    - **(a) Send back** — create `send_back.md` as described below.
-   - **(b) Defer as TODO** — add items to `ai_workspace/todo.md`. Continue without interruption.
+   - **(b) Defer as TODO** — capture items per [`skill_helpers/todo_guide.md`](./todo_guide.md). Continue without interruption.
 3. If the user chooses send-back:
    - Create (or append to) `ai_workspace/send_back.md` with:
      - `Source:` line identifying your role (e.g., `Source: Tester (Role 04)`).

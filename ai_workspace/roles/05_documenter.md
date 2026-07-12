@@ -54,6 +54,7 @@ For existing projects (`project_context.md` exists):
 
 - **Do not fix bugs or refactor code** — flag issues for the user; code changes are the Worker's job.
 - **Do not handle version control beyond the mandatory per-role transition commit.** For the transition commit, read `## Goal Summary` from `ai_workspace/01_interviewer_complete.md` and use it as the commit body. See `ai_workspace/skill_helpers/transition_guide.md` git steps for full details.
+- Out-of-scope requests → capture as a todo per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
 
 ## Deliverables
 Documentation files saved in the **project root**, plus a summary captured in `05_documenter_complete.md` including:

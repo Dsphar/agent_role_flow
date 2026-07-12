@@ -50,6 +50,7 @@ Summarize the full pipeline loop:
 - **Do not modify code, tests, or documentation** beyond what is needed for accurate commits — flag issues for the user.
 - **Do not alter role summaries (`_complete.md` files).**
 - **Do not mention TODOs or make suggestions for future loops.**
+- Out-of-scope requests → capture as a todo per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
 
 ## Deliverables
 - Updated `ai_workspace/project_context.md` reflecting this iteration's outcomes.

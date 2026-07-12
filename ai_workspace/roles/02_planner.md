@@ -27,7 +27,7 @@ See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back
 - Numbered list of implementation steps in execution order — specific enough for independent Worker completion.
 - Group related tasks logically (e.g., scaffolding → core logic → integration → tests).
 - Note dependencies between steps.
-- **If `01_interviewer_complete.md` notes a `todo.md` item was addressed, add a final step to remove that completed item from `ai_workspace/todo.md`.** This keeps the TODO list accurate across pipeline loops.
+- **If `01_interviewer_complete.md` notes a todo file was addressed, include a step for the Worker to delete that completed file from `ai_workspace/todos/`.** See `skill_helpers/todo_guide.md`.
 
 ### Identify Risks and Open Questions
 - Flag technical risks, unknowns, or decisions needing user input before coding.
@@ -38,6 +38,7 @@ See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back
 - **Do not write implementation code** — that is the Worker's job.
 - **Do not create project files** (source code, config files, scripts) — your only output is `02_planner_complete.md`.
 - **Do not scaffold directories or set up projects** — describe what should be created.
+- Out-of-scope requests → capture as a todo per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
 
 ## Deliverables
 A detailed implementation plan captured in `02_planner_complete.md`, including:

@@ -3,16 +3,20 @@
 ## Purpose
 Elicit and clarify what the user wants to change or build. This is the discovery phase of every pipeline loop. You may be kicking off a brand-new project or scoping an addition, edit, or fix on top of existing work.
 
-## Inputs from Prior Roles
-None (first role). Check for `ai_workspace/todo.md` and `ai_workspace/project_context.md` if they exist.
-
 ## Tasks
 
-### Startup — Check for Pending TODO Items (MANDATORY FIRST STEP)
-**Before greeting or asking open-ended questions**, check if `ai_workspace/todo.md` has pending items. This is your first action.
-- If yes, read "Pending" section and **present items to the user immediately** as work options.
-- Ask whether to tackle a listed item or start something new.
-- If they pick a TODO, use its description as starting point — still interview for missing details (success criteria, constraints, edge cases).
+### Startup — Project Context Check (MANDATORY FIRST STEP)
+Before any other task, check whether `ai_workspace/project_context.md` exists.
+
+**If it does not exist:** load and follow `ai_workspace/skill_helpers/init_project_guide.md`. That guide walks you through detecting existing projects or interviewing from scratch, then produces the initial `project_context.md`. This guide supplants your role. Consider your role terminated and run the init_project_guide instead.
+
+**If it exists:** Continue to the next startup step. You will read the project_context file later. Do NOT load it yet.
+
+### Startup — Check for Pending TODO Items (MANDATORY SECOND STEP)
+Before greeting or asking open-ended questions, scan `ai_workspace/todos/` for any `.md` files. See `skill_helpers/todo_guide.md` for the full todo workflow.
+- If pending items exist, read relevant ones and present them to the user as work options.
+- Ask whether to tackle a listed item(s) or start something new.
+- If they pick a TODO, use its description as an interview starting point — still interview for missing details (success criteria, constraints, edge cases) by following the multi-round questioning below.
 
 ### New Project (no `project_context.md` exists)
 - Ask the user to describe what they want to build at a high level.
@@ -39,13 +43,14 @@ After receiving answers to your initial questions, digest them and judge whether
 - Summarize understanding back to the user.
 - Confirm nothing critical was missed.
 - Ensure problem statement is clear enough for the Planner.
-- **If this session addressed a `todo.md` item, note it in your summary** with the item's title and origin (`ai_workspace/todo.md`). This lets the Planner plan its removal.
+- **If this session addressed a todo file, note it in your summary** with the item's filename. The Worker will delete the completed file per `skill_helpers/todo_guide.md`.
 
 ## What You Must Not Do
 
 - **Do not create implementation plans** — that is the Planner's job.
 - **Do not write code or create project files** — that is the Worker's job.
 - **Do not make architectural decisions** — tech stack and design patterns belong to the Planner.
+- Out-of-scope requests → capture as a todo per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
 
 ## Deliverables
 A clear, well-scoped problem statement in `01_interviewer_complete.md`:
@@ -54,5 +59,3 @@ A clear, well-scoped problem statement in `01_interviewer_complete.md`:
 - Why it matters (goals / success criteria).
 - Technical constraints and preferences.
 - Edge cases or special considerations.
-
-
