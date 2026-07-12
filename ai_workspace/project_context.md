@@ -44,7 +44,7 @@ ai_workspace/
 - Only one `[ai-finalizer]` squash commit exists per pipeline loop; intermediate per-role commits are transient and do not persist post-Finalizer
 
 ## Known Issues
-1. `git log --oneline` truncation can break Finalizer's subject-line matching (`todos/fix-git-log-truncation.md`)
+None.
 
 ## Current Pipeline State
 - **Loop 1** — Complete. Squashed by Finalizer.
@@ -53,8 +53,11 @@ ai_workspace/
 - Work this loop: Corrected stale git model references in project_context.md to reflect the squashed-commit reality
 - **Loop 3** — Complete. Squashed by Finalizer.
 - Work this loop: Extracted `_in_progress.md` lifecycle guidance into `skill_helpers/in_progress_guide.md`; added startup check for in-progress files in AGENTS.md Role Detection step 5
+- **Loop 4** — Complete. Squashed by Finalizer.
+- Work this loop: Fixed git log truncation in Finalizer role — replaced `--oneline` with `--format="%H %s"` to preserve full commit hashes and subject lines
 
 ## Recent Changes
+- Fixed git log truncation: replaced `git log --oneline` with `git log --format="%H %s"` in Finalizer role to preserve full hashes and subject lines (2026-07-12)
 - Restructured todo system: replaced monolithic `todo.md` with per-file `todos/` folder + `todo_guide.md` skill helper (2026-07-12)
 - Extracted in-progress file guidance into dedicated skill helper, updated AGENTS.md/Worker/Transition Guide references (2026-07-12)
 - Initial project context created (2026-07-12)

@@ -1,29 +1,25 @@
+# 01 — Interviewer Complete
+
 ## Goal Summary
-Extract in_progress guidance into a dedicated skill helper [ai-interviewer]
+Fix git log truncation in Finalizer role
 
 ---
 
 ## What Is Being Changed
-All `_in_progress.md` instructions scattered across `AGENTS.md`, the Worker role, and the Transition Guide will be consolidated into a single new file: `ai_workspace/skill_helpers/in_progress_guide.md`. After extraction:
-- `AGENTS.md` will have **no** references to in-progress files (the "In-Progress Files" subsection and the mention in "Going Back" are removed)
-- The Worker role (`03_worker.md`) will reference the new helper instead of embedding its own workflow details
-- The Transition Guide (`transition_guide.md`) will reference the new helper for the rename logic
-- The Finalizer (`07_finalizer.md`) keeps its existing deletion step unchanged — no reference to the helper needed
+The `07_finalizer.md` role uses `git log --oneline`, which truncates subject lines to ~52 characters. This breaks prefix matching when goal summaries exceed ~40 characters. The fix is to replace `--oneline` with `--format="%H %s"` so full commit hashes and complete subject lines are displayed.
 
-## Why It Matters (Goals / Success Criteria)
-- Single source of truth for in-progress file behavior across the pipeline
-- Cleaner `AGENTS.md` without embedded role-specific operational details
-- Consistent with the project's pattern of extracting guidance into skill helpers (e.g., `todo_guide.md`, `sendback_guide.md`)
+## Why It Matters
+- Ensures the Finalizer can reliably match commits across all roles, regardless of summary length
+- Prevents silent failures where long summaries cause incorrect or missing commit detection
 
 ## Technical Constraints and Preferences
-- New filename: `in_progress_guide.md` under `ai_workspace/skill_helpers/`
-- Only Worker and Transition Guide should reference the new helper
-- Finalizer does not need a reference — it just deletes `_in_progress.md` files during reset
-- Existing behavior is preserved — content is relocated, not redesigned
+- Scope is limited to `ai_workspace/roles/07_finalizer.md` only
+- Use `git log --format="%H %s"` as the replacement format string
+- No other roles were identified as affected
 
 ## Edge Cases or Special Considerations
-- The "Going Back" section in `AGENTS.md` mentions keeping `_in_progress.md` files — this needs careful removal without breaking the rest of that section's flow
-- The Worker's checklist workflow (create from plan, mark `[x]`, resume on restart) is more detailed than the generic concept in `AGENTS.md` — both should be merged into the helper
+- **Verification required:** This loop's Finalizer must confirm the new git format actually works end-to-end and report back to the user if it does not. Include this verification step in your planning and execution.
+- If any other `--oneline` usages exist elsewhere in the pipeline, they should be noted but are out of scope for this loop unless discovered during implementation.
 
-## Related TODO
-This addresses `todos/extract-in-progress-skill-helper.md`. The Worker should delete that file upon completion.
+## Todo Addressed
+This session addressed `ai_workspace/todos/fix-git-log-truncation.md`. The Worker should delete this file upon completing the fix.

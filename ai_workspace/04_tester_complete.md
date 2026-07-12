@@ -1,20 +1,26 @@
-## Send-Back Summary [ai-tester-sendback]
+# 04 — Tester Complete
 
-### What Was Verified
-Send-back item from Tester: **Missing in-progress file check in AGENTS.md startup sequence**.
+## Goal Summary
+Fix git log truncation in Finalizer role
 
-The fix added step 5 to the Role Detection flow in `AGENTS.md`:
-> Check for `{NN}_rolename_in_progress.md` in `ai_workspace/`. If it exists, read it — this is your role's resume file from a previous session. See `ai_workspace/skill_helpers/in_progress_guide.md` for full details on in-progress file usage and resume behavior.
+## Steps Completed
+- Verified both `--oneline` instances replaced with `--format="%H %s"` in `07_finalizer.md` (2 occurrences confirmed)
+- Scanned all role files for remaining `--oneline` usage — none found across the pipeline
+- Validated git format string `--format="%H %s"` is syntactically correct via live test against repo
+- Confirmed example hash formats in Finalizer step 4 updated to reflect full hashes
+- Verified `ai_workspace/todos/fix-git-log-truncation.md` deleted by Worker
+- Cross-checked changes against Interviewer spec and Planner ordered steps — all aligned, no deviations
 
-### Verification Result
-- **PASS** — Step 5 now instructs all roles to check for their own `_in_progress.md` on startup, matching the "Resume-on-Restart Behavior" defined in `skill_helpers/in_progress_guide.md`.
-- The step is placed after reading prior `_complete.md` summaries (step 4) and before scanning todos (step 6), which is the correct position in the flow.
-- Cross-references `in_progress_guide.md` for full details, consistent with the project's skill helper pattern.
+## Test Results
+- **Passed:** 6 / 6
+- **Failed:** 0
+- **Skipped:** 0
 
-### Test Coverage
-This is a workflow/orchestration fix — no runtime code to test. Verification performed by:
-1. Reading `AGENTS.md` Role Detection steps and confirming step 5 exists with correct content.
-2. Cross-referencing against `skill_helpers/in_progress_guide.md` "Resume-on-Restart Behavior" section for consistency.
+## Bugs Found
+None.
 
-### Recommendation
-Proceed to Documenter (Role 05). Send-back cycle complete — no remaining issues.
+## Coverage Gaps
+This is a markdown-only change to role instructions with no runtime code. Testing consisted of static text verification plus a live `git log` command test — sufficient for this type of change.
+
+## Recommendation
+Proceed to Documenter (Role 05). No send-back needed.
