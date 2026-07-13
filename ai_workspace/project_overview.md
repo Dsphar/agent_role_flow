@@ -8,7 +8,7 @@ An AI agent sequential-pipeline system — 7 roles flowing through a structured 
 AGENTS.md                              ← Master workflow orchestrator
 ai_workspace/
 ├── roles/
-│   ├── 01_Interviewer.md              ← Discovery & scoping
+│   ├── 01_interviewer.md              ← Discovery & scoping
 │   ├── 02_planner.md                  ← Architecture & implementation plan
 │   ├── 03_worker.md                   ← Code execution
 │   ├── 04_tester.md                   ← Testing (unit + e2e)
