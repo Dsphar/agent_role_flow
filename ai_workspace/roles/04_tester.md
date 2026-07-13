@@ -47,7 +47,7 @@ Also ask about test types (unit/integration/e2e), priority areas, and framework/
 See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: when tests reveal bugs, present findings and ask the user to either (1) send back — create `send_back.md` with `Source: Tester (Role 04)` and `Current Role: Planner (Role 02)`, or (2) defer as TODO per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
 
 ### Running Again During Send-Back Mode
-See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: if `send_back.md` points to Tester, run the complete test suite. If all pass, append summary and advance to Documenter (Role 05). If failures remain, update `send_back.md` with remaining bugs and route back to Planner (Role 02).
+See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: if `send_back.md` points to Tester, run the complete test suite. If all pass, offer the skip-docs prompt (same as first-run — see section below). If user skips docs or proceeds normally, append summary and advance to Documenter (Role 05) or Reviewer (Role 06) accordingly. If failures remain, update `send_back.md` with remaining bugs and route back to Planner (Role 02).
 
 ### Run Regression Tests (Existing Projects)
 If `project_overview.md` exists, run existing tests before focusing on new ones:
@@ -58,6 +58,24 @@ If `project_overview.md` exists, run existing tests before focusing on new ones:
 ### Document Coverage Gaps
 - Note areas difficult/impossible to test and why.
 - Flag critical paths lacking adequate coverage.
+
+### Skip-Docs Prompt (Tests Passed Only)
+After all testing is complete **and all tests pass**, ask the user:
+> "Tests passed — should I prepare for documenter handoff, or skip documentation?"
+
+**Guardrails:**
+- Only offer this choice when **all tests pass**. Never offer it on test failures.
+- The decision is made **once at transition time** — no mid-session reconsideration logic needed.
+
+**If the user chooses to skip documentation:**
+1. Create a minimal `05_documenter_complete.md` stub with:
+   - A note that documentation was skipped by user request.
+   - A brief one-line recap of what was built (pulled from prior `_complete.md` summaries).
+2. Proceed to normal transition — the Reviewer will load next since `05_documenter_complete.md` now exists.
+
+**If the user chooses not to skip:** proceed normally to the Documenter (Role 05).
+
+**Undoing a skip-docs decision:** If the user changes their mind after skipping, they can undo it by deleting `05_documenter_complete.md` before starting the next session. On the next session start, the Documenter role will load since its `_complete.md` no longer exists.
 
 ## What You Must Not Do
 

@@ -1,24 +1,41 @@
 # 02 — Planner Complete
 
-## Goal Summary
-Restrict TODO folder scanning to Interviewer-only [ai-planner]
-
 ## Architecture Overview
-Two targeted markdown edits to restrict `ai_workspace/TODO/` scanning behavior from all roles to the Interviewer only. No structural or architectural changes needed — purely orchestration file updates.
+
+This change adds a single decision point at the end of the Tester's session. When all tests pass, the Tester prompts the user with: *"Tests passed, should I prepare for documenter handoff, or skip documentation?"* If the user chooses to skip, the Tester creates a minimal `05_documenter_complete.md` stub before transitioning normally.
+
+No new files are created — only existing role skill file content is modified. The transition guide may need a minor clarification note.
 
 ## File/Module Map
-- **Modify:** `AGENTS.md` — remove Role Detection step 6 (unconditional TODO scan) and renumber remaining steps
-- **Modify:** `ai_workspace/skill_helpers/todo_guide.md` — rewrite "Presenting Pending Items" section to specify Interviewer-only scanning
-- **Delete (Worker):** `ai_workspace/TODO/P2_analyze_todo_folder_access_by_non_interviewer_roles.md` — addressed by this loop
+
+| File | Action |
+|---|---|
+| `ai_workspace/roles/04_tester.md` | Modify — add skip-docs prompt and stub creation logic |
+| `ai_workspace/skill_helpers/transition_guide.md` | Possibly modify — clarify that Tester may pre-create the next `_complete.md` stub |
+| `ai_workspace/TODO/P2_tester_skip_documentation_handoff.md` | Delete (completed TODO) |
 
 ## Ordered Implementation Steps
 
-1. **Edit `AGENTS.md` — Remove step 6 and renumber.** Delete the line: "Scan `ai_workspace/TODO/` for any `.md` files — these are pending out-of-scope items from prior sessions. See `ai_workspace/skill_helpers/todo_guide.md` for the full todo workflow." Renumber steps 7–9 to become steps 6–8.
-
-2. **Edit `todo_guide.md` — Rewrite "Presenting Pending Items" section.** Replace the current section text so it specifies that only the Interviewer scans and presents pending TODOs at session start (per its own skill file instructions). Clarify that other roles retain the ability to capture new TODOs and delete completed ones, but do not proactively scan or present existing items.
-
-3. **Delete addressed TODO file.** Remove `ai_workspace/TODO/P2_analyze_todo_folder_access_by_non_interviewer_roles.md` since this loop addresses it (per `01_interviewer_complete.md`).
+1. **Read `04_tester.md`** in full to understand current session flow and transition behavior.
+2. **Add the skip-docs prompt** near the end of the Tester's tasks section — after all testing is complete and results are confirmed passing, instruct the Tester to ask: *"Tests passed, should I prepare for documenter handoff, or skip documentation?"*
+3. **Define the skip behavior:** If user says yes/skip, create a minimal `05_documenter_complete.md` stub containing only that docs were skipped by user request and a one-line recap of what was built (pulled from prior `_complete.md` summaries). Then proceed to normal transition.
+4. **Clarify guardrails in the prompt section:** Only offer this choice when tests pass — never on test failures. The decision is made once at transition time.
+5. **Update `transition_guide.md`** if needed to note that a role may pre-create the next `_complete.md` stub as part of its own completion (Tester-specific behavior).
+6. **Delete `ai_workspace/TODO/P2_tester_skip_documentation_handoff.md`** — this TODO was addressed by the Interviewer and is now being implemented.
 
 ## Risks and Open Questions
-- **Minimal risk** — both edits are targeted text replacements in markdown files with clear before/after states.
-- The Interviewer's skill file (`01_Interviewer.md`) already contains explicit TODO scanning instructions ("Startup — Check for Pending TODO Items"), so no changes to that file are needed.
+
+- None identified. This is a small, well-scoped change to a single role file with clear user interaction semantics.
+
+---
+
+## Send-Back Summary
+
+Addressed two specification clarifications sent back from the Tester:
+
+1. **EC-04** — Updated "Running Again During Send-Back Mode" in `04_tester.md` to explicitly state the skip-docs prompt is offered during send-back re-runs when tests pass (same as first-run).
+2. **EC-08** — Added undo mechanism notes to both `04_tester.md` and `transition_guide.md`: user can delete the pre-created stub before next session to restore normal pipeline flow.
+
+### Files Modified
+- `ai_workspace/roles/04_tester.md` — Two clarifications added
+- `ai_workspace/skill_helpers/transition_guide.md` — Undo mechanism note added [ai-planner-sendback]

@@ -1,49 +1,44 @@
 # 04 — Tester Complete
 
-## Goal Summary
-Restrict TODO folder scanning to Interviewer-only [ai-tester]
+## Summary of Work Done
 
-## What Was Tested (Deep Validation)
+Ran a deep test suite (29 tests) across the skip-docs feature implementation. All tests passed with zero failures; 2 minor warnings identified and sent back to Planner for specification clarifications.
 
-### Core Change Verification
-- AGENTS.md old step 6 (TODO scan) removed and steps renumbered 1–8 with no gaps.
-- `todo_guide.md` "Presenting Pending Items" section correctly specifies Interviewer-only scanning.
-- Other roles retain ability to capture/delete TODOs but do not proactively scan or present.
+### Test Results
+| Category | Passed | Failed | Warnings |
+|---|---|---|---|
+| Unit — File Integrity (8 tests) | 8/8 | 0 | 0 |
+| Integration — Cross-Reference Consistency (7 tests) | 7/7 | 0 | 0 |
+| Edge Cases — Workflow Logic (10 tests) | 8/10 | 0 | 2 |
+| Regression — Unchanged Roles (4 tests) | 4/4 | 0 | 0 |
 
-### Interviewer Integrity
-- Interviewer's "Startup — Check for Pending TODO Items" section untouched and intact.
-- Interviewer still scans `ai_workspace/TODO/` and presents items at session start.
+### Warnings Sent Back to Planner
+1. **EC-04** — Skip-docs prompt doesn't specify whether it applies during send-back re-runs when tests pass.
+2. **EC-08** — No documented undo mechanism if user changes mind after skipping docs.
 
-### No Lingering TODO-Scan in Non-Interviewer Roles
-- Grep across all 7 role files confirms only the Interviewer references scanning/presenting TODOs.
-- Planner's TODO deletion handoff reference preserved (step to delete completed files).
-- Finalizer's "Do not mention TODOs" rule intact.
+### Files Modified
+None (testing only — no implementation changes).
 
-### Cross-Reference Consistency
-- All 7 roles still reference `todo_guide.md` for out-of-scope capture.
-- AGENTS.md references `todo_guide.md` in "During a Role Session".
-- No broken internal links in modified files.
+### Recommendation
+Send back to Planner for spec clarifications on the two warnings above.
 
-### Regression — Pipeline Flow Unchanged
-- Send-back detection logic (AGENTS.md) untouched.
-- In-progress file handling reference intact.
-- Transition guide and send-back guide unchanged.
+---
 
-### Artifact Verification
-- `P2_analyze_todo_folder_access_by_non_interviewer_roles.md` confirmed deleted by Worker.
-- Remaining TODO files are unrelated to this change (3 items).
+## Send-Back Summary
 
-## Test Results
-- **Tests run:** 18
-- **Passed:** 18
-- **Failed:** 0
-- **Bugs found:** None
+Re-ran full test suite (31 tests) after Planner addressed EC-04 and EC-08. All tests pass with zero failures and zero warnings.
 
-## Coverage Gaps
-N/A — these are markdown orchestration files, not runtime code. Behavioral correctness validated through text inspection and cross-reference checks rather than executable tests.
+### Test Results
+| Category | Passed | Failed | Warnings |
+|---|---|---|
+| Unit — File Integrity (8 tests) | 8/8 | 0 | 0 |
+| Integration — Cross-Reference Consistency (7 tests) | 7/7 | 0 | 0 |
+| Edge Cases — Workflow Logic (12 tests) | 12/12 | 0 | 0 |
+| Regression — Unchanged Roles (4 tests) | 4/4 | 0 | 0 |
 
-## Pre-existing Issue (Not from this change)
-The `sendback_guide.md` "Common Steps" section has a numbering gap (jumps from step 2 to step 3). This is tracked as existing TODO `P2_fix_sendback_guide_common_steps_numbering.md`.
+### Send-Back Items Resolved
+- **EC-04** ✅ — `04_tester.md` now explicitly states skip-docs prompt is offered during send-back re-runs.
+- **EC-08** ✅ — Undo mechanism documented in both `04_tester.md` and `transition_guide.md`.
 
-## Recommendation
-Proceed to Documenter (Role 05). Implementation is correct, consistent across all role files, and introduces no regressions.
+### Recommendation
+Proceed to Documenter (Role 05) for normal handoff. [ai-tester-sendback]

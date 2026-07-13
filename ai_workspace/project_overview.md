@@ -42,6 +42,7 @@ ai_workspace/
 - Out-of-scope requests are captured as individual files in `ai_workspace/TODO/` per `skill_helpers/todo_guide.md`. Only the Interviewer scans and presents pending TODOs at startup; all roles retain the ability to capture new ones.
 - Tool calling is LLM-driven — no hardcoded bash/shell assumptions
 - Only one `[ai-pipeline]` squash commit exists per pipeline loop; intermediate per-role commits are transient and do not persist post-Finalizer
+- Skip-docs feature: when all tests pass, the Tester prompts the user to skip documentation. If skipped, a minimal `05_documenter_complete.md` stub is pre-created so the pipeline flows naturally to Reviewer. An undo path (delete the stub) restores normal flow.
 
 ## User-Preferred Patterns
 _(No user-preferred patterns recorded yet. Add here when identified.)_

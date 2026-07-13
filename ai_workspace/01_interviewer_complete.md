@@ -1,25 +1,28 @@
-# 01 — Interviewer Complete
-
 ## Goal Summary
-Restrict TODO folder scanning to Interviewer-only [ai-interviewer]
+Add skip-docs prompt to Tester at transition [ai-interviewer]
 
-## What Is Being Changed
-Two files that currently instruct **all roles** to scan and present `ai_workspace/TODO/` items at startup need to be narrowed so only the Interviewer does this:
+---
 
-1. **`AGENTS.md` — Role Detection step 6:** Remove or restrict the TODO scanning instruction so it applies only to the Interviewer role.
-2. **`ai_workspace/skill_helpers/todo_guide.md` — "Presenting Pending Items" section:** Narrow the startup scan instruction to specify that only the Interviewer presents pending TODOs at session start.
+## What Is Being Built or Changed
+A new capability for the **Tester (Role 04)** that lets users opt out of the documentation step when all tests pass. This adds a user choice point at the Tester → Documenter handoff.
 
-## Why It Matters (Goals / Success Criteria)
-- Non-Interviewer roles currently present TODO items to users at every role transition, which is noisy and violates the design intent that TODO awareness belongs to the Interviewer.
-- **Done when:** Only the Interviewer scans and presents `ai_workspace/TODO/` contents on startup. All other roles retain their ability to *capture* new out-of-scope items as TODOs but no longer proactively scan or present existing ones.
+## Why It Matters / Success Criteria
+- Saves a session turn when documentation isn't needed for a given pipeline loop.
+- The pipeline still functions correctly — Reviewer loads next since `05_documenter_complete.md` exists as a stub.
+- **Success criteria:** After tests pass, the Tester asks whether to skip docs; if yes, it creates a minimal `05_documenter_complete.md` stub alongside its own summary and transitions normally.
 
 ## Technical Constraints and Preferences
-- This is a meta-fix to the pipeline orchestration files (markdown only, no code).
-- Do not remove any role's ability to *create* TODO files for out-of-scope requests — that behavior is correct and universal.
-- The Planner's reference to checking if a TODO was addressed (for Worker deletion handoff) should remain untouched.
+- Only trigger after **tests pass** — no skip option on test failures.
+- The preemptive `05_documenter_complete.md` should be a **minimal stub**: note that docs were skipped by the user, include a brief recap of what was built (pulled from prior `_complete.md` files).
+- Decision is made at **transition time only** — no mid-session reconsideration logic needed.
+- No extra logging required; Finalizer handles pipeline-level logging naturally.
+- Scoped to **Tester → Documenter skip only** for now (not generalized to other role skips yet).
+
+## Files Expected to Change
+- `ai_workspace/roles/04_tester.md` — primary changes (add skip-docs prompt and stub creation logic)
+- Possibly `ai_workspace/skill_helpers/transition_guide.md` — if transition rules need clarification for this flow
 
 ## Edge Cases or Special Considerations
-- The `todo_guide.md` "Presenting Pending Items" section is referenced by all roles indirectly via AGENTS.md step 6. Even after removing AGENTS.md step 6, the guide itself should be clarified so a future agent reading it doesn't assume universal scanning behavior.
-
-## TODO Addressed
-This session addressed `P2_analyze_todo_folder_access_by_non_interviewer_roles.md`. The Worker should delete this file upon completion.
+- The minimal stub should still follow the `_complete.md` naming convention (lowercase).
+- If this pattern proves useful, it could be generalized to other role skips in future loops — but that is explicitly out of scope for this iteration.
+- Completed TODO: `ai_workspace/TODO/P2_tester_skip_documentation_handoff.md`

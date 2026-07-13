@@ -26,6 +26,11 @@ When you believe the current role's work is complete:
      6. **If the commit fails** (identity not configured, merge conflict, etc.), **block transition** — present the error to the user and ask how to proceed. Do not mark the role complete until the commit succeeds or the user explicitly says to skip it.
    - Inform user: "[clear/new]" handoff ready. Start a new session and the next role will load.
 
+### Pre-Creating the Next `_complete.md` Stub
+A role may pre-create the next role's `_complete.md` as part of its own completion. This is **Tester-specific behavior**: when tests pass and the user chooses to skip documentation, the Tester creates a minimal `05_documenter_complete.md` stub so the pipeline advances directly to the Reviewer.
+
+**Undoing a pre-created stub:** If the user changes their mind after a role has pre-created the next `_complete.md` (e.g., skipped docs but now wants them), they can delete that stub file before starting the next session. On the next session start, the pipeline will load the correct role since its `_complete.md` no longer exists.
+
 ### Pipeline and Send-Back Routes
 
 ```
