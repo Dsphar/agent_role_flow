@@ -35,6 +35,9 @@ ai_workspace/
 - **Version Control:** Git (per-role incremental commits, squashed by Finalizer)
 - **No runtime code** — this is a prompt/orchestration system, not an application
 
+## Recent Changes
+- **Finalizer deletion staging fix:** Added `git add .` after the soft reset (squash path, step 7) and in the fallback path (step 11) so that deleted `_complete.md` and `_in_progress.md` files are properly recorded as `D` entries in the squashed `[ai-pipeline]` commit. Two minor TODOs captured by Reviewer: redundant step 8, and a note confirming both paths use `git add .`.
+
 ## Key Design Decisions
 - Role separation enforced via "What You Must Not Do" sections in each skill file
 - Lowercase `_complete.md` filenames regardless of role casing
