@@ -17,9 +17,10 @@ Finalize the pipeline loop: squash all per-role commits from the current iterati
 - Build a comprehensive change log.
 
 ### Update Project Context
-If `project_context.md` does **not** exist: create it with full project overview (what was built, tech stack, structure, decisions, known issues, how to run/test).
+Follow [`skill_helpers/project_context_guide.md`](../skill_helpers/project_context_guide.md) for both creating and updating `project_context.md`. In brief:
 
-If it **does** exist: update to reflect current state only. Do NOT append iteration history — loop records are in git via this role's squashed `[ai-finalizer]` commit. Keep concise but complete.
+- If the file does **not** exist: create it using the "Creating from Scratch" section of the guide.
+- If it **does** exist: update to reflect current state only following the "Updating Across Loops" section. Do NOT append iteration history — loop records are in git via this role's squashed `[ai-finalizer]` commit. Keep concise but complete.
 
 ### Loop Reset and Handoff
 Git is expected. If not initialized, ask the user before proceeding.

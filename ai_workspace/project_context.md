@@ -57,10 +57,12 @@ None.
 - Work this loop: Fixed git log truncation in Finalizer role — replaced `--oneline` with `--format="%H %s"` to preserve full commit hashes and subject lines
 - **Loop 5** — Complete. Squashed by Finalizer.
 - Work this loop: Renamed `todos/` folder to `TODO/` and updated all references across the project
+- **Loop 6** — Complete. Squashed by Finalizer.
+- Work this loop: Added TODO proposal step (Step 6) to init guide; created canonical `project_context_guide.md` skill helper as single source of truth for `project_context.md` structure
 
 ## Recent Changes
+- Created `project_context_guide.md` as canonical spec for `project_context.md`; updated init guide Step 5 and Finalizer role to reference it (2026-07-12)
+- Added TODO proposal step (Step 6) to `init_project_guide.md` — guides AI to analyze project and propose improvement items during onboarding (2026-07-12)
 - Renamed workspace folder: `todos/` → `TODO/` with all references updated across AGENTS.md, role files, skill helpers, and project context (2026-07-12)
 - Fixed git log truncation: replaced `git log --oneline` with `git log --format="%H %s"` in Finalizer role to preserve full hashes and subject lines (2026-07-12)
 - Restructured todo system: replaced monolithic `todo.md` with per-file `TODO/` folder + `todo_guide.md` skill helper (2026-07-12)
-- Extracted in-progress file guidance into dedicated skill helper, updated AGENTS.md/Worker/Transition Guide references (2026-07-12)
-- Initial project context created (2026-07-12)

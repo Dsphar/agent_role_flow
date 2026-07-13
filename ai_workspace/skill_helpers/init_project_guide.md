@@ -78,35 +78,46 @@ Iterate with follow-up questions until the full picture is clear. Present a comp
 
 ## Step 5 — Write `project_context.md`
 
-Create `ai_workspace/project_context.md` with:
+Create `ai_workspace/project_context.md` following [`skill_helpers/project_context_guide.md`](project_context_guide.md). Use the "Creating from Scratch" section of that guide for the template and field definitions.
 
-```markdown
-# Project Context
+## Step 6 — Propose Optional TODO Items
 
-## What This Is
-<Concise description of the project(s) and their purpose>
+After confirming `project_context.md` is accurate, analyze the project and propose a list of **optional** improvement items to the user. These are suggestions — the user picks what they want (if anything). Categories to consider:
 
-## File Structure
-<Tree or structured overview of key directories and files>
+### Stale or Dead Code
+- Unused files, modules, or imports detected during source mapping
+- Deprecated dependencies in manifests that no longer appear in code
+- Old build artifacts, backup files (`*.bak`, `*~`), or legacy config variants
+- References to removed features (dead routes, orphaned API endpoints)
 
-## Architecture Overview
-<How components interact, data flow, deployment model>
+### Anti-Patterns and Code Quality Issues
+- Repetitive copy-paste logic that should be extracted into shared utilities
+- Hardcoded values (API keys, URLs, paths) that belong in environment config
+- Missing error handling or overly broad `try/catch` blocks
+- Deeply nested conditionals or functions exceeding reasonable length
+- Inconsistent naming conventions across modules
+- Missing type annotations or unchecked dynamic behavior in typed languages
 
-## Tech Stack
-- **Language(s):** ...
-- **Framework(s):** ...
-- **Database(s):** ...
-- **Infrastructure:** ...
-- **Key Dependencies:** ...
+### Incomplete Functionality
+- TODO/FIXME/HACK comments left in source code
+- Stubbed-out functions, placeholder routes, or `notImplemented` handlers
+- Partially implemented features (e.g., a UI component wired to no backend)
+- Tests marked as skipped (`xit`, `test.skip`, `@pytest.mark.skip`) with no tracking issue
+- Incomplete documentation for public APIs or modules
 
-## Key Design Decisions
-<List any architectural or technical decisions made and why>
+### Suggested Enhancements
+- Missing tests for critical paths identified during source mapping
+- Logging, metrics, or observability gaps in production-facing code
+- Security improvements (input validation, auth checks, rate limiting)
+- Performance optimizations (N+1 queries, missing indexes, unbatched calls)
+- Developer experience improvements (pre-commit hooks, linting config, CI checks)
+- Accessibility or internationalization gaps if the project is user-facing
 
-## Known Issues
-<Anything the user flagged as problematic or needing attention>
+Present these as a numbered list grouped by category. For each item, provide:
+- **What:** Brief description of the issue or opportunity.
+- **Where:** File(s) or area affected (if specific).
+- **Why it matters:** Impact on quality, maintainability, security, or user experience.
 
-## Recent Changes
-<Initially empty — populated by pipeline loops over time>
-```
+Ask the user which items they want to pursue. For each item they accept, create a corresponding `.md` file in `ai_workspace/TODO/` following [`skill_helpers/todo_guide.md`](todo_guide.md). Items they decline are simply dropped — no record needed.
 
-Confirm with the user that `project_context.md` is accurate. Once confirmed, delete this guide's temporary notes (if any) and return control to the Interviewer for normal problem-scoping work.
+Once TODO items are captured (or the user declines all), delete this guide's temporary notes (if any) and return control to the Interviewer for normal problem-scoping work.
