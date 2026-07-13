@@ -31,22 +31,6 @@ A role may pre-create the next role's `_complete.md` as part of its own completi
 
 **Undoing a pre-created stub:** If the user changes their mind after a role has pre-created the next `_complete.md` (e.g., skipped docs but now wants them), they can delete that stub file before starting the next session. On the next session start, the pipeline will load the correct role since its `_complete.md` no longer exists.
 
-### Pipeline and Send-Back Routes
+### Pipeline Routing Reference
 
-```
-  ┌──────────┐     ┌──────────┐     ┌─────────┐     ┌────────┐     ┌────────────┐     ┌──────────┐     ┌───────────┐
-  │ 01 Inter-│────▶│ 02 Plan-│────▶│ 03 Work-│────▶│ 04 Test-│────▶│ 05 Docu-   │────▶│ 06 Review-│────▶│ 07 Final-  │
-  │  viewer  │     │   ner   │     │   er    │     │   er   │     │  menter    │     │   er     │     │   izer     │
-  └──────────┘     └────┬─────┘     └────────┘     └────┬───┘     └────────────┘     └────┬─────┘     └───────────┘
-                        │                                │                                   │
-                  ┌─────┴──────┐                         │                          ┌────────┴──────┐
-                  │Send-back to│                         │                          │Send-back to   │
-                  │- Planner   │◀────────────────────────┤                          │- Planner      │◀──────┐
-                  │  (02)      │                         │                          │  (02)         │       │
-                  └────────────┘                         │                          └───────────────┘       │
-                        └───────────────────────────────────────────────────────────────────────────────────┘
-```
-
-**Send-back routing summary:**
-- **Tester → Planner:** Test failures route back to the Planner for re-planning.
-- **Reviewer → Planner:** Critical review findings route back to the Planner for re-planning.
+For pipeline flow and send-back routing details, see [`sendback_guide.md`](./sendback_guide.md#pipeline-and-send-back-routes).
