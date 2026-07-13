@@ -46,17 +46,17 @@ When you find **Critical** issues:
 
 ### Common Steps (All Sending Roles)
 
-2. **Ask how to proceed (send back or defer as TODO):**
+1. **Ask how to proceed (send back or defer as TODO):**
    - **(a) Send back** — create `send_back.md` as described below.
    - **(b) Defer as TODO** — capture items per [`skill_helpers/todo_guide.md`](./todo_guide.md). Continue without interruption.
-3. If the user chooses send-back:
+2. If the user chooses send-back:
    - Create (or append to) `ai_workspace/send_back.md` with:
      - `Source:` line identifying your role (e.g., `Source: Tester (Role 04)`).
      - `Current Role:` line pointing to **Planner (Role 02)**.
      - The list of items to fix.
    - If `send_back.md` already exists, **append** new entries — do NOT overwrite or delete existing content.
    - Do NOT overwrite or delete any `_complete.md` files.
-4. **Commit:** Read `## Goal Summary` from `ai_workspace/01_interviewer_complete.md` and use it as the commit body, with `[ai-{role-name}-sendback]` appended at end.
+3. **Commit:** Read `## Goal Summary` from `ai_workspace/01_interviewer_complete.md` and use it as the commit body, with `[ai-{role-name}-sendback]` appended at end.
 
 ---
 
