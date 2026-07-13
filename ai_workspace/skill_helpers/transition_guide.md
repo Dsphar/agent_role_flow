@@ -7,9 +7,9 @@ Read this file when completing a role's work and transitioning to the next.
 When you believe the current role's work is complete:
 
 1. **Summarize** what was accomplished — clear recap of outcomes and deliverables.
-2. **Ask** the user if they are satisfied or want adjustments before moving on.
-3. Address any requested changes, then re-prompt when ready.
-4. Once confirmed:
+2. **Declare handoff ready.** Inform the user that your work is complete and the next role will load on the next session start. No confirmation prompt needed — transition automatically to step 4.
+3. **Mid-transition feedback (optional).** If the user responds with adjustments or corrections before starting a new session, stay in-session and address them. After making changes, return to step 2 and re-declare handoff ready. Do not create an in-progress file for mid-transition tweaks.
+4. Write summary and commit:
    - **Normal mode:** Follow [`skill_helpers/in_progress_guide.md`](in_progress_guide.md) for the rename-from-in-progress logic. In brief: if `{NN}_rolename_in_progress.md` exists, **rename** it to `{NN}_rolename_complete.md`; otherwise create `{NN}_rolename_complete.md` with the full summary. Summary filenames always use **lowercase** role names.
    - **Send-back mode (you are NOT the original sending role):**
      1. **Append your send-back summary** to the existing `{NN}_rolename_complete.md` — add a `---` divider followed by `## Send-Back Summary`, then your work recap. Do not overwrite the file.

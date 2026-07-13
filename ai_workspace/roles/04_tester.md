@@ -12,7 +12,7 @@ Create and execute tests to validate the implementation produced by the Worker. 
 ## Tasks
 
 ### Clarify Testing Expectations with the User
-Check `project_overview.md` or the Planner's summary for testing preferences. If none defined, **ask the user** which testing depth they prefer:
+Check `project_overview.md` or the Planner's summary for testing preferences. If none defined, **ask the user** which testing depth they prefer using a numbered list:
 
 1. Quick — verify only what was changed in this iteration (change-only testing).
 2. Deep — full suite covering unit + integration + edge cases.
