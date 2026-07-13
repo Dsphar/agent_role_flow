@@ -1,15 +1,27 @@
+# 01 — Interviewer Complete
+
 ## Goal Summary
+Add priority prefixes and switch to underscores in TODO filenames, update all refs
 
-Audit init guide and add TODO proposal step + new todos for context guide and filename convention [ai-interviewer]
+## What Is Being Changed
+- Add a capital-P priority prefix (`P0`–`P3`) to all TODO filenames in `ai_workspace/TODO/`.
+- Switch the descriptive portion of TODO filenames from kebab-case (dashes) to underscore-separated names.
+- Final filename format: `P{N}_{descriptive_name}.md` (e.g., `P0_add_priority_indicator_to_todo_filenames.md`).
 
-## What Was Done
+## Why It Matters / Success Criteria
+- Priority levels at a glance from directory listings improve workflow triage.
+- Consistent underscore naming across the project eliminates casing/style inconsistencies.
+- All references to TODO filenames updated everywhere — no stale dash-based or unprefixed refs remain.
 
-- **Added Step 6 to `init_project_guide.md`** — After creating `project_context.md`, the init guide now analyzes the project and proposes optional improvement items across four categories: stale/dead code, anti-patterns, incomplete functionality, and suggested enhancements. Accepted items become `TODO/` files; declined ones are dropped.
-- **Created TODO item:** `create-project-context-guide.md` — Extract a canonical `project_context_guide.md` skill helper for the init guide and finalizer role to use when creating/updating `project_context.md`.
-- **Created TODO item:** `change-todo-filename-dashes-to-underscores.md` — Rename existing TODO files from kebab-case to underscore-separated naming and update all references.
+## Technical Constraints and Preferences
+- **Priority levels:** `P0-critical`, `P1-high`, `P2-medium`, `P3-low`.
+- **Filename format:** Capital P, underscore between priority and name, underscores throughout descriptive part.
+- **Scope of updates:** Rename existing files, update `skill_helpers/todo_guide.md`, update Interviewer role for priority assignment during init_project_guide Step 6, and update all other references across role files, guides, project_context.md, etc.
 
-## Deliverables
+## Edge Cases or Special Considerations
+- Two TODO items (#1 and #2) are being addressed together — they overlap in scope (both change filename conventions). The Planner should consolidate them into a single coherent plan rather than treating as separate changes.
+- Existing TODO files need reasonable priority assignments where not obvious from context.
 
-- Modified: `ai_workspace/skill_helpers/init_project_guide.md` (new Step 6)
-- Created: `ai_workspace/TODO/create-project-context-guide.md`
-- Created: `ai_workspace/TODO/change-todo-filename-dashes-to-underscores.md`
+## TODO Items Addressed This Loop
+- `add-priority-indicator-to-todo-filenames.md`
+- `change-todo-filename-dashes-to-underscores.md`

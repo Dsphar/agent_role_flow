@@ -1,57 +1,95 @@
-## Goal Summary
+# 02 — Planner Complete
 
-Audit init guide, add TODO proposal step, create project context skill helper [ai-planner]
+## Goal Summary
+Add priority prefixes and switch to underscores in TODO filenames, update all refs
 
 ---
 
 ## Architecture Overview
 
-This loop has two tracks:
+This is a naming-convention change across the `ai_workspace/TODO/` directory and its supporting documentation. No new files or directories are created. The change has three layers:
 
-**Track A — Validate Interviewer deliverables.** The Interviewer already completed the work of adding Step 6 (TODO proposal) to `init_project_guide.md` and creating two TODO files. No code changes needed here — just confirm the artifacts are correct and move on.
+1. **File renames** — existing TODO files get `P2_` prefix and underscores replacing dashes
+2. **Documentation updates** — `todo_guide.md` and Interviewer role reflect the new convention going forward
+3. **Cleanup** — delete the two TODO files whose work is being performed this loop
 
-**Track B — Create `project_context_guide.md`.** Extract a canonical skill helper that defines the structure, creation rules, and update rules for `project_context.md`. Both `init_project_guide.md` (Step 5) and `07_finalizer.md` (Update Project Context task) write this file. Currently each has its own inline understanding of the format — consolidating into one source of truth prevents drift.
-
-### Key Design Decisions
-- **Single source of truth:** `project_context_guide.md` becomes the authoritative spec for `project_context.md`. Both consumers reference it instead of carrying their own templates.
-- **Two modes in the guide:** "Create from scratch" (init flow) and "Update existing" (finalizer loop flow). This matches how the file is actually used across the pipeline lifecycle.
-- **Minimal cross-reference changes:** `init_project_guide.md` Step 5 delegates to the new guide; `07_finalizer.md` Update Project Context task references it. No structural changes to either consumer beyond adding a pointer.
+### Key Decisions
+- All 4 existing TODOs assigned `P2` (medium) per user direction
+- The two items being addressed (`add-priority-indicator...`, `change-todo-filename-dashes...`) are consolidated into a single change — they overlap in scope since both modify filename conventions
+- New convention: `P{N}_{underscore_separated_name}.md` where N is 0–3
 
 ---
 
 ## File/Module Map
 
-| Action | File | Purpose |
-|--------|------|---------|
-| **Create** | `ai_workspace/skill_helpers/project_context_guide.md` | New canonical skill helper defining format, creation, and update rules for `project_context.md` |
-| **Modify** | `ai_workspace/skill_helpers/init_project_guide.md` | Step 5: replace inline template with reference to the new guide |
-| **Modify** | `ai_workspace/roles/07_finalizer.md` | Update Project Context task: add reference to the new guide |
-| **Delete** | `ai_workspace/TODO/create-project-context-guide.md` | Completed TODO — remove after Worker finishes |
+### Files to Rename (in `ai_workspace/TODO/`)
+| Old Name | New Name |
+|---|---|
+| `add-priority-indicator-to-todo-filenames.md` | `P2_add_priority_indicator_to_todo_filenames.md` |
+| `change-todo-filename-dashes-to-underscores.md` | `P2_change_todo_filename_dashes_to_underscores.md` |
+| `fix-role-file-casing-inconsistency.md` | `P2_fix_role_file_casing_inconsistency.md` |
+| `fix-sendback-guide-common-steps-numbering.md` | `P2_fix_sendback_guide_common_steps_numbering.md` |
+
+### Files to Modify
+| File | Changes |
+|---|---|
+| `ai_workspace/skill_helpers/todo_guide.md` | Update filename format from kebab-case to `P{N}_{underscore_name}.md`; update examples; add priority level definitions and assignment guidance in capture step 3 |
+| `ai_workspace/roles/01_Interviewer.md` | Add priority assignment instruction during init_project_guide Step 6 (when creating TODO items from proposals) — instruct Interviewer to assign a P-level when capturing accepted items |
+
+### Files to Delete (after rename, these two are addressed this loop)
+| File | Reason |
+|---|---|
+| `P2_add_priority_indicator_to_todo_filenames.md` | Addressed by this plan |
+| `P2_change_todo_filename_dashes_to_underscores.md` | Addressed by this plan (consolidated with above) |
+
+### Files Referenced but Not Modified
+- `ai_workspace/01_interviewer_complete.md` — contains old filenames as historical record; no update needed since it documents what was planned, not current state
+- `ai_workspace/project_context.md` — no direct TODO filename references that need updating
 
 ---
 
 ## Ordered Implementation Steps
 
-### Step 1 — Create `project_context_guide.md`
-Create `ai_workspace/skill_helpers/project_context_guide.md` with:
-- **Section: Purpose** — What this guide is for and which roles use it.
-- **Section: Canonical Structure** — The full set of sections/fields for `project_context.md`, marking each as mandatory or optional. Base this on the template currently in Step 5 of `init_project_guide.md` (What This Is, File Structure, Architecture Overview, Tech Stack, Key Design Decisions, Known Issues, Recent Changes), plus any fields the Finalizer implicitly uses (e.g., Current Pipeline State, Loop history).
-- **Section: Creating from Scratch** — Instructions for first-time creation (used by init_project_guide during greenfield or existing-project onboarding). Include the full template.
-- **Section: Updating Across Loops** — Instructions for incremental updates after each pipeline loop (used by finalizer). Cover: updating Recent Changes, appending to Current Pipeline State if that section exists, updating Known Issues, refreshing File Structure/Architecture/Tech Stack when they change. Emphasize "reflect current state only" per the Finalizer's existing guidance.
-- **Section: Rules** — Concise but complete; do not append iteration history (that lives in git); keep it accurate to current project state.
+### Step 1 — Rename all four TODO files
+Rename each file in `ai_workspace/TODO/`, replacing dashes with underscores and prepending `P2_`:
+- `add-priority-indicator-to-todo-filenames.md` → `P2_add_priority_indicator_to_todo_filenames.md`
+- `change-todo-filename-dashes-to-underscores.md` → `P2_change_todo_filename_dashes_to_underscores.md`
+- `fix-role-file-casing-inconsistency.md` → `P2_fix_role_file_casing_inconsistency.md`
+- `fix-sendback-guide-common-steps-numbering.md` → `P2_fix_sendback_guide_common_steps_numbering.md`
 
-### Step 2 — Update `init_project_guide.md` Step 5
-Replace the inline template block in Step 5 with a reference to the new guide. The step should say something like: "Create `ai_workspace/project_context.md` following [`skill_helpers/project_context_guide.md`](project_context_guide.md)." Remove the now-redundant inline markdown template.
+### Step 2 — Update `todo_guide.md` with new filename convention
+In the "Capturing an Out-of-Scope Item" section, update step 3:
+- Replace "short, kebab-case" with the new format: `P{N}_{underscore_separated_name}.md`
+- Add priority level definitions inline: `P0-critical`, `P1-high`, `P2-medium`, `P3-low`
+- Instruct the capturing role to assign an appropriate P-level based on urgency/impact
+- Update the example filenames from kebab-case (`fix-git-log-truncation.md`) to the new format (e.g., `P2_fix_git_log_truncation.md`)
 
-### Step 3 — Update `07_finalizer.md`
-In the "Update Project Context" task, add a reference to `project_context_guide.md`. The Finalizer should follow that guide for both creating and updating `project_context.md`, rather than carrying its own implicit understanding.
+### Step 3 — Update Interviewer role for priority assignment during init
+In `ai_workspace/roles/01_Interviewer.md`, update the section referencing init_project_guide Step 6 (the TODO proposal step). Add instruction that when creating TODO files from accepted proposals, the Interviewer should assign a P-level prefix (`P0`–`P3`) and use underscore-separated filenames. This ensures new items created during greenfield onboarding follow the convention from day one.
 
-### Step 4 — Delete Completed TODO
-Delete `ai_workspace/TODO/create-project-context-guide.md` since this loop addresses it.
+### Step 4 — Delete the two addressed TODO files
+Delete:
+- `ai_workspace/TODO/P2_add_priority_indicator_to_todo_filenames.md`
+- `ai_workspace/TODO/P2_change_todo_filename_dashes_to_underscores.md`
+
+These items are satisfied by this loop's work. The remaining two (`P2_fix_role_file_casing_inconsistency.md`, `P2_fix_sendback_guide_common_steps_numbering.md`) stay for future loops.
+
+---
+
+---
+
+## Send-Back Summary
+
+**Trigger:** Tester (Role 04) sent back a stale example in `todo_guide.md`.
+
+### Work Done
+- Fixed line 65 in `ai_workspace/skill_helpers/todo_guide.md`: updated the "Tracking Completion" example from old kebab-case format (`fix-git-log-truncation.md`) to new convention with priority prefix and underscores (`P2_fix_git_log_truncation.md`).
+
+### Additional Items Captured
+- Created `P1_strengthen_planner_guardrails.md` in `ai_workspace/TODO/` — meta-improvement to strengthen Planner role guardrails against doing implementation work.
 
 ---
 
 ## Risks and Open Questions
-
-- **No major risks.** This is a documentation/refactoring change within the orchestration layer only — no runtime code, no external dependencies.
-- The current `project_context.md` has sections like "Current Pipeline State" and "Recent Changes" that aren't in the init template (Step 5). These are added organically by Finalizers over loops. The new guide should document this evolution pattern explicitly so a fresh init doesn't conflict with later loop updates.
+- **No technical risks** — this is purely file renames and documentation edits
+- **No open questions** — scope confirmed by user, priorities assigned

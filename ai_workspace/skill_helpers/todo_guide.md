@@ -16,7 +16,13 @@ When the user requests work outside your role's scope:
 
 1. **Acknowledge briefly** — confirm you heard the request.
 2. **Create a new file** in `ai_workspace/TODO/` using the template below.
-3. **Choose a descriptive filename** — short, kebab-case, reflecting the item (e.g., `fix-git-log-truncation.md`, `add-dark-mode-support.md`).
+3. **Choose a descriptive filename** using the format `P{N}_{underscore_separated_name}.md` where `{N}` is the priority level:
+   - `P0` — critical (blocks progress, must fix immediately)
+   - `P1` — high (important, address soon)
+   - `P2` — medium (nice to have, normal backlog)
+   - `P3` — low (minor improvement, low urgency)
+
+   Examples: `P2_fix_git_log_truncation.md`, `P1_add_dark_mode_support.md`.
 4. **Fill in the template fields** with enough context for a future role to act on it.
 5. **Resume your current work** immediately — capturing a todo does not count as completing your role's tasks.
 
@@ -56,7 +62,7 @@ At the start of a session (after loading your role), scan `ai_workspace/TODO/` f
 When a role's work satisfies a todo item:
 
 1. **Delete** the corresponding file from `ai_workspace/TODO/`.
-2. Optionally note in your `_complete.md` summary which todo was addressed (e.g., "Addressed `fix-git-log-truncation.md`").
+2. Optionally note in your `_complete.md` summary which todo was addressed (e.g., "Addressed `P2_fix_git_log_truncation.md`").
 
 If multiple items are completed in one pass, delete all satisfied files together.
 
