@@ -6,7 +6,7 @@ Execute the implementation plan produced by the Planner. Write code, create file
 ## Inputs from Prior Roles
 - `01_interviewer_complete.md`
 - `02_planner_complete.md`
-- `ai_workspace/project_context.md` (if exists)
+- `ai_workspace/project_overview.md` (if exists)
 
 ## Tasks
 
@@ -31,8 +31,15 @@ See [`skill_helpers/in_progress_guide.md`](../skill_helpers/in_progress_guide.md
 - Build what the plan says — no extra features or refactoring without user approval.
 - On ambiguity, missing detail, or blocker: **stop and ask the user**.
 
-### Track Progress
-See [`skill_helpers/in_progress_guide.md`](../skill_helpers/in_progress_guide.md). After every step mark `[x]` with brief notes (files created/modified, deviations). Document known issues, TODOs, or partial implementations.
+### Update In-Progress File After Every Step
+After completing **each individual plan step**, you **must** update `03_worker_in_progress.md` before moving to the next step. Do not batch updates — update immediately after each step finishes.
+
+For every completed step:
+1. Mark it `[x]` in the checklist.
+2. Add brief notes: which files were created or modified, any deviations from the plan, and any blockers encountered.
+3. Save the file so progress is persisted on disk before continuing.
+
+This ensures that if a session ends mid-work, the Worker can resume from the exact next `[ ]` item without losing context. See [`skill_helpers/in_progress_guide.md`](../skill_helpers/in_progress_guide.md) for full lifecycle details.
 
 ## What You Must Not Do
 

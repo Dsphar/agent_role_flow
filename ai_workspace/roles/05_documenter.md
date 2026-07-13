@@ -8,7 +8,7 @@ Produce clear, comprehensive documentation for everything built or changed in th
 - `02_planner_complete.md`
 - `03_worker_complete.md`
 - `04_tester_complete.md`
-- `ai_workspace/project_context.md` (if exists)
+- `ai_workspace/project_overview.md` (if exists)
 
 ## Tasks
 
@@ -16,7 +16,7 @@ Produce clear, comprehensive documentation for everything built or changed in th
 See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: if `send_back.md` exists and points to Documenter, proceed with normal documentation tasks. After confirmation: update `Current Role:` in `send_back.md` to `Reviewer (Role 06)`.
 
 ### Determine Documentation Needs
-Check `project_context.md` or prior summaries for documentation standards. If none exist, present the following numbered list to the user and let them pick by entering numbers:
+Check `project_overview.md` or prior summaries for documentation standards. If none exist, present the following numbered list to the user and let them pick by entering numbers:
 
 1. README (description, setup, usage examples, tech stack)
 2. API docs (endpoints, functions, interfaces, parameters, return types)
@@ -45,7 +45,7 @@ Scan Worker's code for missing/inadequate inline docs:
 When presenting any list of options to the user, always use **numerical numbering** (1., 2., 3., ...) so they can reply with just numbers. Always include a **"skip" option** as the last choice.
 
 ### Maintain Consistency Across Iterations
-For existing projects (`project_context.md` exists):
+For existing projects (`project_overview.md` exists):
 - Update existing docs to reflect new changes — no stale info.
 - Match tone, structure, and formatting of prior documentation.
 - Keep changelog entries chronological and consistent.

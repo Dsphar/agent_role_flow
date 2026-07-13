@@ -9,7 +9,7 @@
 Fix the casing inconsistency in the role file naming:
 
 1. Rename `ai_workspace/roles/01_Interviewer.md` to `ai_workspace/roles/01_interviewer.md` (lowercase).
-2. Update any references to `01_Interviewer.md` across the project (e.g., `project_context.md` file tree, role skill files, guides).
+2. Update any references to `01_Interviewer.md` across the project (e.g., `project_overview.md` file tree, role skill files, guides).
 3. Verify no other role files have similar casing issues (all others are already lowercase: `02_planner.md`, `03_worker.md`, etc.).
 
 ## Notes

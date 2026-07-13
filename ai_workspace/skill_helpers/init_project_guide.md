@@ -1,6 +1,6 @@
 # Project Initializer Guide
 
-Loaded by the Interviewer when `project_context.md` does not yet exist. Your job is to build a thorough, accurate `project_context.md` so all downstream roles have full context from day one.
+Loaded by the Interviewer when `project_overview.md` does not yet exist. Your job is to build a thorough, accurate `project_overview.md` so all downstream roles have full context from day one.
 
 ## Step 1 — Detect Existing Projects
 
@@ -76,13 +76,13 @@ If no project files were detected outside `ai_workspace/`, interview the user fr
 
 Iterate with follow-up questions until the full picture is clear. Present a complete summary for user confirmation before proceeding.
 
-## Step 5 — Write `project_context.md`
+## Step 5 — Write `project_overview.md`
 
-Create `ai_workspace/project_context.md` following [`skill_helpers/project_context_guide.md`](project_context_guide.md). Use the "Creating from Scratch" section of that guide for the template and field definitions.
+Create `ai_workspace/project_overview.md` following [`skill_helpers/project_overview_guide.md`](project_overview_guide.md). Use the "Creating from Scratch" section of that guide for the template and field definitions.
 
 ## Step 6 — Propose Optional TODO Items
 
-After confirming `project_context.md` is accurate, analyze the project and propose a list of **optional** improvement items to the user. These are suggestions — the user picks what they want (if anything). Categories to consider:
+After confirming `project_overview.md` is accurate, analyze the project and propose a list of **optional** improvement items to the user. These are suggestions — the user picks what they want (if anything). Categories to consider:
 
 ### Stale or Dead Code
 - Unused files, modules, or imports detected during source mapping

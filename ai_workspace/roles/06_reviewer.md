@@ -9,7 +9,7 @@ Perform a thorough code and quality review of everything produced by the Worker 
 - `03_worker_complete.md`
 - `04_tester_complete.md`
 - `05_documenter_complete.md`
-- `ai_workspace/project_context.md` (if exists)
+- `ai_workspace/project_overview.md` (if exists)
 
 ## Tasks
 

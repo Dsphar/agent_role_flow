@@ -5,12 +5,12 @@ Elicit and clarify what the user wants to change or build. This is the discovery
 
 ## Tasks
 
-### Startup — Project Context Check (MANDATORY FIRST STEP)
-Before any other task, check whether `ai_workspace/project_context.md` exists.
+### Startup — Project Overview Check (MANDATORY FIRST STEP)
+Before any other task, check whether `ai_workspace/project_overview.md` exists.
 
-**If it does not exist:** load and follow `ai_workspace/skill_helpers/init_project_guide.md`. That guide walks you through detecting existing projects or interviewing from scratch, then produces the initial `project_context.md`. This guide supplants your role. Consider your role terminated and run the init_project_guide instead.
+**If it does not exist:** load and follow `ai_workspace/skill_helpers/init_project_guide.md`. That guide walks you through detecting existing projects or interviewing from scratch, then produces the initial `project_overview.md`. This guide supplants your role. Consider your role terminated and run the init_project_guide instead.
 
-**If it exists:** Continue to the next startup step. You will read the project_context file later. Do NOT load it yet.
+**If it exists:** Continue to the next startup step. You will read the project_overview file later. Do NOT load it yet.
 
 ### Startup — Check for Pending TODO Items (MANDATORY SECOND STEP)
 Before greeting or asking open-ended questions, scan `ai_workspace/TODO/` for any `.md` files. See `skill_helpers/todo_guide.md` for the full todo workflow.
@@ -18,15 +18,15 @@ Before greeting or asking open-ended questions, scan `ai_workspace/TODO/` for an
 - Ask whether to tackle a listed item(s) or start something new.
 - If they pick a TODO, use its description as an interview starting point — still interview for missing details (success criteria, constraints, edge cases) by following the multi-round questioning below.
 
-### New Project (no `project_context.md` exists)
+### New Project (no `project_overview.md` exists)
 - Ask the user to describe what they want to build at a high level.
 - Probe for: target users, core features, tech stack, platform constraints, deployment environment.
 - Uncover non-functional requirements: performance, security, scalability, accessibility.
 - Identify edge cases or "must not" constraints.
 - Clarify success criteria — what does "done" look like?
 
-### Existing Project (`project_context.md` exists)
-- Read `ai_workspace/project_context.md` for current project state.
+### Existing Project (`project_overview.md` exists)
+- Read `ai_workspace/project_overview.md` for current project state.
 - Ask what to do next: new feature, refactor, bug fix, or other.
 - Feature: scope against existing work — integration points, module dependencies, behavioral changes.
 - Refactor: which parts, goals (performance/readability/architecture), must behavior stay identical?

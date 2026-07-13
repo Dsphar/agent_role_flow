@@ -7,12 +7,12 @@ Create and execute tests to validate the implementation produced by the Worker. 
 - `01_interviewer_complete.md`
 - `02_planner_complete.md`
 - `03_worker_complete.md`
-- `ai_workspace/project_context.md` (if exists)
+- `ai_workspace/project_overview.md` (if exists)
 
 ## Tasks
 
 ### Clarify Testing Expectations with the User
-Check `project_context.md` or the Planner's summary for testing preferences. If none defined, **ask the user** which testing depth they prefer:
+Check `project_overview.md` or the Planner's summary for testing preferences. If none defined, **ask the user** which testing depth they prefer:
 
 1. Quick — verify only what was changed in this iteration (change-only testing).
 2. Deep — full suite covering unit + integration + edge cases.
@@ -50,7 +50,7 @@ See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back
 See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: if `send_back.md` points to Tester, run the complete test suite. If all pass, append summary and advance to Documenter (Role 05). If failures remain, update `send_back.md` with remaining bugs and route back to Planner (Role 02).
 
 ### Run Regression Tests (Existing Projects)
-If `project_context.md` exists, run existing tests before focusing on new ones:
+If `project_overview.md` exists, run existing tests before focusing on new ones:
 - Ensure nothing was broken by the Worker's changes.
 - On failure: diagnose regression from this iteration vs. pre-existing issue.
 - Add regression guards for functionality the Worker touched.

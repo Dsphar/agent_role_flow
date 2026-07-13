@@ -5,7 +5,7 @@ Translate the problem statement from the Interviewer into a concrete, actionable
 
 ## Inputs from Prior Roles
 - `01_interviewer_complete.md`
-- `ai_workspace/project_context.md` (if exists)
+- `ai_workspace/project_overview.md` (if exists)
 
 ## Send-Back Mode
 See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: if `send_back.md` exists and points to Planner, append steps addressing each send-back item (do not re-plan from scratch). After confirmation: update `Current Role:` in `send_back.md` to `Worker (Role 03)`.

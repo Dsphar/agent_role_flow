@@ -1,4 +1,4 @@
-# Project Context
+# Project Overview
 
 ## What This Is
 An AI agent sequential-pipeline system — 7 roles flowing through a structured workflow, orchestrated by `AGENTS.md`. Each role is a markdown skill file that defines persona, tasks, constraints, and deliverables. The pipeline loops: each iteration scopes work, plans it, builds it, tests it, documents it, reviews it, then squashes and resets for the next loop.
@@ -43,29 +43,5 @@ ai_workspace/
 - Tool calling is LLM-driven — no hardcoded bash/shell assumptions
 - Only one `[ai-finalizer]` squash commit exists per pipeline loop; intermediate per-role commits are transient and do not persist post-Finalizer
 
-## Known Issues
-None.
-
-## Current Pipeline State
-- **Loop 1** — Complete. Squashed by Finalizer.
-- Work this loop: Restructured todo system from monolithic `todo.md` to per-file `TODO/` folder with skill helper
-- **Loop 2** — Complete. Squashed by Finalizer.
-- Work this loop: Corrected stale git model references in project_context.md to reflect the squashed-commit reality
-- **Loop 3** — Complete. Squashed by Finalizer.
-- Work this loop: Extracted `_in_progress.md` lifecycle guidance into `skill_helpers/in_progress_guide.md`; added startup check for in-progress files in AGENTS.md Role Detection step 5
-- **Loop 4** — Complete. Squashed by Finalizer.
-- Work this loop: Fixed git log truncation in Finalizer role — replaced `--oneline` with `--format="%H %s"` to preserve full commit hashes and subject lines
-- **Loop 5** — Complete. Squashed by Finalizer.
-- Work this loop: Renamed `todos/` folder to `TODO/` and updated all references across the project
-- **Loop 6** — Complete. Squashed by Finalizer.
-- Work this loop: Added TODO proposal step (Step 6) to init guide; created canonical `project_context_guide.md` skill helper as single source of truth for `project_context.md` structure
-- **Loop 7** — Complete. Squashed by Finalizer.
-- Work this loop: Added P-level priority prefixes and switched TODO filenames from kebab-case to underscores across all files and documentation
-
-## Recent Changes
-- Added P-level priority prefixes (`P0`–`P3`) and switched TODO filenames from kebab-case to underscores; updated `todo_guide.md`, init guide, and all references (2026-07-12)
-- Created `project_context_guide.md` as canonical spec for `project_context.md`; updated init guide Step 5 and Finalizer role to reference it (2026-07-12)
-- Added TODO proposal step (Step 6) to `init_project_guide.md` — guides AI to analyze project and propose improvement items during onboarding (2026-07-12)
-- Renamed workspace folder: `todos/` → `TODO/` with all references updated across AGENTS.md, role files, skill helpers, and project context (2026-07-12)
-- Fixed git log truncation: replaced `git log --oneline` with `git log --format="%H %s"` in Finalizer role to preserve full hashes and subject lines (2026-07-12)
-- Restructured todo system: replaced monolithic `todo.md` with per-file `TODO/` folder + `todo_guide.md` skill helper (2026-07-12)
+## User-Preferred Patterns
+_(No user-preferred patterns recorded yet. Add here when identified.)_

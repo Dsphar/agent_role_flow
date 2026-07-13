@@ -1,95 +1,122 @@
 # 02 — Planner Complete
 
 ## Goal Summary
-Add priority prefixes and switch to underscores in TODO filenames, update all refs
+Rename project_context to project_overview, narrow scope to stable info only
 
 ---
 
 ## Architecture Overview
 
-This is a naming-convention change across the `ai_workspace/TODO/` directory and its supporting documentation. No new files or directories are created. The change has three layers:
+This is a **rename + content narrowing** across the orchestration system itself. Two files are renamed and rewritten; ~10 other files have their references updated. No new files or directories are created. The change is purely within `ai_workspace/` — no project root artifacts are touched.
 
-1. **File renames** — existing TODO files get `P2_` prefix and underscores replacing dashes
-2. **Documentation updates** — `todo_guide.md` and Interviewer role reflect the new convention going forward
-3. **Cleanup** — delete the two TODO files whose work is being performed this loop
-
-### Key Decisions
-- All 4 existing TODOs assigned `P2` (medium) per user direction
-- The two items being addressed (`add-priority-indicator...`, `change-todo-filename-dashes...`) are consolidated into a single change — they overlap in scope since both modify filename conventions
-- New convention: `P{N}_{underscore_separated_name}.md` where N is 0–3
+### Key Design Decisions
+- **Rename to `project_overview.md`** — clearer name that signals "stable architectural reference" rather than a living changelog.
+- **Drop dynamic sections entirely** — `Known Issues`, `Recent Changes`, and `Current Pipeline State` are removed from both the file and its guide. That data belongs in git log / `[ai-finalizer]` commits, not in a startup-context file.
+- **Keep stable sections** — `What This Is`, `File Structure`, `Architecture Overview`, `Tech Stack`, `Key Design Decisions`. Add a placeholder for `User-Preferred Patterns` per the Interviewer's note.
+- **Guide rewrite mirrors the narrowing** — `project_overview_guide.md` explicitly defines what belongs vs. doesn't belong so future roles maintain scope discipline.
 
 ---
 
 ## File/Module Map
 
-### Files to Rename (in `ai_workspace/TODO/`)
-| Old Name | New Name |
-|---|---|
-| `add-priority-indicator-to-todo-filenames.md` | `P2_add_priority_indicator_to_todo_filenames.md` |
-| `change-todo-filename-dashes-to-underscores.md` | `P2_change_todo_filename_dashes_to_underscores.md` |
-| `fix-role-file-casing-inconsistency.md` | `P2_fix_role_file_casing_inconsistency.md` |
-| `fix-sendback-guide-common-steps-numbering.md` | `P2_fix_sendback_guide_common_steps_numbering.md` |
+### Renamed (2 files)
+| Old Path | New Path |
+|----------|----------|
+| `ai_workspace/project_context.md` | `ai_workspace/project_overview.md` |
+| `ai_workspace/skill_helpers/project_context_guide.md` | `ai_workspace/skill_helpers/project_overview_guide.md` |
 
-### Files to Modify
-| File | Changes |
-|---|---|
-| `ai_workspace/skill_helpers/todo_guide.md` | Update filename format from kebab-case to `P{N}_{underscore_name}.md`; update examples; add priority level definitions and assignment guidance in capture step 3 |
-| `ai_workspace/roles/01_Interviewer.md` | Add priority assignment instruction during init_project_guide Step 6 (when creating TODO items from proposals) — instruct Interviewer to assign a P-level when capturing accepted items |
+### Rewritten (2 files — same as above)
+- **`project_overview.md`** — New content: stable sections only. Dynamic data from current file is discarded per user request.
+- **`project_overview_guide.md`** — New content: canonical spec for the narrower scope, with explicit "what belongs / what doesn't" rules.
 
-### Files to Delete (after rename, these two are addressed this loop)
-| File | Reason |
-|---|---|
-| `P2_add_priority_indicator_to_todo_filenames.md` | Addressed by this plan |
-| `P2_change_todo_filename_dashes_to_underscores.md` | Addressed by this plan (consolidated with above) |
+### References Updated (10 files)
+Every occurrence of `project_context.md`, `project_context_guide.md`, and the phrase "Project Context" (as a guide title/header) is replaced with the new names:
 
-### Files Referenced but Not Modified
-- `ai_workspace/01_interviewer_complete.md` — contains old filenames as historical record; no update needed since it documents what was planned, not current state
-- `ai_workspace/project_context.md` — no direct TODO filename references that need updating
+| File | Approximate Reference Count |
+|------|----------------------------|
+| `AGENTS.md` | 1 |
+| `ai_workspace/roles/01_Interviewer.md` | ~6 |
+| `ai_workspace/roles/02_planner.md` | 1 |
+| `ai_workspace/roles/03_worker.md` | 1 |
+| `ai_workspace/roles/04_tester.md` | 3 |
+| `ai_workspace/roles/05_documenter.md` | 3 |
+| `ai_workspace/roles/06_reviewer.md` | 1 |
+| `ai_workspace/roles/07_finalizer.md` | ~8 (most references) |
+| `ai_workspace/skill_helpers/init_project_guide.md` | ~4 |
+
+### Deleted (0 files)
+- No deletions beyond the rename (git handles this as a rename).
 
 ---
 
 ## Ordered Implementation Steps
 
-### Step 1 — Rename all four TODO files
-Rename each file in `ai_workspace/TODO/`, replacing dashes with underscores and prepending `P2_`:
-- `add-priority-indicator-to-todo-filenames.md` → `P2_add_priority_indicator_to_todo_filenames.md`
-- `change-todo-filename-dashes-to-underscores.md` → `P2_change_todo_filename_dashes_to_underscores.md`
-- `fix-role-file-casing-inconsistency.md` → `P2_fix_role_file_casing_inconsistency.md`
-- `fix-sendback-guide-common-steps-numbering.md` → `P2_fix_sendback_guide_common_steps_numbering.md`
+1. **Rename `project_context.md` → `project_overview.md`.** Move `ai_workspace/project_context.md` to `ai_workspace/project_overview.md`.
 
-### Step 2 — Update `todo_guide.md` with new filename convention
-In the "Capturing an Out-of-Scope Item" section, update step 3:
-- Replace "short, kebab-case" with the new format: `P{N}_{underscore_separated_name}.md`
-- Add priority level definitions inline: `P0-critical`, `P1-high`, `P2-medium`, `P3-low`
-- Instruct the capturing role to assign an appropriate P-level based on urgency/impact
-- Update the example filenames from kebab-case (`fix-git-log-truncation.md`) to the new format (e.g., `P2_fix_git_log_truncation.md`)
+2. **Rewrite `project_overview.md` with stable-only content.** Using the existing file as source material, produce a new version containing only:
+   - `# Project Overview` (header)
+   - `## What This Is` — concise project description
+   - `## File Structure` — tree of key directories/files
+   - `## Architecture Overview` — how components interact
+   - `## Tech Stack` — languages, frameworks, tools
+   - `## Key Design Decisions` — architectural choices and rationale
+   - `## User-Preferred Patterns` — placeholder section (no content yet per Interviewer note)
 
-### Step 3 — Update Interviewer role for priority assignment during init
-In `ai_workspace/roles/01_Interviewer.md`, update the section referencing init_project_guide Step 6 (the TODO proposal step). Add instruction that when creating TODO files from accepted proposals, the Interviewer should assign a P-level prefix (`P0`–`P3`) and use underscore-separated filenames. This ensures new items created during greenfield onboarding follow the convention from day one.
+   Remove: `Known Issues`, `Current Pipeline State`, `Recent Changes`. Do not carry forward any of their content.
 
-### Step 4 — Delete the two addressed TODO files
-Delete:
-- `ai_workspace/TODO/P2_add_priority_indicator_to_todo_filenames.md`
-- `ai_workspace/TODO/P2_change_todo_filename_dashes_to_underscores.md`
+3. **Rename `project_context_guide.md` → `project_overview_guide.md`.** Move `ai_workspace/skill_helpers/project_context_guide.md` to `ai_workspace/skill_helpers/project_overview_guide.md`.
 
-These items are satisfied by this loop's work. The remaining two (`P2_fix_role_file_casing_inconsistency.md`, `P2_fix_sendback_guide_common_steps_numbering.md`) stay for future loops.
+4. **Rewrite `project_overview_guide.md`.** Restructure the guide around the narrower scope:
+   - Update title and all internal references from "Project Context" / `project_context.md` to "Project Overview" / `project_overview.md`.
+   - Canonical Structure table: keep only stable sections (`What This Is`, `File Structure`, `Architecture Overview`, `Tech Stack`, `Key Design Decisions`, `User-Preferred Patterns`). Remove `Known Issues`, `Recent Changes`, `Current Pipeline State` from the table.
+   - "Creating from Scratch" template: reflect only the stable sections.
+   - "Updating Across Loops" section: simplify to structural updates only (File Structure, Architecture Overview, Tech Stack, Key Design Decisions). Remove instructions for updating Recent Changes, Current Pipeline State, and Known Issues since those sections no longer exist.
+   - Add explicit "What Does Not Belong Here" section listing: recent changes/changelog entries, loop history/iteration counts, known issues/bug tracking, raw iteration logs — with guidance on where that data belongs instead (git log, `[ai-finalizer]` commits).
 
----
+5. **Update `AGENTS.md`.** Replace the reference in Role Detection step 7 from `project_context.md` to `project_overview.md`.
 
----
+6. **Update `ai_workspace/roles/01_Interviewer.md`.** Replace all ~6 references:
+   - Check for existence of `project_overview.md` (not `project_context.md`)
+   - Init guide produces initial `project_overview.md`
+   - Read `project_overview.md` for current project state
+   - Section headers referencing "no `project_overview.md` exists" / "`project_overview.md` exists"
 
-## Send-Back Summary
+7. **Update `ai_workspace/roles/02_planner.md`.** Replace the input reference from `project_context.md` to `project_overview.md`.
 
-**Trigger:** Tester (Role 04) sent back a stale example in `todo_guide.md`.
+8. **Update `ai_workspace/roles/03_worker.md`.** Replace the input reference from `project_context.md` to `project_overview.md`.
 
-### Work Done
-- Fixed line 65 in `ai_workspace/skill_helpers/todo_guide.md`: updated the "Tracking Completion" example from old kebab-case format (`fix-git-log-truncation.md`) to new convention with priority prefix and underscores (`P2_fix_git_log_truncation.md`).
+9. **Update `ai_workspace/roles/04_tester.md`.** Replace all 3 references:
+   - Input section: `project_overview.md` (if exists)
+   - "Check `project_overview.md` or the Planner's summary for testing preferences"
+   - "If `project_overview.md` exists, run existing tests..."
 
-### Additional Items Captured
-- Created `P1_strengthen_planner_guardrails.md` in `ai_workspace/TODO/` — meta-improvement to strengthen Planner role guardrails against doing implementation work.
+10. **Update `ai_workspace/roles/05_documenter.md`.** Replace all 3 references:
+    - Input section: `project_overview.md` (if exists)
+    - "Check `project_overview.md` or prior summaries for documentation standards"
+    - "For existing projects (`project_overview.md` exists)"
+
+11. **Update `ai_workspace/roles/06_reviewer.md`.** Replace the input reference from `project_context.md` to `project_overview.md`.
+
+12. **Update `ai_workspace/roles/07_finalizer.md`.** This has the most references (~8). Replace all:
+    - Input section: `project_overview.md` (if exists)
+    - Guide reference: `skill_helpers/project_overview_guide.md` for creating/updating `project_overview.md`
+    - Delete step: "Do NOT delete `project_overview.md`"
+    - Stage step: `git add ai_workspace/project_overview.md`
+    - Fallback commit: stage `project_overview.md` + deleted files
+    - Deliverables: "Updated `ai_workspace/project_overview.md` reflecting this iteration's outcomes"
+    - Update the Finalizer's update instructions to match the new narrower scope (structural updates only, no more appending Recent Changes / Pipeline State)
+
+13. **Update `ai_workspace/skill_helpers/init_project_guide.md`.** Replace all ~4 references:
+    - "Loaded by the Interviewer when `project_overview.md` does not yet exist"
+    - Step 5 title and body: write `project_overview.md` following `project_overview_guide.md`
+    - Post-confirmation step referencing `project_overview.md`
+
+14. **Verify no stale references remain.** Run a grep across the entire project for `project_context` to confirm zero hits outside of `_complete.md` summary files (which are historical records and can retain old names).
 
 ---
 
 ## Risks and Open Questions
-- **No technical risks** — this is purely file renames and documentation edits
-- **No open questions** — scope confirmed by user, priorities assigned
+
+- **No major technical risks** — this is a straightforward rename + content edit across markdown files.
+- The existing `project_overview.md` (currently `project_context.md`) contains valuable stable content in its first 5 sections that should be preserved during the rewrite. Steps 2 and 4 are careful to retain this while discarding only the dynamic sections.
+- **No open questions** — scope is clear from the Interviewer summary.
