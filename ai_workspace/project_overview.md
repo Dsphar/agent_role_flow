@@ -39,7 +39,7 @@ ai_workspace/
 - Role separation enforced via "What You Must Not Do" sections in each skill file
 - Lowercase `_complete.md` filenames regardless of role casing
 - Goal summary from Interviewer used as commit subject across all roles
-- Out-of-scope requests are captured as individual files in `ai_workspace/TODO/` per `skill_helpers/todo_guide.md`
+- Out-of-scope requests are captured as individual files in `ai_workspace/TODO/` per `skill_helpers/todo_guide.md`. Only the Interviewer scans and presents pending TODOs at startup; all roles retain the ability to capture new ones.
 - Tool calling is LLM-driven — no hardcoded bash/shell assumptions
 - Only one `[ai-pipeline]` squash commit exists per pipeline loop; intermediate per-role commits are transient and do not persist post-Finalizer
 

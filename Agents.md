@@ -17,10 +17,9 @@ Before normal role detection, check for `ai_workspace/send_back.md`. If it exist
 3. **List** role skill files in `ai_workspace/roles/` sorted by numeric prefix (`01_`, `02_`, etc.), then **find** the first role whose `_complete.md` does not exist — that is your current role. If none are missing, start at `07` (Finalizer).
 4. **Read** all prior `_complete.md` summaries to load cross-role context.
 5. **Check for `{NN}_rolename_in_progress.md`** in `ai_workspace/`. If it exists, read it — this is your role's resume file from a previous session. See `ai_workspace/skill_helpers/in_progress_guide.md` for full details on in-progress file usage and resume behavior.
-6. **Scan `ai_workspace/TODO/`** for any `.md` files — these are pending out-of-scope items from prior sessions. See `ai_workspace/skill_helpers/todo_guide.md` for the full todo workflow.
-7. **Check for `ai_workspace/project_overview.md`.** If it exists, read it — it describes what has been built across previous pipeline loops.
-8. **Read** the current role's skill file from `ai_workspace/roles/{NN}_rolename.md`.
-9. **Proactively greet the user.** Announce your role by name and number, then ask relevant questions to kick things off naturally.
+6. **Check for `ai_workspace/project_overview.md`.** If it exists, read it — it describes what has been built across previous pipeline loops.
+7. **Read** the current role's skill file from `ai_workspace/roles/{NN}_rolename.md`.
+8. **Proactively greet the user.** Announce your role by name and number, then ask relevant questions to kick things off naturally.
 
 ### In-Progress Files
 See [`skill_helpers/in_progress_guide.md`](ai_workspace/skill_helpers/in_progress_guide.md) for full details on in-progress file usage, naming, and lifecycle.

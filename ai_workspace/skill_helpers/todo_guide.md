@@ -50,10 +50,9 @@ Copy this into each new todo file:
 
 ## Presenting Pending Items
 
-At the start of a session (after loading your role), scan `ai_workspace/TODO/` for any `.md` files. If pending items exist:
+**Only the Interviewer (Role 01)** scans and presents pending TODO items at session start. The Interviewer's skill file contains explicit instructions for this.
 
-- Briefly list them to the user so they are aware of outstanding work.
-- Do not act on them unless the user explicitly asks — they are deferred by design.
+All other roles retain the ability to *capture* new out-of-scope items as TODOs and to *delete* completed ones, but they do **not** proactively scan or present existing TODO files at startup.
 
 ---
 
