@@ -46,6 +46,7 @@ ai_workspace/
 - Planner guardrails use forceful prohibitive language with concrete acceptable/unacceptable behavior examples; send-back mode explicitly does not relax any role's constraints
 - User-facing prompt convention: all binary-choice prompts presented to users list options as "Option A (recommended) or Option B?" so that "yes" = recommended/default and "no" = alternative. This applies across all roles (skip-docs, send-back vs defer, etc.)
 - Auto-handoff after role completion: roles automatically declare handoff ready once work is done — no user confirmation prompt at transition time. Mid-transition feedback from the user keeps the role in-session for adjustments.
+- Per-role git commits are a top-level Step 5 in `transition_guide.md` (promoted from sub-bullets) with guardrail language explaining consequences of skipping, plus a Pre-Handoff Checklist (`- [ ]` checkboxes) that roles verify before transitioning begins.
 
 ## User-Preferred Patterns
 _(No user-preferred patterns recorded yet. Add here when identified.)_
