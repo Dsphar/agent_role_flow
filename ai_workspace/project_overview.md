@@ -26,7 +26,7 @@ ai_workspace/
 ## Architecture Overview
 - **Sequential pipeline:** Roles execute in order (01→07). Each produces a `{NN}_rolename_complete.md` summary before transitioning.
 - **Send-back loop:** Tester and Reviewer can route issues back to Planner for re-planning via `send_back.md`.
-- **Git strategy:** Per-role incremental commits during the pipeline, squashed into one `[ai-finalizer]` commit at end of each loop.
+- **Git strategy:** Per-role incremental commits during the pipeline, squashed into one `[ai-pipeline]` commit at end of each loop.
 - **Loop reset:** Finalizer deletes `_complete.md` files, updates this file, and resets for the next iteration.
 
 ## Tech Stack
@@ -41,7 +41,7 @@ ai_workspace/
 - Goal summary from Interviewer used as commit subject across all roles
 - Out-of-scope requests are captured as individual files in `ai_workspace/TODO/` per `skill_helpers/todo_guide.md`
 - Tool calling is LLM-driven — no hardcoded bash/shell assumptions
-- Only one `[ai-finalizer]` squash commit exists per pipeline loop; intermediate per-role commits are transient and do not persist post-Finalizer
+- Only one `[ai-pipeline]` squash commit exists per pipeline loop; intermediate per-role commits are transient and do not persist post-Finalizer
 
 ## User-Preferred Patterns
 _(No user-preferred patterns recorded yet. Add here when identified.)_

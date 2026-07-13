@@ -20,7 +20,7 @@ Finalize the pipeline loop: squash all per-role commits from the current iterati
 Follow [`skill_helpers/project_overview_guide.md`](../skill_helpers/project_overview_guide.md) for both creating and updating `project_overview.md`. In brief:
 
 - If the file does **not** exist: create it using the "Creating from Scratch" section of the guide.
-- If it **does** exist: update to reflect current structural state only following the "Updating Across Loops" section. Do NOT append iteration history, changelog entries, or known issues — that data belongs in git via this role's squashed `[ai-finalizer]` commit. Keep concise but complete.
+- If it **does** exist: update to reflect current structural state only following the "Updating Across Loops" section. Do NOT append iteration history, changelog entries, or known issues — that data belongs in git via this role's squashed `[ai-pipeline]` commit. Keep concise but complete.
 
 ### Loop Reset and Handoff
 Git is expected. If not initialized, ask the user before proceeding.
@@ -33,11 +33,11 @@ Git is expected. If not initialized, ask the user before proceeding.
 6. **Soft reset to pre-loop state:** Run `git reset --soft <parent-hash>` where `<parent-hash>` is the parent of the oldest matching commit found in step 4. This stages ALL changes from the entire loop (all role artifacts + deletions) without discarding anything.
 7. **Stage updated project overview:** Ensure `project_overview.md` is staged (`git add ai_workspace/project_overview.md`). The soft reset already staged everything, but this ensures the overview update is included explicitly.
 8. **Compose multi-line commit message:** Format as:
-   - First line (subject): `<goal summary from step 1> [ai-finalizer]`
+   - First line (subject): `<goal summary from step 1> [ai-pipeline]`
    - Blank line separator
    - Body paragraphs: Narrative of what happened across the pipeline loop, drawn from role summaries captured in step 2. Use structured sub-headers per role that ran (e.g., `### Planner`, `### Worker`) for readability.
 9. **Commit with multi-line message:** Run `git commit -m "<subject>" -m "" -m "<body paragraph 1>" -m "<body paragraph 2>" ...` using multiple `-m` flags for the multi-line format.
-10. **Fallback (no squash):** If reached from step 5, do a normal single commit of just your own changes: stage `project_overview.md` + deleted files, commit with `<goal summary> [ai-finalizer]`.
+10. **Fallback (no squash):** If reached from step 5, do a normal single commit of just your own changes: stage `project_overview.md` + deleted files, commit with `<goal summary> [ai-pipeline]`.
 11. **If commit fails:** Block transition — present error to user and ask how to proceed.
 
 ### Present Final Recap
@@ -55,7 +55,7 @@ Summarize the full pipeline loop:
 
 ## Deliverables
 - Updated `ai_workspace/project_overview.md` reflecting this iteration's structural changes.
-- Single git commit (`[ai-finalizer]`) capturing the context update and workspace reset.
+- Single git commit (`[ai-pipeline]`) capturing the context update and workspace reset.
 - Verbal recap of everything accomplished across the full pipeline loop.
 
 

@@ -34,10 +34,10 @@ The following types of content do **not** belong in `project_overview.md`. They 
 
 | Content Type | Where It Belongs Instead |
 |--------------|--------------------------|
-| Recent changes / changelog entries | Git log (`[ai-finalizer]` commit messages) |
-| Loop history / iteration counts | Git log (squashed `[ai-finalizer]` commits per loop) |
+| Recent changes / changelog entries | Git log (`[ai-pipeline]` commit messages) |
+| Loop history / iteration counts | Git log (squashed `[ai-pipeline]` commits per loop) |
 | Known issues / bug tracking | `send_back.md` (active), git issues, or project issue tracker |
-| Raw iteration logs | Git log — each `[ai-finalizer]` commit captures the loop's outcomes |
+| Raw iteration logs | Git log — each `[ai-pipeline]` commit captures the loop's outcomes |
 
 This file is a **stable architectural reference**, not a living changelog. Dynamic data belongs in version control history.
 
@@ -91,7 +91,7 @@ Used by the Finalizer role after squashing commits at the end of each pipeline l
 
 ### What Not to Do
 
-- **Do not add changelog entries, recent changes, or loop history.** That data lives in git via `[ai-finalizer]` commit messages.
+- **Do not add changelog entries, recent changes, or loop history.** That data lives in git via `[ai-pipeline]` commit messages.
 - **Do not track known issues here.** Active issues use `send_back.md`; resolved issues are captured in git history.
 - **Do not modify code, tests, or documentation** beyond what is needed for an accurate overview file.
 - **Keep it concise but complete.** Every role reads this at startup — accuracy matters more than brevity, but avoid unnecessary detail.
