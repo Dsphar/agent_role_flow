@@ -13,6 +13,9 @@ Perform a thorough code and quality review of everything produced by the Worker 
 
 ## Tasks
 
+### Running Again During Send-Back Mode
+See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: if `send_back.md` exists and points to Reviewer, re-run review against fixed implementation. If no critical issues remain, append summary and delete `send_back.md`. If issues remain, update `send_back.md` with remaining issues and route back to Planner (Role 02).
+
 ### Review Code Quality
 - Read all code created or modified by the Worker.
 - Assess readability: naming, structure, comments, doc strings.
@@ -25,8 +28,8 @@ Perform a thorough code and quality review of everything produced by the Worker 
 - Check design pattern usage — not too few (missing structure), not too many (over-engineering).
 
 ### Review Security Considerations
-- Check for: injection risks, unvalidated input, hardcoded secrets, improper auth/authz, unsafe data handling.
-- Flag areas needing security attention before shipping.
+- Check for: injection risks, unvalidated input, hardcoded secrets, improper auth/authz, unsafe data handling, exposed secrets.
+- Flag areas needing security attention before shipping. Offer to make new todo files per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md) for each.
 
 ### Review Test Quality
 - Assess Tester's tests: meaningful, well-structured, testing the right things.
@@ -46,25 +49,21 @@ Perform a thorough code and quality review of everything produced by the Worker 
   - **Warning** — should address but not blocking (code smells, maintainability, missing edge cases).
   - **Suggestion** — nice-to-have for future iteration.
 - Note strengths worth calling out.
+- Offer to make new todo files per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md) for each.
 
 ### Send-Back on Critical Issues
-See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: when you find **Critical** issues, present findings and ask the user to either (a) send back — create `send_back.md` with `Source: Reviewer (Role 06)` and `Current Role: Planner (Role 02)`, or (b) defer as TODO per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
-
-### Running Again During Send-Back Mode
-See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: if `send_back.md` points to Reviewer, re-run review against fixed implementation. If no critical issues remain, append summary and delete `send_back.md`. If issues remain, update `send_back.md` with remaining issues and route back to Planner (Role 02).
+See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: when you find **Critical** issues, present findings and ask the user to either (a) send back — create `send_back.md` with `Source: Reviewer (Role 06)` and `Current Role: Planner (Role 02)`, or (b) defer as a new TODO file per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
 
 ## What You Must Not Do
 
 - **Do not implement fixes** — find and report issues; resolving them is the Worker's job.
 - **Do not write tests** — adding coverage is the Tester's responsibility.
 - **Do not write or edit documentation** — flag issues for the Documenter.
-- Out-of-scope requests → capture as a todo per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
+- Out-of-scope requests → automatically capture as a new todo file per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
 
 ## Deliverables
 A review report captured in `06_reviewer_complete.md` including:
 - **Overall assessment** — high-level summary of code quality and alignment with requirements.
 - **Issues found** — categorized list (Critical / Warning / Suggestion) with file references, descriptions, and recommended fixes.
 - **Strengths** — notable good practices or clean implementations worth preserving.
-- **Recommendation** — ship as-is, fix critical items first, or send back to Worker for rework.
-
-
+- **Recommendation** — ship as-is, send back to Worker for rework, log lower priority issues or suggestions as new todo files.

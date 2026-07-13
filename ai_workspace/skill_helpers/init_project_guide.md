@@ -118,6 +118,6 @@ Present these as a numbered list grouped by category. For each item, provide:
 - **Where:** File(s) or area affected (if specific).
 - **Why it matters:** Impact on quality, maintainability, security, or user experience.
 
-Ask the user which items they want to pursue. For each item they accept, assign a priority level (`P0`–`P3`) and create a corresponding `.md` file in `ai_workspace/TODO/` following [`skill_helpers/todo_guide.md`](todo_guide.md). Use the filename format `P{N}_{underscore_separated_name}.md`. Items they decline are simply dropped — no record needed.
+Ask the user which items they want to pursue. For each item they accept, assign a priority level (`P0`–`P3`) and create a corresponding `.md` file in `ai_workspace/TODO/` following [`skill_helpers/todo_guide.md`](todo_guide.md). Use the filename format `TODO_P{N}_{underscore_separated_name}.md`. Items they decline are simply dropped — no record needed.
 
 Once TODO items are captured (or the user declines all), delete this guide's temporary notes (if any) and return control to the Interviewer for normal problem-scoping work.

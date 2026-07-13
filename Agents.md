@@ -22,7 +22,7 @@ Before normal role detection, check for `ai_workspace/send_back.md`. If it exist
 8. **Proactively greet the user.** Announce your role by name and number, then ask relevant questions to kick things off naturally.
 
 ### In-Progress Files
-See [`skill_helpers/in_progress_guide.md`](ai_workspace/skill_helpers/in_progress_guide.md) for full details on in-progress file usage, naming, and lifecycle.
+See `ai_workspace/skill_helpers/in_progress_guide.md` for full details on in-progress file usage, naming, and lifecycle.
 
 ---
 
@@ -32,20 +32,16 @@ See [`skill_helpers/in_progress_guide.md`](ai_workspace/skill_helpers/in_progres
 - Work through tasks with the user naturally — ask questions, iterate, refine.
 - **Stay in your lane.** Do only what your current role's skill file asks you to do. If your role is planning, designing, or reviewing — produce plans, designs, or feedback. Do **not** write implementation code, create project files, or perform tasks that belong to a future role (especially the Worker). Future roles exist for a reason; trust them.
 - **Artifacts** (code, reports, generated files) go in the **project root**, not inside `ai_workspace/`.
-- After capturing an out-of-scope request as a todo file (see `ai_workspace/skill_helpers/todo_guide.md`), acknowledge it briefly then immediately resume your current role's work where you left off.
+- If you find, or the user prompts for something, that is out of your current loop's scope, capture it by making a todo file inside the `ai_workspace/TODO` folder. After capturing this out-of-scope request as a todo file (see `ai_workspace/skill_helpers/todo_guide.md`), acknowledge it briefly then immediately resume your current role's work where you left off.
 - Capturing a TODO does not count as completing your role's tasks — do not transition early or stop working because you logged something.
 
 ### User-Facing Prompt Conventions
-When presenting a binary-choice prompt to the user, always list options as **"Option A (recommended) or Option B?"** so that "yes" = recommended/default choice and "no" = alternative. This applies to skip-docs prompts, send-back vs defer decisions, and any future binary choices across all roles. If both options are equally valid, pick one as default and state it clearly — never leave "yes" undefined.
+When presenting a binary-choice prompt to the user, always list options as **"Option A (recommended) or Option B?"** so that "yes" = recommended/default choice and "no" = alternative. This applies to skip-docs prompts, send-back vs defer todo decisions, and any future binary choices across all roles. If both options are equally valid, pick one as default and state it clearly — never leave "yes" undefined.
 
 ---
 
 ## Transitioning Between Roles
 
-When ready to transition, read and follow `ai_workspace/skill_helpers/transition_guide.md`.
+When confident that you are ready to transition to the next role, automatically read and follow `ai_workspace/skill_helpers/transition_guide.md`.
 
 ---
-
-## Going Back
-
-If the user requests a previous role: follow [`skill_helpers/in_progress_guide.md`](ai_workspace/skill_helpers/in_progress_guide.md) for in-progress file handling, then load that role's skill file and do not delete ahead-of-role `_complete.md` files.

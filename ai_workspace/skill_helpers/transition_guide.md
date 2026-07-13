@@ -19,19 +19,19 @@ Before starting the numbered transition steps below, verify each of the followin
 2. **Declare handoff ready.** Inform the user that your work is complete and the next role will load on the next session start. No confirmation prompt needed — transition automatically to step 4.
 3. **Mid-transition feedback (optional).** If the user responds with adjustments or corrections before starting a new session, stay in-session and address them. After making changes, return to step 2 and re-declare handoff ready. Do not create an in-progress file for mid-transition tweaks.
 4. **Write summary.** Create or update your `_complete.md` file:
-   - **Normal mode:** Follow [`skill_helpers/in_progress_guide.md`](in_progress_guide.md) for the rename-from-in-progress logic. In brief: if `{NN}_rolename_in_progress.md` exists, **rename** it to `{NN}_rolename_complete.md`; otherwise create `{NN}_rolename_complete.md` with the full summary. Summary filenames always use **lowercase** role names.
+   - **Normal mode:** See the "Transition-Time Rename" section of [`skill_helpers/in_progress_guide.md`](in_progress_guide.md). In brief: if `{NN}_rolename_in_progress.md` exists, **rename** it to `{NN}_rolename_complete.md`; otherwise create `{NN}_rolename_complete.md` with the full summary. Summary filenames always use **lowercase** role names.
    - **Send-back mode (you are NOT the original sending role):**
-     1. **Append your send-back summary** to the existing `{NN}_rolename_complete.md` — add a `---` divider followed by `## Send-Back Summary`, then your work recap. Do not overwrite the file.
+     1. **Append your send-back summary** to the existing `{NN}_rolename_complete.md` — add a `---` divider followed by `## Send-Back Summary`, then your work recap. Do not overwrite the file. (Also described in [`sendback_guide.md`](./sendback_guide.md) § Completing a Role in Send-Back Mode.)
      2. **Update `Current Role:`** in `send_back.md` to point to the next role in the pipeline (e.g., Worker → Tester, Tester → Documenter).
    - **Send-back mode (you ARE the original sending role and your work passes):**
      1. **Append your send-back summary** to the existing `{NN}_rolename_complete.md` as above.
      2. **Delete `send_back.md`** — the send-back cycle is complete.
 5. **Git commit.** This step is mandatory unless explicitly skipped by the user. Skipping it means incremental progress is not preserved — prior roles' work in this loop could be lost if something goes wrong later. Commit all changed files so progress is preserved incrementally:
-   1. I run `git status`. If not in a git repo or there are no changes, skip this step silently.
-   2. Determine prefix: if you are in send-back mode (`send_back.md` exists now, **or you just deleted it** as the original sending role), use `[ai-{role-name}-sendback]`; otherwise use `[ai-{role-name}]`. Extract `{role-name}` from the `_complete.md` filename (e.g., `03_worker_complete.md` → `worker`).
-   3. I run `git add -A`.
+   1. Run `git status`. If not in a git repo or there are no changes, skip this step silently.
+   2. Determine tag: if you are in send-back mode (`send_back.md` exists now, **or you just deleted it** as the original sending role), use `[ai-{role-name}-sendback]`; otherwise use `[ai-{role-name}]`. Extract `{role-name}` from the `_complete.md` filename (e.g., `03_worker_complete.md` → `worker`).
+   3. Run `git add -A`.
    4. Determine the commit body: read `## Goal Summary` from `ai_workspace/01_interviewer_complete.md`. If it exists, use its content as the body (truncate to <100 chars if needed). If not, generate a concise ad-hoc summary of what was accomplished.
-   5. I run `git commit -m "{commit body from step 4} {prefix determined in step 2}"`.
+   5. Run `git commit -m "{commit body from step 4} {tag determined in step 2}"`.
    6. **If the commit fails** (identity not configured, merge conflict, etc.), **block transition** — present the error to the user and ask how to proceed. Do not mark the role complete until the commit succeeds or the user explicitly says to skip it.
 6. **Inform user handoff ready.** Tell the user: "[clear/new]" handoff ready. Start a new session and the next role will load.
 

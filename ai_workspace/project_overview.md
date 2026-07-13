@@ -16,7 +16,9 @@ ai_workspace/
 │   ├── 06_reviewer.md                ← Quality gate review
 │   └── 07_finalizer.md               ← Squash commits, reset for next loop
 ├── skill_helpers/
+│   ├── in_progress_guide.md           ← In-progress file lifecycle & resume behavior
 │   ├── init_project_guide.md          ← Greenfield onboarding flow
+│   ├── project_overview_guide.md      ← Canonical spec for creating/updating this file
 │   ├── sendback_guide.md              ← Bug/critical-issue routing back to Planner
 │   ├── todo_guide.md                  ← Out-of-scope item capture workflow + template
 │   └── transition_guide.md            ← Role completion & git commit rules

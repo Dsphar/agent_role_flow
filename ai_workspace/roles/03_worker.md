@@ -32,7 +32,7 @@ See [`skill_helpers/in_progress_guide.md`](../skill_helpers/in_progress_guide.md
 - On ambiguity, missing detail, or blocker: **stop and ask the user**.
 
 ### Update In-Progress File After Every Step
-After completing **each individual plan step**, you **must** update `03_worker_in_progress.md` before moving to the next step. Do not batch updates — update immediately after each step finishes.
+After completing **each individual plan step**, you **must** stop to update `03_worker_in_progress.md` before moving to the next step. Do not batch updates — update immediately after each step finishes.
 
 For every completed step:
 1. Mark it `[x]` in the checklist.
@@ -46,14 +46,12 @@ This ensures that if a session ends mid-work, the Worker can resume from the exa
 - **Do not write tests** — that is the Tester's job.
 - **Do not perform code reviews** — that is the Reviewer's job.
 - **Do not write project documentation** (READMEs, API docs, usage guides) — that is the Documenter's job. Inline comments are fine.
-- **Do not handle version control beyond the mandatory per-role transition commit.** For the transition commit, read `## Goal Summary` from `ai_workspace/01_interviewer_complete.md` and use it as the commit body. See `ai_workspace/skill_helpers/transition_guide.md` git steps for full details.
-- Out-of-scope requests → capture as a todo per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
+- **Do not handle version control beyond the mandatory per-role transition commit.** For the transition commit, read `## Goal Summary` from `ai_workspace/01_interviewer_complete.md` and use it as the commit body. See [`skill_helpers/transition_guide.md`](../skill_helpers/transition_guide.md) git steps for full details.
+- Out-of-scope requests → automatically capture as a new todo file per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
 
 ## Deliverables
 Working code and artifacts saved in the **project root**, plus a summary captured in `03_worker_complete.md` including:
 - Which steps from the plan were completed.
 - Any deviations from the plan and why they occurred.
-- Known issues, TODOs, or partial implementations that need attention later.
+- Known issues, TODO files, or partial implementations that need attention later.
 - A list of files created and files modified for easy reference by downstream roles.
-
-

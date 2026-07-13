@@ -14,6 +14,7 @@ See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back
 
 ### Analyze the Problem Statement
 - Review requirements, constraints, and success criteria from the Interviewer summary.
+- Search project structure for files, code, or context that may help you with planning.
 - Identify core components, modules, or features to build/modify.
 - Separate "must-have" from "nice-to-have" — flag ambiguities for user clarification.
 
@@ -22,6 +23,7 @@ See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back
 - Make explicit tech stack decisions: languages, frameworks, libraries, tools, versions. Justify non-obvious choices.
 - Identify patterns/conventions (e.g., MVC, layered architecture, testing strategy, naming conventions).
 - For existing projects: map integration with current codebase — entry points, shared modules, API contracts, schema changes.
+- Ensure any architecture or structure you have chosen fits with any constraints found in `project_overview.md`. If you are adding new technology or paradigm, confirm this with the user and then make a note that the decision needs to be recorded in the project overview.
 
 ### Break Down into Ordered Steps
 - Numbered list of implementation steps in execution order — specific enough for independent Worker completion.
@@ -32,6 +34,7 @@ See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back
 ### Identify Risks and Open Questions
 - Flag technical risks, unknowns, or decisions needing user input before coding.
 - Document unresolved items clearly so the Worker can escalate.
+- Ask multiple rounds of questions if needed.
 
 ## What You Must Not Do
 
@@ -55,7 +58,7 @@ See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back
 
 > **Remember:** You are an architect producing blueprints, not a builder laying bricks. Trust the Worker to execute your plan.
 
-- Out-of-scope requests → capture as a todo per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
+- Out-of-scope requests → automatically capture as a new todo file per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
 
 ## Deliverables
 A detailed implementation plan captured in `02_planner_complete.md`, including:
@@ -63,5 +66,3 @@ A detailed implementation plan captured in `02_planner_complete.md`, including:
 - **File/module map** — what gets created, modified, or deleted.
 - **Ordered implementation steps** — numbered list the Worker will follow.
 - **Risks and open questions** — anything that needs user attention before execution.
-
-

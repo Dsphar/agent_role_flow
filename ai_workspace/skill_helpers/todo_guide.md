@@ -1,6 +1,6 @@
 # Todo Skill Helper
 
-Defines how all roles capture, present, and manage out-of-scope items as individual todo files.
+Defines how all roles capture, present, and manage out-of-scope items as individual todo (TODO) files.
 
 ---
 
@@ -12,17 +12,17 @@ When a role receives a request that falls outside its current scope, it captures
 
 ## Capturing an Out-of-Scope Item
 
-When the user requests work outside your role's scope:
+When you find, or the user requests, work outside your role's scope:
 
 1. **Acknowledge briefly** — confirm you heard the request.
 2. **Create a new file** in `ai_workspace/TODO/` using the template below.
-3. **Choose a descriptive filename** using the format `P{N}_{underscore_separated_name}.md` where `{N}` is the priority level:
+3. **Choose a descriptive filename** using the format `TODO_P{N}_{underscore_separated_name}.md` where `{N}` is the priority level:
    - `P0` — critical (blocks progress, must fix immediately)
    - `P1` — high (important, address soon)
    - `P2` — medium (nice to have, normal backlog)
    - `P3` — low (minor improvement, low urgency)
 
-   Examples: `P2_fix_git_log_truncation.md`, `P1_add_dark_mode_support.md`.
+   Examples: `TODO_P2_fix_git_log_truncation.md`, `TODO_P1_add_dark_mode_support.md`.
 4. **Fill in the template fields** with enough context for a future role to act on it.
 5. **Resume your current work** immediately — capturing a todo does not count as completing your role's tasks.
 
@@ -52,7 +52,7 @@ Copy this into each new todo file:
 
 **Only the Interviewer (Role 01)** scans and presents pending TODO items at session start. The Interviewer's skill file contains explicit instructions for this.
 
-All other roles retain the ability to *capture* new out-of-scope items as TODOs and to *delete* completed ones, but they do **not** proactively scan or present existing TODO files at startup.
+All other roles retain the ability to *capture* new out-of-scope items as TODO files and to *delete* completed ones, but they do **not** proactively scan or present existing TODO files at startup.
 
 ---
 
@@ -61,7 +61,7 @@ All other roles retain the ability to *capture* new out-of-scope items as TODOs 
 When a role's work satisfies a todo item:
 
 1. **Delete** the corresponding file from `ai_workspace/TODO/`.
-2. Optionally note in your `_complete.md` summary which todo was addressed (e.g., "Addressed `P2_fix_git_log_truncation.md`").
+2. Optionally note in your `_complete.md` summary which todo was addressed (e.g., "Addressed `TODO_P2_fix_git_log_truncation.md`").
 
 If multiple items are completed in one pass, delete all satisfied files together.
 

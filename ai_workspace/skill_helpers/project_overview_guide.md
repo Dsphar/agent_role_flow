@@ -9,7 +9,7 @@ Canonical specification for creating and maintaining `ai_workspace/project_overv
 `project_overview.md` gives every downstream role a concise, accurate picture of what has been built, how it works, and key architectural decisions. It is read at session startup by all roles and updated only by:
 
 - **Init flow** (Interviewer via `init_project_guide.md`) — creates the file from scratch during onboarding.
-- **Finalizer role** — updates incrementally after each pipeline loop (structural changes only).
+- **Finalizer role** — updates as needed after each pipeline loop (structural changes only).
 
 ---
 

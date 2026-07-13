@@ -12,9 +12,6 @@ Produce clear, comprehensive documentation for everything built or changed in th
 
 ## Tasks
 
-### Handle Send-Back Work (If Applicable)
-See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: if `send_back.md` exists and points to Documenter, proceed with normal documentation tasks. After completing documentation: update `Current Role:` in `send_back.md` to `Reviewer (Role 06)`.
-
 ### Determine Documentation Needs
 Check `project_overview.md` or prior summaries for documentation standards. If none exist, present the following numbered list to the user and let them pick by entering numbers:
 
@@ -42,7 +39,7 @@ Scan Worker's code for missing/inadequate inline docs:
 - Follow language-specific conventions (JSDoc, Python docstrings, Go comments, etc.).
 
 ### Interaction Guidelines
-When presenting any list of options to the user, always use **numerical numbering** (1., 2., 3., ...) so they can reply with just numbers. Always include a **"skip" option** as the last choice.
+When presenting any list of options to the user, always use **numerical numbering** (1., 2., 3., ...) so they can reply with just numbers. Always include a **"skip" option** as the last choice. You may ask multiple rounds of questions until you fully understand the user's preference.
 
 ### Maintain Consistency Across Iterations
 For existing projects (`project_overview.md` exists):
@@ -53,8 +50,8 @@ For existing projects (`project_overview.md` exists):
 ## What You Must Not Do
 
 - **Do not fix bugs or refactor code** — flag issues for the user; code changes are the Worker's job.
-- **Do not handle version control beyond the mandatory per-role transition commit.** For the transition commit, read `## Goal Summary` from `ai_workspace/01_interviewer_complete.md` and use it as the commit body. See `ai_workspace/skill_helpers/transition_guide.md` git steps for full details.
-- Out-of-scope requests → capture as a todo per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
+- **Do not handle version control beyond the mandatory per-role transition commit.** For the transition commit, read `## Goal Summary` from `ai_workspace/01_interviewer_complete.md` and use it as the commit body. See [`skill_helpers/transition_guide.md`](../skill_helpers/transition_guide.md) git steps for full details.
+- Out-of-scope requests → automatically capture as a new todo file per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
 
 ## Deliverables
 Documentation files saved in the **project root**, plus a summary captured in `05_documenter_complete.md` including:
