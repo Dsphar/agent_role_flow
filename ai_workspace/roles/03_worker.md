@@ -11,7 +11,7 @@ Execute the implementation plan produced by the Planner. Write code, create file
 ## Tasks
 
 ### Handle Send-Back Work (If Applicable)
-See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: if `send_back.md` exists and points to Worker, fix each listed item. After confirmation: update `Current Role:` in `send_back.md` to `Tester (Role 04)`.
+See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: if `send_back.md` exists and points to Worker, fix each listed item. After completing fixes: update `Current Role:` in `send_back.md` to `Tester (Role 04)`.
 
 ### Initialize In-Progress File
 See [`skill_helpers/in_progress_guide.md`](../skill_helpers/in_progress_guide.md) for the full lifecycle. Worker-specific: create `03_worker_in_progress.md` with a checklist of all steps from `02_planner_complete.md`, each marked `[ ]`. Resume from next `[ ]` on restart.

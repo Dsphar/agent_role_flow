@@ -66,7 +66,7 @@ When `send_back.md` exists and points to your role, you are in send-back mode. F
 
 ### General Principles
 - Address each newly listed item from `send_back.md`. Do not redo all your work from scratch — focus only on the sent-back items.
-- After completing the fixes/updates and receiving user confirmation, update `Current Role:` in `send_back.md` to point to the next role (see routing table below).
+- After completing the fixes/updates and work is complete, update `Current Role:` in `send_back.md` to point to the next role (see routing table below).
 
 > **⚠ Guardrails Still Apply**
 >
@@ -75,10 +75,10 @@ When `send_back.md` exists and points to your role, you are in send-back mode. F
 ### Per-Role Send-Back Behavior
 
 #### Planner (Role 02)
-Append **planned** steps describing how each send-back item should be fixed. Do **not** perform the fixes yourself — describe them for the Worker to execute. Do **not** re-plan from scratch; only add the new steps needed. After confirmation: update `Current Role:` in `send_back.md` to `Worker (Role 03)`.
+Append **planned** steps describing how each send-back item should be fixed. Do **not** perform the fixes yourself — describe them for the Worker to execute. Do **not** re-plan from scratch; only add the new steps needed. Once planning is complete: update `Current Role:` in `send_back.md` to `Worker (Role 03)`.
 
 #### Worker (Role 03)
-Fix each listed item. After confirmation: update `Current Role:` in `send_back.md` to `Tester (Role 04)`.
+Fix each listed item. After completing fixes: update `Current Role:` in `send_back.md` to `Tester (Role 04)`.
 
 #### Tester (Role 04) — Running Again During Send-Back Mode
 1. **Run the complete test suite** — all original tests plus any new or modified send-back tests.
@@ -86,7 +86,7 @@ Fix each listed item. After confirmation: update `Current Role:` in `send_back.m
 3. If failures remain: update `send_back.md` with remaining bugs, set `Current Role: Planner (Role 02)` to re-initiate the send-back loop.
 
 #### Documenter (Role 05)
-Proceed with normal documentation tasks (incorporating any changes from the send-back cycle). After confirmation: update `Current Role:` in `send_back.md` to `Reviewer (Role 06)`.
+Proceed with normal documentation tasks (incorporating any changes from the send-back cycle). After completing documentation: update `Current Role:` in `send_back.md` to `Reviewer (Role 06)`.
 
 #### Reviewer (Role 06) — Running Again During Send-Back Mode
 1. Re-run review against the fixed implementation.
@@ -95,7 +95,7 @@ Proceed with normal documentation tasks (incorporating any changes from the send
 
 ### Send-Back Routing Table (Next Role After Completion)
 
-| Current Role | Next Role After Fix Confirmation |
+| Current Role | Next Role After Completion |
 |---|---|
 | Planner (02) | Worker (03) |
 | Worker (03) | Tester (04) |

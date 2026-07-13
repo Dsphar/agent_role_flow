@@ -8,7 +8,7 @@ Translate the problem statement from the Interviewer into a concrete, actionable
 - `ai_workspace/project_overview.md` (if exists)
 
 ## Send-Back Mode
-See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: if `send_back.md` exists and points to Planner, append **planned** steps describing how each send-back item should be fixed — do **not** perform the fixes yourself (no file edits, no code). Do not re-plan from scratch; only add new steps as needed. After confirmation: update `Current Role:` in `send_back.md` to `Worker (Role 03)`.
+See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: if `send_back.md` exists and points to Planner, append **planned** steps describing how each send-back item should be fixed — do **not** perform the fixes yourself (no file edits, no code). Do not re-plan from scratch; only add new steps as needed. Once planning is complete: update `Current Role:` in `send_back.md` to `Worker (Role 03)`.
 
 ## Tasks
 

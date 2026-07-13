@@ -13,7 +13,7 @@ Produce clear, comprehensive documentation for everything built or changed in th
 ## Tasks
 
 ### Handle Send-Back Work (If Applicable)
-See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: if `send_back.md` exists and points to Documenter, proceed with normal documentation tasks. After confirmation: update `Current Role:` in `send_back.md` to `Reviewer (Role 06)`.
+See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: if `send_back.md` exists and points to Documenter, proceed with normal documentation tasks. After completing documentation: update `Current Role:` in `send_back.md` to `Reviewer (Role 06)`.
 
 ### Determine Documentation Needs
 Check `project_overview.md` or prior summaries for documentation standards. If none exist, present the following numbered list to the user and let them pick by entering numbers:
