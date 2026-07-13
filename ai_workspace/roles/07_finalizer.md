@@ -32,14 +32,13 @@ Git is expected. If not initialized, ask the user before proceeding.
 5. **Decide squash vs. fallback:** If step 4 found **zero** matching commits, skip to step 10 (fallback). This means no roles from the current loop produced git commits with the expected subject prefix, so squashing would risk crossing loop boundaries.
 6. **Soft reset to pre-loop state:** Run `git reset --soft <parent-hash>` where `<parent-hash>` is the parent of the oldest matching commit found in step 4. This stages ALL changes from the entire loop (all role artifacts + deletions) without discarding anything.
 7. **Stage all working-tree changes including deletions:** Run `git add .` to ensure deleted `_complete.md` and `_in_progress.md` files are recorded as `D` (deleted) in the index. The soft reset restores the index from the pre-loop tree, so file deletions made in step 3 need re-staging.
-8. **Stage updated project overview:** Ensure `project_overview.md` is staged (`git add ai_workspace/project_overview.md`). This ensures the overview update is included explicitly.
-9. **Compose multi-line commit message:** Format as:
+8. **Compose multi-line commit message:** Format as:
    - First line (subject): `<goal summary from step 1> [ai-pipeline]`
    - Blank line separator
    - Body paragraphs: Narrative of what happened across the pipeline loop, drawn from role summaries captured in step 2. Use structured sub-headers per role that ran (e.g., `### Planner`, `### Worker`) for readability.
-10. **Commit with multi-line message:** Run `git commit -m "<subject>" -m "" -m "<body paragraph 1>" -m "<body paragraph 2>" ...` using multiple `-m` flags for the multi-line format.
-11. **Fallback (no squash):** If reached from step 5, do a normal single commit of just your own changes: run `git add .` to stage `project_overview.md` + deleted files, then commit with `<goal summary> [ai-pipeline]`.
-12. **If commit fails:** Block transition — present error to user and ask how to proceed.
+9. **Commit with multi-line message:** Run `git commit -m "<subject>" -m "" -m "<body paragraph 1>" -m "<body paragraph 2>" ...` using multiple `-m` flags for the multi-line format.
+10. **Fallback (no squash):** If reached from step 5, do a normal single commit of just your own changes: run `git add .` to stage `project_overview.md` + deleted files, then commit with `<goal summary> [ai-pipeline]`.
+11. **If commit fails:** Block transition — present error to user and ask how to proceed.
 
 ### Present Final Recap
 Summarize the full pipeline loop:
