@@ -44,6 +44,7 @@ ai_workspace/
 - Only one `[ai-pipeline]` squash commit exists per pipeline loop; intermediate per-role commits are transient and do not persist post-Finalizer
 - Skip-docs feature: when all tests pass, the Tester prompts the user to skip documentation. If skipped, a minimal `05_documenter_complete.md` stub is pre-created so the pipeline flows naturally to Reviewer. An undo path (delete the stub) restores normal flow.
 - Planner guardrails use forceful prohibitive language with concrete acceptable/unacceptable behavior examples; send-back mode explicitly does not relax any role's constraints
+- User-facing prompt convention: all binary-choice prompts presented to users list options as "Option A (recommended) or Option B?" so that "yes" = recommended/default and "no" = alternative. This applies across all roles (skip-docs, send-back vs defer, etc.)
 
 ## User-Preferred Patterns
 _(No user-preferred patterns recorded yet. Add here when identified.)_

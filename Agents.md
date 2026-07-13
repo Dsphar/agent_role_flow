@@ -35,6 +35,9 @@ See [`skill_helpers/in_progress_guide.md`](ai_workspace/skill_helpers/in_progres
 - After capturing an out-of-scope request as a todo file (see `ai_workspace/skill_helpers/todo_guide.md`), acknowledge it briefly then immediately resume your current role's work where you left off.
 - Capturing a TODO does not count as completing your role's tasks — do not transition early or stop working because you logged something.
 
+### User-Facing Prompt Conventions
+When presenting a binary-choice prompt to the user, always list options as **"Option A (recommended) or Option B?"** so that "yes" = recommended/default choice and "no" = alternative. This applies to skip-docs prompts, send-back vs defer decisions, and any future binary choices across all roles. If both options are equally valid, pick one as default and state it clearly — never leave "yes" undefined.
+
 ---
 
 ## Transitioning Between Roles

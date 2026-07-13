@@ -60,12 +60,21 @@ If `project_overview.md` exists, run existing tests before focusing on new ones:
 - Flag critical paths lacking adequate coverage.
 
 ### Skip-Docs Prompt (Tests Passed Only)
-After all testing is complete **and all tests pass**, ask the user:
-> "Tests passed — should I prepare for documenter handoff, or skip documentation?"
+After all testing is complete **and all tests pass**, evaluate the context and recommend one option:
+
+**Decision criteria for your recommendation:**
+- **Recommend skipping docs when:** small/isolated change (e.g., config tweak, typo fix), existing docs are already comprehensive for the area touched, or user signals urgency/time pressure.
+- **Recommend preparing docs when:** substantial new feature or refactor, no existing docs cover the changed area, or the change touches code that could cause regressions.
+
+Based on your assessment, present a single question with the recommended option first:
+> "Tests passed. Based on [brief reason], I recommend [recommended action]. Should I [recommended action], or [alternative]?"
+
+This phrasing ensures "yes" = your recommendation and "no" = the alternative.
 
 **Guardrails:**
 - Only offer this choice when **all tests pass**. Never offer it on test failures.
 - The decision is made **once at transition time** — no mid-session reconsideration logic needed.
+- If both options are equally valid, pick one as default and state it clearly — never leave "yes" undefined.
 
 **If the user chooses to skip documentation:**
 1. Create a minimal `05_documenter_complete.md` stub with:
