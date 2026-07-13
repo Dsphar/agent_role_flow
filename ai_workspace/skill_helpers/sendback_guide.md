@@ -68,10 +68,14 @@ When `send_back.md` exists and points to your role, you are in send-back mode. F
 - Address each newly listed item from `send_back.md`. Do not redo all your work from scratch — focus only on the sent-back items.
 - After completing the fixes/updates and receiving user confirmation, update `Current Role:` in `send_back.md` to point to the next role (see routing table below).
 
+> **⚠ Guardrails Still Apply**
+>
+> Send-back mode changes *what* you work on (sent-back items instead of original scope), but it does **not** change *how* you work. Each role's "What You Must Not Do" rules remain fully in effect. The Planner still only produces plans — never edits project files, even to fix the bugs that triggered the send-back. The Worker still doesn't write tests or docs. Trust the pipeline.
+
 ### Per-Role Send-Back Behavior
 
 #### Planner (Role 02)
-Append steps addressing each send-back item — do **not** re-plan from scratch. After confirmation: update `Current Role:` in `send_back.md` to `Worker (Role 03)`.
+Append **planned** steps describing how each send-back item should be fixed. Do **not** perform the fixes yourself — describe them for the Worker to execute. Do **not** re-plan from scratch; only add the new steps needed. After confirmation: update `Current Role:` in `send_back.md` to `Worker (Role 03)`.
 
 #### Worker (Role 03)
 Fix each listed item. After confirmation: update `Current Role:` in `send_back.md` to `Tester (Role 04)`.

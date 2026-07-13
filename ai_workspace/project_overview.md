@@ -35,9 +35,6 @@ ai_workspace/
 - **Version Control:** Git (per-role incremental commits, squashed by Finalizer)
 - **No runtime code** — this is a prompt/orchestration system, not an application
 
-## Recent Changes
-- **Finalizer deletion staging fix:** Added `git add .` after the soft reset (squash path, step 7) and in the fallback path (step 11) so that deleted `_complete.md` and `_in_progress.md` files are properly recorded as `D` entries in the squashed `[ai-pipeline]` commit. Two minor TODOs captured by Reviewer: redundant step 8, and a note confirming both paths use `git add .`.
-
 ## Key Design Decisions
 - Role separation enforced via "What You Must Not Do" sections in each skill file
 - Lowercase `_complete.md` filenames regardless of role casing
@@ -46,6 +43,7 @@ ai_workspace/
 - Tool calling is LLM-driven — no hardcoded bash/shell assumptions
 - Only one `[ai-pipeline]` squash commit exists per pipeline loop; intermediate per-role commits are transient and do not persist post-Finalizer
 - Skip-docs feature: when all tests pass, the Tester prompts the user to skip documentation. If skipped, a minimal `05_documenter_complete.md` stub is pre-created so the pipeline flows naturally to Reviewer. An undo path (delete the stub) restores normal flow.
+- Planner guardrails use forceful prohibitive language with concrete acceptable/unacceptable behavior examples; send-back mode explicitly does not relax any role's constraints
 
 ## User-Preferred Patterns
 _(No user-preferred patterns recorded yet. Add here when identified.)_

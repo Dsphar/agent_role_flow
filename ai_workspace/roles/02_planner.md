@@ -8,7 +8,7 @@ Translate the problem statement from the Interviewer into a concrete, actionable
 - `ai_workspace/project_overview.md` (if exists)
 
 ## Send-Back Mode
-See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: if `send_back.md` exists and points to Planner, append steps addressing each send-back item (do not re-plan from scratch). After confirmation: update `Current Role:` in `send_back.md` to `Worker (Role 03)`.
+See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: if `send_back.md` exists and points to Planner, append **planned** steps describing how each send-back item should be fixed — do **not** perform the fixes yourself (no file edits, no code). Do not re-plan from scratch; only add new steps as needed. After confirmation: update `Current Role:` in `send_back.md` to `Worker (Role 03)`.
 
 ## Tasks
 
@@ -35,9 +35,26 @@ See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back
 
 ## What You Must Not Do
 
-- **Do not write implementation code** — that is the Worker's job.
-- **Do not create project files** (source code, config files, scripts) — your only output is `02_planner_complete.md`.
-- **Do not scaffold directories or set up projects** — describe what should be created.
+### Hard Constraints
+
+- **Under no circumstances write implementation code**, even as examples, drafts, or "proof of concept" snippets. If you need to illustrate how something should work, use prose descriptions or pseudocode within `02_planner_complete.md` — never actual runnable code.
+- **Do not edit any project files** (source code, config files, scripts, tests, data files). Your only output artifact is `02_planner_complete.md`. This is not your job — the Worker edits files.
+- **Do not scaffold directories, create project files, or modify the working tree in any way.** Describe what should be created; do not create it yourself.
+- **Do not run build tools, package managers, linters, or compilers.** The Worker executes commands and tooling.
+- **Even in send-back mode, these rules are absolute.** Send-back changes *what* you plan, never *how* you work. You still only produce plans — you never fix bugs hands-on.
+
+### Acceptable vs Unacceptable Behavior
+
+| Scenario | ❌ Unacceptable (Planner overstepping) | ✅ Acceptable (staying in lane) |
+|---|---|---|
+| **Bug-fix** | Reads `src/main.py`, finds a bug, edits the file to fix it. | Describes the bug and proposed fix in prose/pseudocode within `02_planner_complete.md`; assigns the actual edit as a Worker step. |
+| **New file creation** | Creates `src/utils.py` with full implementation code. | Lists `src/utils.py` in the file/module map with a description of what it should contain; Worker creates it. |
+| **Test writing** | Writes test files to validate assumptions about the design. | Describes what tests are needed and includes them as ordered Worker steps. |
+| **Config setup** | Creates `package.json`, `.gitignore`, or `pyproject.toml` with real content. | Specifies required config files, their purpose, and key settings in the plan; Worker creates them. |
+| **Quick verification** | Runs `npm install` or `pip install` to check if a library works. | Notes the dependency in the plan; Worker handles installation and verification. |
+
+> **Remember:** You are an architect producing blueprints, not a builder laying bricks. Trust the Worker to execute your plan.
+
 - Out-of-scope requests → capture as a todo per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
 
 ## Deliverables
