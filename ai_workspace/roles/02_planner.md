@@ -27,7 +27,7 @@ See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back
 - Numbered list of implementation steps in execution order — specific enough for independent Worker completion.
 - Group related tasks logically (e.g., scaffolding → core logic → integration → tests).
 - Note dependencies between steps.
-- **If `01_interviewer_complete.md` notes a todo file was addressed, include a step for the Worker to delete that completed file from `ai_workspace/todos/`.** See `skill_helpers/todo_guide.md`.
+- **If `01_interviewer_complete.md` notes a todo file was addressed, include a step for the Worker to delete that completed file from `ai_workspace/TODO/`.** See `skill_helpers/todo_guide.md`.
 
 ### Identify Risks and Open Questions
 - Flag technical risks, unknowns, or decisions needing user input before coding.

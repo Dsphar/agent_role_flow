@@ -20,7 +20,7 @@ ai_workspace/
 │   ├── sendback_guide.md              ← Bug/critical-issue routing back to Planner
 │   ├── todo_guide.md                  ← Out-of-scope item capture workflow + template
 │   └── transition_guide.md            ← Role completion & git commit rules
-└── todos/                             ← Pending items (one .md file per item)
+└── TODO/                              ← Pending items (one .md file per item)
 ```
 
 ## Architecture Overview
@@ -39,7 +39,7 @@ ai_workspace/
 - Role separation enforced via "What You Must Not Do" sections in each skill file
 - Lowercase `_complete.md` filenames regardless of role casing
 - Goal summary from Interviewer used as commit subject across all roles
-- Out-of-scope requests are captured as individual files in `ai_workspace/todos/` per `skill_helpers/todo_guide.md`
+- Out-of-scope requests are captured as individual files in `ai_workspace/TODO/` per `skill_helpers/todo_guide.md`
 - Tool calling is LLM-driven — no hardcoded bash/shell assumptions
 - Only one `[ai-finalizer]` squash commit exists per pipeline loop; intermediate per-role commits are transient and do not persist post-Finalizer
 
@@ -48,16 +48,19 @@ None.
 
 ## Current Pipeline State
 - **Loop 1** — Complete. Squashed by Finalizer.
-- Work this loop: Restructured todo system from monolithic `todo.md` to per-file `todos/` folder with skill helper
+- Work this loop: Restructured todo system from monolithic `todo.md` to per-file `TODO/` folder with skill helper
 - **Loop 2** — Complete. Squashed by Finalizer.
 - Work this loop: Corrected stale git model references in project_context.md to reflect the squashed-commit reality
 - **Loop 3** — Complete. Squashed by Finalizer.
 - Work this loop: Extracted `_in_progress.md` lifecycle guidance into `skill_helpers/in_progress_guide.md`; added startup check for in-progress files in AGENTS.md Role Detection step 5
 - **Loop 4** — Complete. Squashed by Finalizer.
 - Work this loop: Fixed git log truncation in Finalizer role — replaced `--oneline` with `--format="%H %s"` to preserve full commit hashes and subject lines
+- **Loop 5** — Complete. Squashed by Finalizer.
+- Work this loop: Renamed `todos/` folder to `TODO/` and updated all references across the project
 
 ## Recent Changes
+- Renamed workspace folder: `todos/` → `TODO/` with all references updated across AGENTS.md, role files, skill helpers, and project context (2026-07-12)
 - Fixed git log truncation: replaced `git log --oneline` with `git log --format="%H %s"` in Finalizer role to preserve full hashes and subject lines (2026-07-12)
-- Restructured todo system: replaced monolithic `todo.md` with per-file `todos/` folder + `todo_guide.md` skill helper (2026-07-12)
+- Restructured todo system: replaced monolithic `todo.md` with per-file `TODO/` folder + `todo_guide.md` skill helper (2026-07-12)
 - Extracted in-progress file guidance into dedicated skill helper, updated AGENTS.md/Worker/Transition Guide references (2026-07-12)
 - Initial project context created (2026-07-12)

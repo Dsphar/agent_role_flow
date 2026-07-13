@@ -13,7 +13,7 @@ Before any other task, check whether `ai_workspace/project_context.md` exists.
 **If it exists:** Continue to the next startup step. You will read the project_context file later. Do NOT load it yet.
 
 ### Startup — Check for Pending TODO Items (MANDATORY SECOND STEP)
-Before greeting or asking open-ended questions, scan `ai_workspace/todos/` for any `.md` files. See `skill_helpers/todo_guide.md` for the full todo workflow.
+Before greeting or asking open-ended questions, scan `ai_workspace/TODO/` for any `.md` files. See `skill_helpers/todo_guide.md` for the full todo workflow.
 - If pending items exist, read relevant ones and present them to the user as work options.
 - Ask whether to tackle a listed item(s) or start something new.
 - If they pick a TODO, use its description as an interview starting point — still interview for missing details (success criteria, constraints, edge cases) by following the multi-round questioning below.

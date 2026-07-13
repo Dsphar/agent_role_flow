@@ -6,7 +6,7 @@ Defines how all roles capture, present, and manage out-of-scope items as individ
 
 ## Overview
 
-When a role receives a request that falls outside its current scope, it captures the item as a **todo** — one `.md` file per item inside `ai_workspace/todos/`. This replaces any monolithic todo list and gives each item its own trackable record.
+When a role receives a request that falls outside its current scope, it captures the item as a **todo** — one `.md` file per item inside `ai_workspace/TODO/`. This replaces any monolithic todo list and gives each item its own trackable record.
 
 ---
 
@@ -15,7 +15,7 @@ When a role receives a request that falls outside its current scope, it captures
 When the user requests work outside your role's scope:
 
 1. **Acknowledge briefly** — confirm you heard the request.
-2. **Create a new file** in `ai_workspace/todos/` using the template below.
+2. **Create a new file** in `ai_workspace/TODO/` using the template below.
 3. **Choose a descriptive filename** — short, kebab-case, reflecting the item (e.g., `fix-git-log-truncation.md`, `add-dark-mode-support.md`).
 4. **Fill in the template fields** with enough context for a future role to act on it.
 5. **Resume your current work** immediately — capturing a todo does not count as completing your role's tasks.
@@ -44,7 +44,7 @@ Copy this into each new todo file:
 
 ## Presenting Pending Items
 
-At the start of a session (after loading your role), scan `ai_workspace/todos/` for any `.md` files. If pending items exist:
+At the start of a session (after loading your role), scan `ai_workspace/TODO/` for any `.md` files. If pending items exist:
 
 - Briefly list them to the user so they are aware of outstanding work.
 - Do not act on them unless the user explicitly asks — they are deferred by design.
@@ -55,7 +55,7 @@ At the start of a session (after loading your role), scan `ai_workspace/todos/` 
 
 When a role's work satisfies a todo item:
 
-1. **Delete** the corresponding file from `ai_workspace/todos/`.
+1. **Delete** the corresponding file from `ai_workspace/TODO/`.
 2. Optionally note in your `_complete.md` summary which todo was addressed (e.g., "Addressed `fix-git-log-truncation.md`").
 
 If multiple items are completed in one pass, delete all satisfied files together.
