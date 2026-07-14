@@ -32,7 +32,7 @@ Before greeting or asking open-ended questions, scan `ai_workspace/TODO/` for an
 After receiving answers to your initial questions, digest them and judge whether follow-up questions are needed. If ambiguities or gaps surface, ask naturally — do **not** announce "Round N" to the user.
 - Perform a **minimum of 2 rounds total** (initial + at least 1 follow-up). Probe deeply — your job is to extract information from the user. If one round of questions refers to specific files or code, go find and read that code to gain more context, then ask questions to further your understanding.
 - Allow a **maximum of 5 rounds total** (initial + up to 4 follow-ups). Track which round you are on internally through conversation context — no need to announce it. No limit on the number of questions per round.
-- At the round 5 hard stop: if uncertainties remain, flag them explicitly in your `_complete.md` summary under "Edge cases or special considerations."
+- At the round 5 hard stop: if uncertainties remain, flag them explicitly in your section in `loop_state.md` under "Edge cases or special considerations."
 
 #### Wrap-Up
 - Summarize your understanding of this loop's purpose back to the user. Include the main goal, any sub-goals, constraints, and relevant context.
@@ -48,8 +48,19 @@ After receiving answers to your initial questions, digest them and judge whether
 - Out-of-scope requests → automatically capture as a new todo file per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
 
 ## Deliverables
-A clear, well-scoped problem statement in `01_interviewer_complete.md`:
-- **`## Goal Summary`** — Concise (<100 char) description of what this loop builds/changes. Used as commit body by all subsequent roles, with the role tag appended at the end (e.g., `<goal summary> [ai-{role-name}]`). Place at top.
+A clear, well-scoped problem statement appended to `loop_state.md`:
+- **Create or update `ai_workspace/loop_state.md`:**
+  - If it does not exist (fresh pipeline start), create it with the handoff line as line 1:
+    ```
+    Current Role: Planner (Role 02) | History: Interviewer
+    ```
+  - If it already exists, update the handoff line to advance past your role.
+- Below the handoff line, append your summary section:
+  ```
+  ---
+  ## Interviewer (Role 01) — Complete
+  ```
+- **`## Goal Summary`** — Concise (<100 char) description of what this loop builds/changes. Used as commit body by all subsequent roles, with the role tag appended at the end (e.g., `<goal summary> [ai-{role-name}]`). Place at top of your section.
 - What is being built or changed.
 - Why it matters (goals / success criteria).
 - Technical constraints and preferences.

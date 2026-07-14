@@ -4,10 +4,7 @@
 Produce clear, comprehensive documentation for everything built or changed in this pipeline loop. This is the "write it down" role — generating READMEs, API docs, usage guides, changelogs, and any other documentation that ensures the project is understandable to anyone who picks it up later.
 
 ## Inputs from Prior Roles
-- `01_interviewer_complete.md`
-- `02_planner_complete.md`
-- `03_worker_complete.md`
-- `04_tester_complete.md`
+- Read the Interviewer's, Planner's, Worker's, and Tester's summary sections from `loop_state.md`.
 - `ai_workspace/project_overview.md` (if exists)
 
 ## Tasks
@@ -50,12 +47,19 @@ For existing projects (`project_overview.md` exists):
 ## What You Must Not Do
 
 - **Do not fix bugs or refactor code** — flag issues for the user; code changes are the Worker's job.
-- **Do not handle version control beyond the mandatory per-role transition commit.** For the transition commit, read `## Goal Summary` from `ai_workspace/01_interviewer_complete.md` and use it as the commit body. See [`skill_helpers/transition_guide.md`](../skill_helpers/transition_guide.md) git steps for full details.
+- **Do not handle version control beyond the mandatory per-role transition commit.** For the transition commit, read `## Goal Summary` from the Interviewer's section in `loop_state.md` and use it as the commit body. See [`skill_helpers/transition_guide.md`](../skill_helpers/transition_guide.md) git steps for full details.
 - Out-of-scope requests → automatically capture as a new todo file per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
 
 ## Deliverables
-Documentation files saved in the **project root**, plus a summary captured in `05_documenter_complete.md` including:
-- List of documentation files created or updated.
-- Brief description of what each file covers.
-- Any areas where documentation was intentionally skipped (and why).
-- Notes on inline code comments added or improved.
+Documentation files saved in the **project root**, plus a summary appended to `loop_state.md`:
+- Append your summary section below existing content:
+  ```
+  ---
+  ## Documenter (Role 05) — Complete
+  ```
+- Update the handoff line in `loop_state.md` to advance past your role.
+- Include:
+  - List of documentation files created or updated.
+  - Brief description of what each file covers.
+  - Any areas where documentation was intentionally skipped (and why).
+  - Notes on inline code comments added or improved.

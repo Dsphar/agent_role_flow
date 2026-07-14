@@ -1,10 +1,10 @@
 # In-Progress Files Guide
 
-This guide is the single source of truth for `_in_progress.md` file lifecycle — creation, usage, resume-on-restart, and transition-time rename.
+This guide is the single source of truth for `_in_progress.md` file lifecycle — creation, usage, resume-on-restart, and transition-time handling.
 
 ## Purpose and Naming Convention
 
-In-progress files provide early notes and progress tracking during a role session. They are temporary and replaced by the corresponding `_complete.md` summary at transition time.
+In-progress files provide early notes and progress tracking during a role session. They are temporary and their content is incorporated into `loop_state.md` at transition time.
 
 - **Naming:** `{NN}_rolename_in_progress.md` placed in `ai_workspace/`.
 - Role names always use **lowercase** (e.g., `03_worker_in_progress.md`, not `03_Worker_in_progress.md`).
@@ -15,7 +15,7 @@ In-progress files provide early notes and progress tracking during a role sessio
 Any role may optionally create an `_in_progress.md` file during its session for early notes and progress tracking.
 
 ### Worker — Mandatory Checklist
-The Worker **must** create `03_worker_in_progress.md` with a checklist derived from the ordered implementation steps in `02_planner_complete.md`. Each step starts marked `[ ]`.
+The Worker **must** create `03_worker_in_progress.md` with a checklist derived from the ordered implementation steps in the Planner's section of `loop_state.md`. Each step starts marked `[ ]`.
 
 ## How to Use During a Session
 
@@ -29,13 +29,19 @@ If a session ends and restarts within the same role:
 2. If it exists, **resume from the next incomplete step** (for Worker: next `[ ]` item in the checklist).
 3. If it does not exist, start fresh per normal role instructions.
 
-## Transition-Time Rename
+## Transition-Time Handling
 
 When transitioning out of a role (see `transition_guide.md`):
-- If `{NN}_rolename_in_progress.md` exists, **rename** it to `{NN}_rolename_complete.md`.
-- If it does not exist, create `{NN}_rolename_complete.md` with the full summary.
-- Summary filenames always use **lowercase** role names, regardless of how the role skill file is cased (e.g., `06_reviewer_complete.md`).
+
+- If `{NN}_rolename_in_progress.md` exists, **append its contents as an "In-Progress Notes" subsection** under your role's summary section in `loop_state.md`. Format:
+  ```
+  ### In-Progress Notes
+  {contents of the _in_progress.md file}
+  ```
+  After appending, **delete** `{NN}_rolename_in_progress.md` — its content is now preserved in `loop_state.md`.
+
+- If no `_in_progress.md` exists, skip this step. Your role's summary section in `loop_state.md` stands on its own.
 
 ## "Going Back" Rule
 
-If the user requests reverting to a previous role: **keep any `_in_progress.md`** for that role so work-in-progress is preserved. Do not delete ahead-of-role `_complete.md` files either.
+If the user requests reverting to a previous role: **keep any `_in_progress.md`** for that role so work-in-progress is preserved. Revert the handoff line in `loop_state.md` to point back to the target role (removing any roles after it from the history). Do not delete summary sections from roles ahead of the target either — they remain as reference.

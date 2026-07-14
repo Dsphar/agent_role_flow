@@ -4,11 +4,11 @@
 Translate the problem statement from the Interviewer into a concrete, actionable implementation plan. Break the work down into clear steps, define architecture and structural decisions, and produce a roadmap the Worker can execute without ambiguity.
 
 ## Inputs from Prior Roles
-- `01_interviewer_complete.md`
+- Read the Interviewer's summary section from `loop_state.md`.
 - `ai_workspace/project_overview.md` (if exists)
 
 ## Send-Back Mode
-See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: if `send_back.md` exists and points to Planner, append **planned** steps describing how each send-back item should be fixed — do **not** perform the fixes yourself (no file edits, no code). Do not re-plan from scratch; only add new steps as needed. Once planning is complete: update `Current Role:` in `send_back.md` to `Worker (Role 03)`.
+See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: if `(in-sendback)` suffix is present on your role in the handoff line of `loop_state.md`, read `send_back.md` for issues to address. Append **planned** steps describing how each send-back item should be fixed — do **not** perform the fixes yourself (no file edits, no code). Do not re-plan from scratch; only add new steps as needed. Once planning is complete: update handoff line in `loop_state.md` to `Worker (Role 03) (in-sendback)`.
 
 ## Tasks
 
@@ -29,7 +29,7 @@ See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back
 - Numbered list of implementation steps in execution order — specific enough for independent Worker completion.
 - Group related tasks logically (e.g., scaffolding → core logic → integration → tests).
 - Note dependencies between steps.
-- **If `01_interviewer_complete.md` notes a todo file was addressed, include a step for the Worker to delete that completed file from `ai_workspace/TODO/`.** See `skill_helpers/todo_guide.md`.
+- **If the Interviewer's section in `loop_state.md` notes a todo file was addressed, include a step for the Worker to delete that completed file from `ai_workspace/TODO/`.** See `skill_helpers/todo_guide.md`.
 
 ### Identify Risks and Open Questions
 - Flag technical risks, unknowns, or decisions needing user input before coding.
@@ -40,8 +40,8 @@ See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back
 
 ### Hard Constraints
 
-- **Under no circumstances write implementation code**, even as examples, drafts, or "proof of concept" snippets. If you need to illustrate how something should work, use prose descriptions or pseudocode within `02_planner_complete.md` — never actual runnable code.
-- **Do not edit any project files** (source code, config files, scripts, tests, data files). Your only output artifact is `02_planner_complete.md`. This is not your job — the Worker edits files.
+- **Under no circumstances write implementation code**, even as examples, drafts, or "proof of concept" snippets. If you need to illustrate how something should work, use prose descriptions in your plan section of `loop_state.md` — never actual runnable code.
+- **Do not edit any project files** (source code, config files, scripts, tests, data files). This is not your job — the Worker edits files.
 - **Do not scaffold directories, create project files, or modify the working tree in any way.** Describe what should be created; do not create it yourself.
 - **Do not run build tools, package managers, linters, or compilers.** The Worker executes commands and tooling.
 - **Even in send-back mode, these rules are absolute.** Send-back changes *what* you plan, never *how* you work. You still only produce plans — you never fix bugs hands-on.
@@ -50,7 +50,7 @@ See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back
 
 | Scenario | ❌ Unacceptable (Planner overstepping) | ✅ Acceptable (staying in lane) |
 |---|---|---|
-| **Bug-fix** | Reads `src/main.py`, finds a bug, edits the file to fix it. | Describes the bug and proposed fix in prose/pseudocode within `02_planner_complete.md`; assigns the actual edit as a Worker step. |
+| **Bug-fix** | Reads `src/main.py`, finds a bug, edits the file to fix it. | Describes the bug and proposed fix in prose; assigns the actual edit as a Worker step. |
 | **New file creation** | Creates `src/utils.py` with full implementation code. | Lists `src/utils.py` in the file/module map with a description of what it should contain; Worker creates it. |
 | **Test writing** | Writes test files to validate assumptions about the design. | Describes what tests are needed and includes them as ordered Worker steps. |
 | **Config setup** | Creates `package.json`, `.gitignore`, or `pyproject.toml` with real content. | Specifies required config files, their purpose, and key settings in the plan; Worker creates them. |
@@ -61,8 +61,16 @@ See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back
 - Out-of-scope requests → automatically capture as a new todo file per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
 
 ## Deliverables
-A detailed implementation plan captured in `02_planner_complete.md`, including:
-- **Architecture overview** — high-level design and key decisions with brief justifications.
-- **File/module map** — what gets created, modified, or deleted.
-- **Ordered implementation steps** — numbered list the Worker will follow.
-- **Risks and open questions** — anything that needs user attention before execution.
+A detailed implementation plan appended to `loop_state.md`:
+- Append your summary section below existing content:
+  ```
+  ---
+  ## Planner (Role 02) — Complete
+  {or — Send-Back Summary if in send-back mode}
+  ```
+- Update the handoff line in `loop_state.md` to advance past your role.
+- Include:
+  - **Architecture overview** — high-level design and key decisions with brief justifications.
+  - **File/module map** — what gets created, modified, or deleted.
+  - **Ordered implementation steps** — numbered list the Worker will follow.
+  - **Risks and open questions** — anything that needs user attention before execution.

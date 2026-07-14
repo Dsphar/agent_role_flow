@@ -4,15 +4,13 @@
 Create, update, and execute tests to validate the implementation produced by the Worker. Catch bugs, verify edge cases, and ensure the code meets the requirements before it moves into review. This role covers both unit-level testing and end-to-end (integration) testing. If there is a regression test suite, run it. This helps catch regressions early.
 
 ## Inputs from Prior Roles
-- `01_interviewer_complete.md`
-- `02_planner_complete.md`
-- `03_worker_complete.md`
+- Read the Interviewer's, Planner's, and Worker's summary sections from `loop_state.md`.
 - `ai_workspace/project_overview.md` (if exists)
 
 ## Tasks
 
 ### Handle Send-Back Work (If Applicable)
-See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: if `send_back.md` points to Tester, update or add any beneficial tests for the problems addressed during the send-back, then run the complete test suite. If all pass, offer the skip-docs prompt (same as first-run — see section below). If user skips docs or proceeds normally, append summary and advance to Documenter (Role 05) or Reviewer (Role 06) accordingly. If failures remain, update `send_back.md` with remaining bugs and route back to Planner (Role 02). If tests pass and `Source:` in `send_back.md` is `Tester (Role 04)`, delete `send_back.md` — the send-back cycle is complete.
+See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: if `(in-sendback)` suffix is present on your role in the handoff line of `loop_state.md`, read `send_back.md` for issues to address. Update or add any beneficial tests for the problems addressed during the send-back, then run the complete test suite. If all pass, offer the skip-docs prompt (same as first-run — see section below). If user skips docs or proceeds normally, append summary and advance handoff line in `loop_state.md` to Documenter (Role 05) or Reviewer (Role 06) accordingly. If failures remain, update `send_back.md` with remaining bugs and update handoff line in `loop_state.md` back to Planner (Role 02). If tests pass and `Source:` in `send_back.md` is `Tester (Role 04)`, remove `(in-sendback)` suffix from handoff line and delete `send_back.md` — the send-back cycle is complete.
 
 ### Clarify Testing Expectations with the User
 Check `project_overview.md` or the Planner's summary for testing preferences. If none defined, **ask the user** which testing depth they prefer using a numbered list:
@@ -98,7 +96,7 @@ If `project_overview.md` exists, run existing tests before focusing on new ones:
 - Re-run until stable (all passing or known issues documented).
 
 ### Send-Back on Bugs
-See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: when tests reveal bugs, present findings and ask the user, in numbered list form, to either (1) send back — create `send_back.md` with `Source: Tester (Role 04)` and `Current Role: Planner (Role 02)`, or (2) defer as TODO per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
+See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: when tests reveal bugs, present findings and ask the user to either (a) send back — create `send_back.md` with `Source: Tester (Role 04)` AND update handoff line in `loop_state.md` to `Planner (Role 02) (in-sendback)`, or (b) defer as TODO per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
 
 ### Document Coverage Gaps
 - Note areas difficult/impossible to test and why.
@@ -137,14 +135,21 @@ This phrasing ensures "yes" = your recommendation and "no" = the alternative.
 - If both options are equally valid, pick one as default and state it clearly — never leave "yes" undefined.
 
 **If the user chooses to skip documentation:**
-1. Create a minimal `05_documenter_complete.md` stub with:
-   - A note that documentation was skipped by user request.
-   - A brief one-line recap of what was built (pulled from prior `_complete.md` summaries).
-2. Proceed to normal transition — the Reviewer will load next since `05_documenter_complete.md` now exists.
+1. Pre-append a minimal Documenter section to `loop_state.md`:
+   ```
+   ---
+   ## Documenter (Role 05) — Complete
+   Documentation skipped by user at request of Tester. All tests passed; no documentation produced this loop.
+   ```
+2. Advance the handoff line in `loop_state.md` past Documenter to Reviewer:
+   ```
+   Current Role: Reviewer (Role 06) | History: ... → Tester → Documenter
+   ```
+3. Proceed to normal transition — the Reviewer will load next since Documenter now has a "Complete" entry in `loop_state.md`.
 
 **If the user chooses not to skip:** proceed normally to the Documenter (Role 05).
 
-**Undoing a skip-docs decision:** If the user changes their mind after skipping, they can undo it by deleting `05_documenter_complete.md` before starting the next session. On the next session start, the Documenter role will load since its `_complete.md` no longer exists.
+**Undoing a skip-docs decision:** If the user changes their mind after skipping, they can edit `loop_state.md` to remove the pre-created Documenter section and revert the handoff line before starting the next session. On the next session start, the Documenter role will load since it no longer appears in the history.
 
 ## What You Must Not Do
 
@@ -154,11 +159,18 @@ This phrasing ensures "yes" = your recommendation and "no" = the alternative.
 - Out-of-scope requests → automatically capture as a new todo file per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
 
 ## Deliverables
-Test files saved in the **project root** following project conventions, plus a summary captured in `04_tester_complete.md` including:
-- What was tested (unit tests + end-to-end tests).
-- Test results — how many passed, failed, or were skipped.
-- Bugs found during testing and their severity.
-- Coverage gaps or areas that need more attention.
-- Recommendation: proceed to Reviewer, or send-back ([`sendback_guide.md`](../skill_helpers/sendback_guide.md)) to Planner for re-planning.
-
-At transition time, `04_tester_in_progress.md` is renamed to `04_tester_complete.md` per [`transition_guide.md`](../skill_helpers/transition_guide.md). The final summary should incorporate the tracked progress from the checklist — use it as the backbone of your completion report.
+Test files saved in the **project root** following project conventions, plus a summary appended to `loop_state.md`:
+- Append your summary section below existing content:
+  ```
+  ---
+  ## Tester (Role 04) — Complete
+  {or — Send-Back Summary if in send-back mode}
+  ```
+- If `04_tester_in_progress.md` exists, append its contents as an `### In-Progress Notes` subsection under your summary, then delete the file.
+- Update the handoff line in `loop_state.md` to advance past your role.
+- Include:
+  - What was tested (unit tests + end-to-end tests).
+  - Test results — how many passed, failed, or were skipped.
+  - Bugs found during testing and their severity.
+  - Coverage gaps or areas that need more attention.
+  - Recommendation: proceed to Reviewer, or send-back ([`sendback_guide.md`](../skill_helpers/sendback_guide.md)) to Planner for re-planning.

@@ -4,22 +4,18 @@
 Perform a thorough code and quality review of everything produced by the Worker and validated by the Tester. Assess architecture, readability, maintainability, security, test quality, and overall alignment with the original requirements. This role is the final quality gate before finalization.
 
 ## Inputs from Prior Roles
-- `01_interviewer_complete.md`
-- `02_planner_complete.md`
-- `03_worker_complete.md`
-- `04_tester_complete.md`
-- `05_documenter_complete.md`
+- Read the Interviewer's, Planner's, Worker's, Tester's, and Documenter's summary sections from `loop_state.md`.
 - `ai_workspace/project_overview.md` (if exists)
 
 ## Tasks
 
 ### Running Again During Send-Back Mode
-See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: if `send_back.md` exists and points to Reviewer, re-run review against fixed implementation. If no critical issues remain, append summary and delete `send_back.md`. If issues remain, update `send_back.md` with remaining issues and route back to Planner (Role 02).
+See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: if `(in-sendback)` suffix is present on your role in the handoff line of `loop_state.md`, read `send_back.md` for issues to re-check. Re-run review against fixed implementation. If no critical issues remain, remove `(in-sendback)` suffix from handoff line and delete `send_back.md`. If issues remain, update `send_back.md` with remaining issues and update handoff line in `loop_state.md` back to Planner (Role 02).
 
 ### Perform Scope Audit
-- **Discover loop commits** — Run `git log --format="%H %s"` to list all commits. Find every commit whose subject starts with the Goal Summary text from `01_interviewer_complete.md`. Note the parent hash of the oldest matching commit (this is the pre-loop state). If no matching commits are found, fall back to listing project root files and comparing against role summaries.
+- **Discover loop commits** — Run `git log --format="%H %s"` to list all commits. Find every commit whose subject starts with the Goal Summary text from the Interviewer's section in `loop_state.md`. Note the parent hash of the oldest matching commit (this is the pre-loop state). If no matching commits are found, fall back to listing project root files and comparing against role summaries.
 - **Run diff** — Execute `git diff <parent-hash>..HEAD` to get the full file-level set of changes for this pipeline loop.
-- **Load scope context** — Read the full problem statement from `01_interviewer_complete.md` (not just the Goal Summary line). If the file does not exist, skip the scope audit and note the skip in your review report. Proceed to normal review tasks.
+- **Load scope context** — Read the full problem statement from the Interviewer's section in `loop_state.md` (not just the Goal Summary line). If it does not exist, skip the scope audit and note the skip in your review report. Proceed to normal review tasks.
 - **Compare changes against scope** — Judge each changed file or change group against the full problem statement. Identify any changes that appear out of scope relative to what was originally requested.
 - **Present out-of-scope items to user** — For each out-of-scope change, present two options:
   - **Absorb (recommended)** — Keep the change silently (no logging, no further action).
@@ -62,7 +58,7 @@ See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back
 - Offer to make new todo files per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md) for each.
 
 ### Send-Back on Critical Issues
-See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: when you find **Critical** issues, present findings and ask the user to either (a) send back — create `send_back.md` with `Source: Reviewer (Role 06)` and `Current Role: Planner (Role 02)`, or (b) defer as a new TODO file per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
+See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: when you find **Critical** issues, present findings and ask the user to either (a) send back — create `send_back.md` with `Source: Reviewer (Role 06)` AND update handoff line in `loop_state.md` to `Planner (Role 02) (in-sendback)`, or (b) defer as a new TODO file per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
 
 ## What You Must Not Do
 
@@ -72,9 +68,17 @@ See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back
 - Out-of-scope requests → automatically capture as a new todo file per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
 
 ## Deliverables
-A review report captured in `06_reviewer_complete.md` including:
-- **Overall assessment** — high-level summary of code quality and alignment with requirements.
-- **Issues found** — categorized list (Critical / Warning / Suggestion) with file references, descriptions, and recommended fixes.
-- **Strengths** — notable good practices or clean implementations worth preserving.
-- **Scope audit findings** — whether all changes were in-scope relative to the original problem statement, and a summary of any out-of-scope items (absorbed or flagged).
-- **Recommendation** — ship as-is, send back to Worker for rework, log lower priority issues or suggestions as new todo files.
+A review report appended to `loop_state.md`:
+- Append your summary section below existing content:
+  ```
+  ---
+  ## Reviewer (Role 06) — Complete
+  {or — Send-Back Summary if in send-back mode}
+  ```
+- Update the handoff line in `loop_state.md` to advance past your role.
+- Include:
+  - **Overall assessment** — high-level summary of code quality and alignment with requirements.
+  - **Issues found** — categorized list (Critical / Warning / Suggestion) with file references, descriptions, and recommended fixes.
+  - **Strengths** — notable good practices or clean implementations worth preserving.
+  - **Scope audit findings** — whether all changes were in-scope relative to the original problem statement, and a summary of any out-of-scope items (absorbed or flagged).
+  - **Recommendation** — ship as-is, send back to Worker for rework, log lower priority issues or suggestions as new todo files.

@@ -61,7 +61,7 @@ All other roles retain the ability to *capture* new out-of-scope items as TODO f
 When a role's work satisfies a todo item:
 
 1. **Delete** the corresponding file from `ai_workspace/TODO/`.
-2. Optionally note in your `_complete.md` summary which todo was addressed (e.g., "Addressed `TODO_P2_fix_git_log_truncation.md`").
+2. Optionally note in your section in `loop_state.md` which todo was addressed (e.g., "Addressed `TODO_P2_fix_git_log_truncation.md`").
 
 If multiple items are completed in one pass, delete all satisfied files together.
 
