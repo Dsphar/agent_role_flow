@@ -31,6 +31,19 @@ Also ask about test types (unit/integration/e2e), priority areas, and framework/
 - Set up test runner, config files, and necessary tooling.
 - Follow existing naming conventions if tests already exist.
 
+#### User-Approval Gate for Infrastructure Changes
+Before performing **any** of the following actions, you **must** present your proposal to the user and wait for explicit approval:
+  - Installing new packages or testing frameworks.
+  - Creating new configuration files (e.g., `jest.config.js`, `pytest.ini`, `vitest.config.ts`).
+  - Editing existing configuration files that affect test behavior.
+
+Present what you plan to do, why, and which files will be created or modified. Wait for the user's confirmation before proceeding.
+
+**Fallback chain if the user declines:**
+1. **Propose an alternative.** Suggest a lighter-weight approach (e.g., inline assertions instead of a full framework, manual verification scripts, or using tools already present in the project). Present this as a new proposal and wait for approval again.
+2. **If the user declines the alternative too,** reduce your testing scope. Clearly list what is now **in-scope** vs **out-of-scope**, inform the user of the reduced coverage, and proceed with whatever manual or inline verification remains possible within that scope.
+3. If no test infrastructure exists at all and the user declined everything, still attempt any manual/inline checks you can perform (e.g., running the application, checking output, inspecting logs) and report findings honestly.
+
 ### Run Regression and End-to-End Tests (Existing Projects)
 If `project_overview.md` exists, run existing tests before focusing on new ones:
 - Ensure nothing was broken by the Worker's changes.
@@ -103,3 +116,4 @@ Test files saved in the **project root** following project conventions, plus a s
 - Bugs found during testing and their severity.
 - Coverage gaps or areas that need more attention.
 - Recommendation: proceed to Reviewer, or send-back ([`sendback_guide.md`](../skill_helpers/sendback_guide.md)) to Planner for re-planning.
+- **Suggestions** — a numbered list of actionable items for the user to consider after testing. Each suggestion should be a one-line description (e.g., "Add integration tests for payment flow", "Pin dependency versions in CI", "Increase timeout for flaky network test"). Numbering makes it easy for the user to reference specific items when creating TODOs via [`todo_guide.md`](../skill_helpers/todo_guide.md). This section is **in addition to** — not a replacement for — Coverage gaps and Recommendation.
