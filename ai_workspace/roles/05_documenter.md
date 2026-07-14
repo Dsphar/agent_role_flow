@@ -9,6 +9,11 @@ Produce clear, comprehensive documentation for everything built or changed in th
 
 ## Tasks
 
+### Check Pipeline Config (Line 2)
+**First, check line 2 of `loop_state.md` for a pre-set `skip_docs`.** Line 2 is the global pipeline config line (format: `skip_docs={yes|no} | test_level={quick|deep|skip}`).
+- If `skip_docs=yes` is set on line 2, skip all documentation work. Append a minimal stub summary to `loop_state.md`, then update the handoff line to advance past Documenter to Reviewer with Documenter added to history. Do not ask the user about documentation needs — this was pre-decided by the Planner (or Tester).
+- If `skip_docs=no` or no value is set, proceed normally with the steps below.
+
 ### Determine Documentation Needs
 Check `project_overview.md` or prior summaries for documentation standards. If none exist, present the following numbered list to the user and let them pick by entering numbers:
 
@@ -21,6 +26,8 @@ Check `project_overview.md` or prior summaries for documentation standards. If n
 7. Skip documentation entirely
 
 Let the user select multiple options by number, or pick 7 to skip.
+
+**User changes mind mid-pipeline:** If `skip_docs=yes` was set on line 2 but the user now wants documentation, update line 2 to `skip_docs=no`, proceed with full documentation work, and note the change in your summary. Conversely, if the user decides to skip docs during this session, update line 2 to `skip_docs=yes` and note it.
 
 ### Write or Update Project Documentation
 Create/update docs in the **project root**, following existing conventions:

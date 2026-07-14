@@ -53,6 +53,8 @@ ai_workspace/
 - Reviewer scope audit: the Reviewer (Role 06) performs a Scope Audit as its first task, using `git diff` to compare this loop's file-level changes against the full problem statement from the Interviewer. Out-of-scope items are presented with Absorb (recommended) or Revert options.
 - Tester flow refinement: "Suggestions" promoted from Deliverables bullet into its own task section ("Generate and Present Suggestions") to achieve temporal separation from the Skip-Docs prompt, avoiding numbered-list collision during user interaction.
 - Tester mandatory test plan tracking: The Tester must create `ai_workspace/04_tester_in_progress.md` with a checkbox list of all planned test steps after clarifying expectations with the user. Each step is marked `[x]` on completion or left `[ ]` with failure notes. The file is updated after every step for resume-on-restart support, appended to `loop_state.md` as a subsection at transition time, then deleted.
+- Pipeline configuration via line 2: Line 2 of `loop_state.md` carries global mutable key-value pairs (`skip_docs={yes|no} | test_level={quick|deep|skip}`). The Planner asks skip-docs and test-level questions upfront; any downstream role can update line 2 if the user changes their mind (with a summary note). A routing matrix in `transition_guide.md` determines Worker and Tester handoff targets based on these values.
+- Routing matrix for dynamic pipeline paths: Six combinations of skip_docs/test_level map to specific handoff chains. Both roles skipped routes Worker → Reviewer directly. The matrix is replicated in Planner, transition guide, and referenced by Worker/Tester/Documenter roles.
 
 ## User-Preferred Patterns
 _(No user-preferred patterns recorded yet. Add here when identified.)_

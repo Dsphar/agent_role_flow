@@ -13,11 +13,16 @@ Create, update, and execute tests to validate the implementation produced by the
 See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: if `(in-sendback)` suffix is present on your role in the handoff line of `loop_state.md`, read `send_back.md` for issues to address. Update or add any beneficial tests for the problems addressed during the send-back, then run the complete test suite. If all pass, offer the skip-docs prompt (same as first-run — see section below). If user skips docs or proceeds normally, append summary and advance handoff line in `loop_state.md` to Documenter (Role 05) or Reviewer (Role 06) accordingly. If failures remain, update `send_back.md` with remaining bugs and update handoff line in `loop_state.md` back to Planner (Role 02). If tests pass and `Source:` in `send_back.md` is `Tester (Role 04)`, remove `(in-sendback)` suffix from handoff line and delete `send_back.md` — the send-back cycle is complete.
 
 ### Clarify Testing Expectations with the User
-Check `project_overview.md` or the Planner's summary for testing preferences. If none defined, **ask the user** which testing depth they prefer using a numbered list:
+**First, check line 2 of `loop_state.md` for a pre-set `test_level`.** Line 2 is the global pipeline config line (format: `skip_docs={yes|no} | test_level={quick|deep|skip}`).
+- If `test_level=skip` is set on line 2, skip all testing. Proceed directly to transition — hand off per the routing matrix (see Deliverables).
+- If `test_level=quick` or `test_level=deep` is set on line 2, use that value as your scope. Inform the user of the pre-set level and ask if they want to change it.
+- If no `test_level` is set on line 2 (or line 2 doesn't exist), **ask the user** which testing depth they prefer using a numbered list:
 
 1. Quick — verify only what was changed in this iteration (change-only testing).
 2. Deep — full suite covering unit + integration + edge cases.
 3. Skip — no testing this time, proceed to next role.
+
+After determining the level (from line 2 or user input), record it on line 2 of `loop_state.md` as `test_level={quick|deep|skip}` if not already present.
 
 Also ask about test types (unit/integration/e2e), priority areas, and framework/tool opinions if not already defined.
 
@@ -118,6 +123,11 @@ If no suggestions arise, gracefully skip — do not present an awkward empty lis
 Wait for user acknowledgment or feedback before proceeding to the Skip-Docs prompt.
 
 ### Skip-Docs Prompt (Tests Passed Only)
+**First, check line 2 of `loop_state.md` for a pre-set `skip_docs`.**
+- If `skip_docs=yes` is set on line 2, skip this prompt entirely. Since skip_docs=yes, transition directly to Reviewer (Role 06) regardless of test_level.
+- If `skip_docs=no` is set on line 2, proceed with the prompt below — the user can still change their mind.
+- If no `skip_docs` value is on line 2, this is your fallback mid-pipeline prompt. Proceed with the prompt below.
+
 After all testing is complete **and all tests pass**, evaluate the context and recommend one of the following options:
 
 **Decision criteria for your recommendation:**
@@ -149,6 +159,8 @@ This phrasing ensures "yes" = your recommendation and "no" = the alternative.
 
 **If the user chooses not to skip:** proceed normally to the Documenter (Role 05).
 
+**User changes mind mid-pipeline:** If the user wants to change `skip_docs` or `test_level` from what was set on line 2, update line 2 with the new value and note the change in your summary section.
+
 **Undoing a skip-docs decision:** If the user changes their mind after skipping, they can edit `loop_state.md` to remove the pre-created Documenter section and revert the handoff line before starting the next session. On the next session start, the Documenter role will load since it no longer appears in the history.
 
 ## What You Must Not Do
@@ -167,7 +179,17 @@ Test files saved in the **project root** following project conventions, plus a s
   {or — Send-Back Summary if in send-back mode}
   ```
 - If `04_tester_in_progress.md` exists, append its contents as an `### In-Progress Notes` subsection under your summary, then delete the file.
-- Update the handoff line in `loop_state.md` to advance past your role.
+- Update the handoff line in `loop_state.md` to advance past your role. Determine your handoff target from the routing matrix using values on line 2:
+
+| skip_docs | test_level | Hands off to |
+|-----------|------------|---------------|
+| no        | deep       | Documenter (Role 05) |
+| no        | quick      | Documenter (Role 05) |
+| yes       | deep       | Reviewer (Role 06) — advance past Documenter |
+| yes       | quick      | Reviewer (Role 06) — advance past Documenter |
+
+If `test_level=skip`, you should not be here (Tester is skipped when test_level=skip). If somehow loaded, hand off per skip_docs value: to Documenter if no, to Reviewer if yes.
+
 - Include:
   - What was tested (unit tests + end-to-end tests).
   - Test results — how many passed, failed, or were skipped.

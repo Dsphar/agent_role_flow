@@ -36,6 +36,36 @@ See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back
 - Document unresolved items clearly so the Worker can escalate.
 - Ask multiple rounds of questions if needed.
 
+### Ask Pipeline Configuration Questions
+After completing all planning tasks above and before wrapping up with deliverables, ask the user two pipeline configuration questions:
+
+1. **Skip Documenter?** — Present as: "Skip documentation this loop? Yes (recommended) or No?"
+   - If yes, set `skip_docs=yes`. The handoff line will advance past the Documenter.
+   - If no, set `skip_docs=no` (default flow).
+
+2. **Testing level?** — Present as: "What testing level this loop? Quick, Deep (recommended), or Skip?"
+   - Options: `quick` (lightweight/smoke tests), `deep` (full test suite), `skip` (no automated testing).
+   - If the user chooses `skip`, show a warning: "Skipping all tests means no automated validation this loop. Continue?"
+
+**Record decisions on line 2 of `loop_state.md`.** Line 2 is the global pipeline config line with key-value pairs:
+```
+skip_docs={yes|no} | test_level={quick|deep|skip}
+```
+If line 2 already has content, append new keys or update existing ones.
+
+**Determine your handoff target from the routing matrix:**
+
+| skip_docs | test_level | Hands off to |
+|-----------|------------|---------------|
+| no        | deep       | Worker → (Worker hands to Tester) |
+| no        | quick      | Worker → (Worker hands to Tester) |
+| no        | skip       | Worker → (Worker hands to Documenter) |
+| yes       | deep       | Worker → (Worker hands to Tester) |
+| yes       | quick      | Worker → (Worker hands to Tester) |
+| yes       | skip       | Worker → (Worker hands to Reviewer) |
+
+Your handoff is always to `Worker (Role 03)`. The routing matrix above tells you what to note in your summary so the Worker knows who to hand off to after completing implementation.
+
 ## What You Must Not Do
 
 ### Hard Constraints

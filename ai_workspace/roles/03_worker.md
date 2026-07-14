@@ -57,7 +57,7 @@ Working code and artifacts saved in the **project root**, plus a summary appende
   {or — Send-Back Summary if in send-back mode}
   ```
 - If `03_worker_in_progress.md` exists, append its contents as an `### In-Progress Notes` subsection under your summary, then delete the file.
-- Update the handoff line in `loop_state.md` to advance past your role.
+- Update the handoff line in `loop_state.md` to advance past your role. To determine which role to hand off to, check line 2 of `loop_state.md` for `skip_docs` and `test_level`, then use the **Routing Matrix — Worker Handoff Targets** in [`skill_helpers/transition_guide.md`](../skill_helpers/transition_guide.md).
 - Include:
   - Which steps from the plan were completed.
   - Any deviations from the plan and why they occurred.
