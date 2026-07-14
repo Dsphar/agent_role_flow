@@ -10,7 +10,22 @@ Perform a thorough code and quality review of everything produced by the Worker 
 ## Tasks
 
 ### Running Again During Send-Back Mode
-See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: if `(in-sendback)` suffix is present on your role in the handoff line of `loop_state.md`, read `send_back.md` for issues to re-check. Re-run review against fixed implementation. If no critical issues remain, remove `(in-sendback)` suffix from handoff line and delete `send_back.md`. If issues remain, update `send_back.md` with remaining issues and update handoff line in `loop_state.md` back to Planner (Role 02).
+See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: if `(in-sendback)` suffix is present on your role in the handoff line of `loop_state.md`, read `send_back.md` for issues to re-check.
+
+When running again during send-back mode, you must do the following:
+
+1. **Re-execute your full task suite** against the fixed implementation. Do not shortcut by only checking the sent-back items — fixes may have introduced regressions or new issues elsewhere. Specifically, you must re-run each of these tasks in order:
+   - Perform Scope Audit (re-check all changes including any new diffs from the fix).
+   - Review Code Quality (full review of all code created or modified by the Worker).
+   - Review Architecture and Design (verify alignment with Planner's decisions).
+   - Review Security Considerations (check for injection risks, unvalidated input, hardcoded secrets, etc.).
+   - Review Test Quality (assess Tester's tests for meaningfulness, determinism, and organization).
+   - Review Documentation Quality (accuracy, completeness, clarity of docs and inline comments).
+   - Compile Findings (categorize all issues by severity: Critical / Warning / Suggestion).
+2. **Verify sent-back items as additional focus areas.** On top of the full re-run above, pay special attention to the specific issues listed in `send_back.md`. Confirm they are genuinely resolved and check for any side effects introduced while fixing them.
+3. **Resolve send-back or escalate further:**
+   - If no critical issues remain (sent-back items fixed, no new Criticals found), remove `(in-sendback)` suffix from handoff line and delete `send_back.md` — the send-back cycle is complete.
+   - If issues remain, update `send_back.md` with remaining issues and update handoff line in `loop_state.md` back to Planner (Role 02).
 
 ### Perform Scope Audit
 - **Discover loop commits** — Run `git log --format="%H %s"` to list all commits. Find every commit whose subject starts with the Goal Summary text from the Interviewer's section in `loop_state.md`. Note the parent hash of the oldest matching commit (this is the pre-loop state). If no matching commits are found, fall back to listing project root files and comparing against role summaries.

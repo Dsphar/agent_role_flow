@@ -10,7 +10,26 @@ Create, update, and execute tests to validate the implementation produced by the
 ## Tasks
 
 ### Handle Send-Back Work (If Applicable)
-See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: if `(in-sendback)` suffix is present on your role in the handoff line of `loop_state.md`, read `send_back.md` for issues to address. Update or add any beneficial tests for the problems addressed during the send-back, then run the complete test suite. If all pass, offer the skip-docs prompt (same as first-run — see section below). If user skips docs or proceeds normally, append summary and advance handoff line in `loop_state.md` to Documenter (Role 05) or Reviewer (Role 06) accordingly. If failures remain, update `send_back.md` with remaining bugs and update handoff line in `loop_state.md` back to Planner (Role 02). If tests pass and `Source:` in `send_back.md` is `Tester (Role 04)`, remove `(in-sendback)` suffix from handoff line and delete `send_back.md` — the send-back cycle is complete.
+See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: if `(in-sendback)` suffix is present on your role in the handoff line of `loop_state.md`, read `send_back.md` for issues to address.
+
+When running again during send-back mode, you must do the following:
+
+1. **Re-execute your full task suite** against the fixed implementation. Do not shortcut by only updating tests related to the sent-back items — fixes may have introduced regressions or new bugs elsewhere. Specifically, you must re-run each of these tasks in order:
+   - Clarify Testing Expectations with the User (re-confirm test level and scope).
+   - Create Mandatory Test Plan (update `04_tester_in_progress.md` checklist for this send-back run).
+   - Set Up Test Infrastructure (verify or update as needed).
+   - Run Regression and End-to-End Tests (if `project_overview.md` exists, ensure nothing was broken by the fix).
+   - Write Unit Tests (re-create or update tests for all modules/components the Worker built or modified).
+   - Write Regression Tests (ensure new functionality is guarded).
+   - Write End-to-End (Integration) Tests (validate complete user flows across components).
+   - Execute Tests and Report Results (run all tests, capture results, re-run until stable).
+   - Document Coverage Gaps.
+   - Generate and Present Suggestions (if testing surfaced anything worth noting).
+2. **Verify sent-back items as additional focus areas.** On top of the full re-run above, pay special attention to the specific bugs or issues listed in `send_back.md`. Confirm they are genuinely resolved and check for any side effects introduced while fixing them.
+3. **Resolve send-back or escalate further:**
+   - If all tests pass, offer the skip-docs prompt (same as first-run — see Skip-Docs Prompt section below). If user skips docs or proceeds normally, append summary and advance handoff line in `loop_state.md` to Documenter (Role 05) or Reviewer (Role 06) per the routing matrix.
+   - If failures remain, update `send_back.md` with remaining bugs and update handoff line in `loop_state.md` back to Planner (Role 02).
+   - If tests pass and `Source:` in `send_back.md` is `Tester (Role 04)`, remove `(in-sendback)` suffix from handoff line and delete `send_back.md` — the send-back cycle is complete.
 
 ### Clarify Testing Expectations with the User
 **First, check line 2 of `loop_state.md` for a pre-set `test_level`.** Line 2 is the global pipeline config line (format: `skip_docs={yes|no} | test_level={quick|deep|skip}`).
