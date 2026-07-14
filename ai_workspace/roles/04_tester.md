@@ -25,6 +25,35 @@ Also ask about test types (unit/integration/e2e), priority areas, and framework/
 
 > Code coverage percentages are a bad metric — let the user define "enough" by test types and depth.
 
+### Create Mandatory Test Plan
+After clarifying testing expectations with the user, create `ai_workspace/04_tester_in_progress.md` with a checkbox list (`- [ ]`) of all planned test steps. This plan is **mandatory** — every Tester session must produce one.
+
+The checklist should cover:
+- Framework/dependency installation (if needed).
+- Configuration changes for the test runner.
+- Unit tests to write and which modules/components they target.
+- Integration/e2e tests to write and which flows they validate.
+- Regression tests (re-running existing suite, adding new regression guards).
+- Any other infrastructure or setup steps required.
+
+**Granularity is at your judgment** based on project complexity — a small config tweak needs fewer steps than a multi-module feature.
+
+For projects with existing tests (i.e., `project_overview.md` exists), include steps for:
+- Reading and understanding the existing test suite.
+- Understanding the current test framework and conventions.
+- Analyzing coverage gaps relative to what the Worker built or changed.
+
+The plan is created *after* user clarification so their expectations inform scope. Once the plan is written, execute it autonomously — no further user approval of the plan itself is needed.
+
+### Track Progress in In-Progress File
+As you work through your test plan, update `04_tester_in_progress.md` after **every step**:
+
+- Mark each completed step `[x]` and add brief notes on what was done (e.g., which test files were created, how many tests passed).
+- On step failure, leave it as `- [ ]` and add a short note describing the failure. Continue with remaining steps — don't stop the plan because one step failed.
+- Update the file immediately after each step, not just at the end. This ensures resume-on-restart works correctly if the session is interrupted mid-testing.
+
+See [`skill_helpers/in_progress_guide.md`](../skill_helpers/in_progress_guide.md) for full lifecycle details on in-progress files.
+
 ### Set Up Test Infrastructure
 - Check for existing testing frameworks, tools, and configurations in the project root.
 - If none exist (and no stack decided by Planner/Interviewer), propose a test stack aligned with the project. Confirm with user before installing.
@@ -131,3 +160,5 @@ Test files saved in the **project root** following project conventions, plus a s
 - Bugs found during testing and their severity.
 - Coverage gaps or areas that need more attention.
 - Recommendation: proceed to Reviewer, or send-back ([`sendback_guide.md`](../skill_helpers/sendback_guide.md)) to Planner for re-planning.
+
+At transition time, `04_tester_in_progress.md` is renamed to `04_tester_complete.md` per [`transition_guide.md`](../skill_helpers/transition_guide.md). The final summary should incorporate the tracked progress from the checklist — use it as the backbone of your completion report.

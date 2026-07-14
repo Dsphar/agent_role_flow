@@ -50,6 +50,7 @@ ai_workspace/
 - Auto-handoff after role completion: roles automatically declare handoff ready once work is done — no user confirmation prompt at transition time. Mid-transition feedback from the user keeps the role in-session for adjustments.
 - Per-role git commits are a top-level Step 5 in `transition_guide.md` (promoted from sub-bullets) with guardrail language explaining consequences of skipping, plus a Pre-Handoff Checklist (`- [ ]` checkboxes) that roles verify before transitioning begins.
 - Tester flow refinement: "Suggestions" promoted from Deliverables bullet into its own task section ("Generate and Present Suggestions") to achieve temporal separation from the Skip-Docs prompt, avoiding numbered-list collision during user interaction.
+- Tester mandatory test plan tracking: The Tester must create `ai_workspace/04_tester_in_progress.md` with a checkbox list of all planned test steps after clarifying expectations with the user. Each step is marked `[x]` on completion or left `[ ]` with failure notes. The file is updated after every step for resume-on-restart support and renamed to `_complete.md` at transition time.
 
 ## User-Preferred Patterns
 _(No user-preferred patterns recorded yet. Add here when identified.)_
