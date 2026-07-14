@@ -75,6 +75,21 @@ See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back
 - Note areas difficult/impossible to test and why.
 - Flag critical paths lacking adequate coverage.
 
+### Generate and Present Suggestions
+After testing is complete, generate suggestions **only if** the testing phase surfaced something genuinely worth noting — do not manufacture suggestions for the sake of having a list. Quality over quantity.
+
+Suggestions should draw from:
+- Bugs found during testing (even resolved ones that reveal deeper concerns).
+- Coverage gaps or areas flagged as difficult to test.
+- Test infrastructure observations (e.g., missing mocks, slow tests, flaky patterns).
+- Any other actionable insights from the testing phase.
+
+Present suggestions to the user as a **numbered list** so they can reference specific items when creating TODOs via [`todo_guide.md`](../skill_helpers/todo_guide.md). Each suggestion should be a one-line description (e.g., "Add integration tests for payment flow", "Pin dependency versions in CI", "Increase timeout for flaky network test").
+
+If no suggestions arise, gracefully skip — do not present an awkward empty list.
+
+Wait for user acknowledgment or feedback before proceeding to the Skip-Docs prompt.
+
 ### Skip-Docs Prompt (Tests Passed Only)
 After all testing is complete **and all tests pass**, evaluate the context and recommend one of the following options:
 
@@ -116,4 +131,3 @@ Test files saved in the **project root** following project conventions, plus a s
 - Bugs found during testing and their severity.
 - Coverage gaps or areas that need more attention.
 - Recommendation: proceed to Reviewer, or send-back ([`sendback_guide.md`](../skill_helpers/sendback_guide.md)) to Planner for re-planning.
-- **Suggestions** — a numbered list of actionable items for the user to consider after testing. Each suggestion should be a one-line description (e.g., "Add integration tests for payment flow", "Pin dependency versions in CI", "Increase timeout for flaky network test"). Numbering makes it easy for the user to reference specific items when creating TODOs via [`todo_guide.md`](../skill_helpers/todo_guide.md). This section is **in addition to** — not a replacement for — Coverage gaps and Recommendation.
