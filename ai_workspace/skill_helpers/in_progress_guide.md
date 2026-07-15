@@ -1,26 +1,24 @@
 # In-Progress Files Guide
 
-This guide is the single source of truth for `_in_progress.md` file lifecycle — creation, usage, resume-on-restart, and transition-time handling.
+Single source of truth for `_in_progress.md` lifecycle — creation, usage, resume-on-restart, and transition-time handling.
 
-## Purpose and Naming Convention
+## Naming Convention
 
-In-progress files provide early notes and progress tracking during a role session. They are temporary and their content is incorporated into `loop_state.md` at transition time.
-
-- **Naming:** `{NN}_rolename_in_progress.md` placed in `ai_workspace/`.
-- Role names always use **lowercase** (e.g., `03_worker_in_progress.md`, not `03_Worker_in_progress.md`).
+- **Format:** `{NN}_rolename_in_progress.md` in `ai_workspace/`. Role names always **lowercase** (e.g., `03_worker_in_progress.md`).
+- Temporary files — content incorporated into `loop_state.md` at transition time.
 
 ## When to Create
 
 ### Most Roles — Optional
-Any role may optionally create an `_in_progress.md` file during its session for early notes and progress tracking.
+Any role may create an `_in_progress.md` file for early notes and progress tracking.
 
 ### Worker — Mandatory Checklist
-The Worker **must** create `03_worker_in_progress.md` with a checklist derived from the ordered implementation steps in the Planner's section of `loop_state.md`. Each step starts marked `[ ]`.
+Worker **must** create `03_worker_in_progress.md` with a checklist from the Planner's ordered steps in `loop_state.md`. Each step starts `[ ]`.
 
-## How to Use During a Session
+## Usage During Session
 
-- Jot notes, track progress, and record decisions as you work.
-- **Worker-specific:** After completing each plan step, mark it `[x]` with brief notes (files created/modified, deviations from the plan). Document known issues, TODOs, or partial implementations alongside relevant steps.
+- Jot notes, track progress, record decisions.
+- **Worker-specific:** After each plan step, mark `[x]` with brief notes (files created/modified, deviations, blockers).
 
 ## Resume-on-Restart Behavior
 
