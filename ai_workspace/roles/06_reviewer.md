@@ -39,7 +39,7 @@ Categorize issues by severity:
 Note strengths worth calling out. Offer to make new todo files per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md) for each.
 
 ### Send-Back on Critical Issues
-See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: when you find **Critical** issues, present findings and ask user to either (a) send back — create `send_back.md` with `Source: Reviewer (Role 06)` AND update handoff line in `loop_state.md` to `Planner (Role 02) (in-sendback)`, or (b) defer as new TODO per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
+See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: when you find **Critical** issues, present findings and ask user to either (a) send back — append `### Send-Back Issues` subsection to your summary section in `loop_state.md` with `Source: Reviewer (Role 06)` AND update handoff line to `Planner (Role 02) (in-sendback)`, or (b) defer as new TODO per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
 
 ## What You Must Not Do
 

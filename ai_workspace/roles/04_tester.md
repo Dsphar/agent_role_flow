@@ -20,15 +20,15 @@ Record the chosen level on line 3 as `test_level={quick|deep|skip}` if not alrea
 
 > Code coverage percentages are a bad metric — let user define "enough" by test types and depth.
 
-### Create Mandatory Test Plan
-After clarifying expectations, create `ai_workspace/04_tester_in_progress.md` with a checkbox list (`- [ ]`) of all planned test steps. This is **mandatory** every session. Cover: framework installation (if needed), config changes, unit tests per module/component, integration/e2e tests per flow, regression suite re-run + new guards, and any setup steps.
+### Create Mandatory Test Plan (Inline)
+After clarifying expectations, create your role's summary section in `loop_state.md` with a `### Current-Role Steps` subsection containing a checkbox list (`- [ ]`) of all planned test steps. This is **mandatory** every session. Cover: framework installation (if needed), config changes, unit tests per module/component, integration/e2e tests per flow, regression suite re-run + new guards, and any setup steps.
 
 For existing projects (`project_overview.md` exists): add steps for reading the existing test suite, understanding conventions, and analyzing coverage gaps vs. Worker's changes.
 
 **Granularity is at your judgment.** Plan is created *after* user clarification so expectations inform scope. Once written, execute autonomously — no further plan approval needed.
 
-### Track Progress in In-Progress File
-Update `04_tester_in_progress.md` after **every step**: mark `[x]` with brief notes on completion, or leave `[ ]` with failure notes and continue remaining steps. Update immediately — not just at the end — so resume-on-restart works. See [In-Progress File Lifecycle](../skill_helpers/transition_guide.md#in-progress-file-lifecycle) in `transition_guide.md` for full lifecycle details.
+### Track Progress Inline
+Update your `### Current-Role Steps` subsection in `loop_state.md` after **every step**: mark `[x]` with brief notes on completion, or leave `[ ]` with failure notes and continue remaining steps. Update immediately — not just at the end — so resume-on-restart works. See [Inline Progress Tracking](../skill_helpers/transition_guide.md#inline-progress-tracking) in `transition_guide.md` for full conventions.
 
 ### Set Up Test Infrastructure
 - Check for existing frameworks, tools, configs in project root.
@@ -64,7 +64,7 @@ Create tests validating complete user flows or feature-level behavior across com
 Run all tests and capture results. On failure: **implementation bug** → document with file, line, description, severity. **Flaky/incorrect test** → fix the test. Re-run until stable (all passing or known issues documented).
 
 ### Send-Back on Bugs
-See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: when tests reveal bugs, present findings and ask user to either (a) send back — create `send_back.md` with `Source: Tester (Role 04)` AND update handoff line in `loop_state.md` to `Planner (Role 02) (in-sendback)`, or (b) defer as TODO per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
+See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: when tests reveal bugs, present findings and ask user to either (a) send back — append `### Send-Back Issues` subsection to your summary section in `loop_state.md` with `Source: Tester (Role 04)` AND update handoff line to `Planner (Role 02) (in-sendback)`, or (b) defer as TODO per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
 
 ### Document Coverage Gaps
 Note areas difficult/impossible to test and why. Flag critical paths lacking adequate coverage.

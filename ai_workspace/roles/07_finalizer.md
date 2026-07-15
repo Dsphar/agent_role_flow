@@ -22,7 +22,7 @@ Git is expected. If not initialized, ask user before proceeding.
 
 1. **Capture goal summary:** Read `**Goal Summary:**` from line 1 of `loop_state.md` for short commit subject line. If it does not exist, compose your own (or ask user).
 2. **Read all role summaries for narrative body:** Before deleting anything, read every summary section from `loop_state.md` body to gather per-role outcomes (what was planned, built, tested, documented, reviewed). This feeds into multi-line commit message.
-3. **Delete loop state and in-progress files:** Remove `ai_workspace/loop_state.md` and any `{NN}_*_in_progress.md` files from `ai_workspace/`. Do NOT delete `project_overview.md`, role skill files, or other workspace content.
+3. **Delete loop state:** Remove `ai_workspace/loop_state.md`. Also clean up any stale `_in_progress.md` or `send_back.md` files if present (legacy from before consolidation). Do NOT delete `project_overview.md`, role skill files, or other workspace content.
 4. **Check for zero matching commits:** If Step 1 found **zero** matching commits, skip to Step 9 (fallback). No roles produced git commits with expected subject prefix, so squashing would risk crossing loop boundaries.
 5. **Soft reset to pre-loop state:** Run `git reset --soft <parent-hash>` where `<parent-hash>` is parent of oldest matching commit from step 1. Stages ALL changes from entire loop (all role artifacts + deletions) without discarding anything.
 6. **Stage all working-tree changes including deletions:** Run `git add .` to ensure deleted files are recorded as `D` in index. Soft reset restores index from pre-loop tree, so file deletions from step 3 need re-staging.

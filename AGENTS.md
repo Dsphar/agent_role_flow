@@ -8,25 +8,24 @@ AI assistant working through a **sequential pipeline of roles**. Each role is a 
 
 On every session start:
 
-1. **Check `ai_workspace/send_back.md`.** If it exists, you may be in send-back mode — read it for context. Confirm via `(in-sendback)` suffix on active role in `loop_state.md` line 2. If confirmed, read [`sendback_guide.md`](ai_workspace/skill_helpers/sendback_guide.md) for master instructions.
-2. **If `send_back.md` exists AND `(in-sendback)` is present:** Extract current role from handoff line (active role with `(in-sendback)` suffix). Load that role directly — skip step 3.
-3. **Otherwise, read `ai_workspace/loop_state.md`.** Parse line 2 for active role:
+1. **Read `ai_workspace/loop_state.md`.** Parse line 2 for active role:
    ```
    **Current Role:** {RoleName} (Role NN) | History: ...
    ```
-   Text after `Current Role:` and before `|` is your current role. If `(in-sendback)` suffix present, read `send_back.md` for details.
-4. **If `loop_state.md` does not exist**, fresh pipeline start — begin at `01_interviewer.md`.
-5. **Line 1 of `loop_state.md`:** `**Goal Summary:** <text><br>` — all roles use this value for git commit messages.
-6. **Line 3 is the pipeline config line** (see [Pipeline Configuration](#pipeline-configuration-line-3-of-loop_statemd) below). Any role can update values if user changes their mind (with summary note).
+   Text after `Current Role:` and before `|` is your current role. If `(in-sendback)` suffix present, read [`sendback_guide.md`](ai_workspace/skill_helpers/sendback_guide.md) for master instructions — send-back issue details live inline in the relevant Tester/Reviewer summary section of `loop_state.md` under `### Send-Back Issues`.
+2. **If `loop_state.md` does not exist**, fresh pipeline start — begin at `01_interviewer.md`.
+3. **Line 1 of `loop_state.md`:** `**Goal Summary:** <text><br>` — all roles use this value for git commit messages.
+4. **Line 3 is the pipeline config line** (see [Pipeline Configuration](#pipeline-configuration-line-3-of-loop_statemd) below). Any role can update values if user changes their mind (with summary note).
 
 > Lines 1–3 end with `<br>` for markdown rendering. **Strip trailing `<br>` before parsing.** Line 1 = goal summary (most read), line 2 = active role + history, line 3 = mutable config.
 
-7. **List** `ai_workspace/roles/` sorted by numeric prefix (`01_`, `02_`, etc.), then **load** the skill file matching your current role from step 3 or 4.
-8. **Read prior summary sections** from `loop_state.md` body (below line 3). Sections headed by `## {Rolename} (Role NN) — Complete` or `— Send-Back Summary`.
-9. **Check for `{NN}_rolename_in_progress.md`** in `ai_workspace/`. If exists, read it — your role's resume file from previous session. See [In-Progress File Lifecycle](ai_workspace/skill_helpers/transition_guide.md#in-progress-file-lifecycle) in `transition_guide.md` for full details.
-10. **Check for `ai_workspace/project_overview.md`.** If exists, read it — describes what has been built across previous loops.
-11. **Read** current role's skill file from `ai_workspace/roles/{NN}_rolename.md`.
-12. **Proactively greet the user.** Announce role by name and number, ask relevant questions to kick things off naturally.
+5. **List** `ai_workspace/roles/` sorted by numeric prefix (`01_`, `02_`, etc.), then **load** the skill file matching your current role from step 1 or 2.
+6. **Read prior summary sections** from `loop_state.md` body (below line 3). Sections headed by `## {Rolename} (Role NN) — Complete` or `— Send-Back Summary`.
+7. **Check for `ai_workspace/project_overview.md`.** If exists, read it — describes what has been built across previous loops.
+8. **Read** current role's skill file from `ai_workspace/roles/{NN}_rolename.md`.
+9. **Proactively greet the user.** Announce role by name and number, ask relevant questions to kick things off naturally.
+
+> **Migration note:** Stale `_in_progress.md` or `send_back.md` files from before this consolidation may still exist on disk. Ignore them — their content has been absorbed into `loop_state.md`. They will be cleaned up at the next Finalizer run.
 
 ---
 

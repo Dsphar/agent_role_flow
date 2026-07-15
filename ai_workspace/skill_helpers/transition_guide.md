@@ -9,7 +9,7 @@ Verify each before starting numbered steps below. Skipping risks lost work or br
 - [ ] **All role tasks complete.** Deliverables match your skill file requirements. Do not transition early — incomplete work breaks downstream roles.
 - [ ] **Summary ready.** Clear recap of outcomes and deliverables prepared for `loop_state.md`.
 - [ ] **Git commit will be done (Step 5).** Mandatory unless explicitly skipped by user. Skipping means incremental progress is not preserved — prior roles' work in this loop could be lost.
-- [ ] **Send-back state handled.** If in send-back mode: `send_back.md` updated (next role set) or deleted (if you are the original sending role and re-check passes), `(in-sendback)` suffix managed correctly.
+- [ ] **Send-back state handled.** If in send-back mode: `### Send-Back Issues` subsection updated in your `loop_state.md` summary section, `(in-sendback)` suffix on line 2 managed correctly.
 - [ ] **User will be informed of handoff.** User should know a new session loads the next role.
 
 ## Transition Steps
@@ -26,7 +26,7 @@ Verify each before starting numbered steps below. Skipping risks lost work or br
    {your full summary here}
    ```
 
-   **b) If you have an `_in_progress.md` file, append its contents as a subsection** under your summary above. After appending, **delete** `{NN}_rolename_in_progress.md` — content is now preserved in `loop_state.md`.
+   **b) (Removed — progress tracking is now inline via checkbox subsections within each role's own loop_state.md section.)**
 
    **c) Update handoff history line (line 2).** Move current role to history; next role becomes active:
    ```
@@ -36,11 +36,11 @@ Verify each before starting numbered steps below. Skipping risks lost work or br
 
    **d) Send-back mode transitions:**
    - **Not the original sending role:** Append under `## {Rolename} (Role NN) — Send-Back Summary` header. Update handoff to next role. Keep `(in-sendback)` suffix if cycle continues, remove if advancing past issue.
-   - **Original sending role and re-check passes:** Append as above. Remove `(in-sendback)` suffix. **Delete `send_back.md`** — cycle complete.
+   - **Original sending role and re-check passes:** Append as above. Remove `(in-sendback)` suffix from handoff line. Cycle complete — no external files to clean up.
 
 5. **Git commit.** Mandatory unless explicitly skipped by user. Skipping means incremental progress is not preserved:
    1. Run `git status`. If not in a git repo or no changes, skip silently.
-   2. Determine tag: if in send-back mode (`send_back.md` exists now, **or you just deleted it**), use `[ai-{role-name}-sendback]`; otherwise `[ai-{role-name}]`. Extract `{role-name}` from role name (e.g., Worker → `worker`).
+   2. Determine tag: if in send-back mode (`(in-sendback)` suffix present on line 2 of `loop_state.md`), use `[ai-{role-name}-sendback]`; otherwise `[ai-{role-name}]`. Extract `{role-name}` from role name (e.g., Worker → `worker`).
    3. Run `git add -A`.
    4. Determine commit body: read `**Goal Summary:**` from line 1 of `loop_state.md`, use as commit body (truncate to <100 chars if needed). If missing, generate concise ad-hoc summary.
    5. Run `git commit -m "{commit body} {tag}"`.
@@ -68,47 +68,47 @@ A role may pre-create the next role's summary section as part of its own complet
 
 > For line 3 format, parsing rules, mutability rules, and routing matrices, see [Pipeline Configuration](../../AGENTS.md#pipeline-configuration-line-3-of-loop_statemd) in AGENTS.md.
 
-## In-Progress File Lifecycle
+## Inline Progress Tracking
 
-Single source of truth for `_in_progress.md` lifecycle — creation, usage, resume-on-restart, and transition-time handling.
+Each role tracks progress directly within its own `loop_state.md` summary section using checkbox-style subsections. No external `_in_progress.md` files are created.
 
-### Naming Convention
+### Creating Your Progress Subsection
 
-- **Format:** `{NN}_rolename_in_progress.md` in `ai_workspace/`. Role names always **lowercase** (e.g., `03_worker_in_progress.md`).
-- Temporary files — content incorporated into `loop_state.md` at transition time.
+When you begin work, create your role's summary section in `loop_state.md` with a `### Current-Role Steps` subsection:
+```
+---
+## {Rolename} (Role NN) — In Progress
 
-### When to Create
+### Current-Role Steps
+- [ ] Step 1 description
+- [ ] Step 2 description
+- [ ] Step 3 description
+```
 
-**Most Roles — Optional.** Any role may create an `_in_progress.md` file for early notes and progress tracking.
+For Worker: populate steps from the Planner's ordered implementation plan. For Tester: populate with your test plan items. Other roles: list your key tasks.
 
-**Worker — Mandatory Checklist.** Worker **must** create `03_worker_in_progress.md` with a checklist from the Planner's ordered steps in `loop_state.md`. Each step starts `[ ]`.
+### Updating During Session
 
-### Usage During Session
-
-- Jot notes, track progress, record decisions.
-- **Worker-specific:** After each plan step, mark `[x]` with brief notes (files created/modified, deviations, blockers).
+After completing each step, mark it `[x]` and add brief notes (files created/modified, deviations, blockers). Update `loop_state.md` immediately — do not batch updates.
 
 ### Resume-on-Restart Behavior
 
 If a session ends and restarts within the same role:
-1. Check for `{NN}_rolename_in_progress.md`.
-2. If it exists, **resume from the next incomplete step** (for Worker: next `[ ]` item in the checklist).
-3. If it does not exist, start fresh per normal role instructions.
+1. Read your summary section in `loop_state.md`.
+2. If headed `— In Progress`, **resume from the next `[ ]` item** in `### Current-Role Steps`.
+3. If headed `— Complete`, you already finished — proceed normally.
+4. If no section exists, start fresh per normal role instructions.
 
 ### Transition-Time Handling
 
 When transitioning out of a role:
-- If `{NN}_rolename_in_progress.md` exists, **append its contents as an "In-Progress Notes" subsection** under your role's summary section in `loop_state.md`. Format:
-  ```
-  ### In-Progress Notes
-  {contents of the _in_progress.md file}
-  ```
-  After appending, **delete** `{NN}_rolename_in_progress.md` — its content is now preserved in `loop_state.md`.
-- If no `_in_progress.md` exists, skip this step. Your role's summary section in `loop_state.md` stands on its own.
+1. Change your section header from `## {Rolename} (Role NN) — In Progress` to `## {Rolename} (Role NN) — Complete`.
+2. Replace the checkbox subsection with a narrative summary of outcomes and deliverables.
+3. No external files to delete — everything lives in `loop_state.md`.
 
 ### "Going Back" Rule
 
-If the user requests reverting to a previous role: **keep any `_in_progress.md`** for that role so work-in-progress is preserved. Revert the handoff line in `loop_state.md` to point back to the target role (removing any roles after it from the history). Do not delete summary sections from roles ahead of the target either — they remain as reference.
+If the user requests reverting to a previous role: revert the handoff line in `loop_state.md` to point back to the target role (removing any roles after it from the history). Change that role's section header back to `— In Progress` if needed. Do not delete summary sections from roles ahead of the target — they remain as reference.
 
 ## Pipeline Routing Reference
 

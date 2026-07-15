@@ -23,7 +23,7 @@ Detected via `(in-sendback)` suffix on the active role in `loop_state.md` line 2
 Current Role: Planner (Role 02) (in-sendback) | History: Interviewer → Planner → Worker → Tester<br>
 ```
 
-`send_back.md` is created for detailed issue descriptions, but **detection** comes from the `(in-sendback)` suffix.
+**Detection** comes solely from the `(in-sendback)` suffix. Issue details live inline in `loop_state.md` under `### Send-Back Issues` subsections within the Tester or Reviewer's summary section.
 
 ---
 
@@ -42,11 +42,11 @@ Present findings: list each issue with file references, descriptions, recommende
 ### Common Steps (All Sending Roles)
 
 1. **Ask how to proceed** — evaluate context and mark the most appropriate option as "(recommended)":
-   - **(a) Send back** — create `send_back.md`, update `loop_state.md` (below).
+   - **(a) Send back** — append `### Send-Back Issues` subsection to your `loop_state.md` summary section, update handoff line (below).
    - **(b) Defer as TODO file** — capture per [`todo_guide.md`](./todo_guide.md). Continue without interruption.
 
 2. If user chooses send-back:
-   - Create (or append to) `ai_workspace/send_back.md` with `Source:` line identifying your role and the list of items to fix. **Append** if file already exists — never overwrite.
+   - Append a `### Send-Back Issues` subsection to your existing summary section in `loop_state.md`. List each issue with source role, file references, description, severity, and recommended fix. If the subsection already exists, append new items — do not overwrite.
    - **Update handoff line in `loop_state.md`:** set active role to `Planner (Role 02) (in-sendback)`, add your current role to history trail. Example (Tester):
      ```
      Before:  Current Role: Tester (Role 04) | History: Interviewer → Planner → Worker<br>
@@ -59,7 +59,7 @@ Present findings: list each issue with file references, descriptions, recommende
 
 ## Receiving a Send-Back (Roles Working on Sent-Back Items)
 
-When `(in-sendback)` points to your role in `loop_state.md` line 2, you are in send-back mode. Read `send_back.md` for issues to fix.
+When `(in-sendback)` points to your role in `loop_state.md` line 2, you are in send-back mode. Read the `### Send-Back Issues` subsection within the relevant Tester or Reviewer summary section of `loop_state.md` for issues to fix.
 
 ### General Principles
 - Re-execute your complete original task suite against the fixed implementation. Treat sent-back fixes as additional focus areas on top of the full re-run — do not shortcut by checking only the sent-back items.
@@ -86,7 +86,7 @@ Follow [`transition_guide.md`](./transition_guide.md) for full transition steps.
 Append under `## {Rolename} (Role NN) — Send-Back Summary` header instead of `— Complete`.
 
 - **Not the original sending role:** Append summary, update handoff to next role with `(in-sendback)` suffix.
-- **Original sending role and re-check passes:** Append summary, remove `(in-sendback)` suffix from handoff line. **Delete `send_back.md`** — cycle complete.
+- **Original sending role and re-check passes:** Append summary, remove `(in-sendback)` suffix from handoff line. Cycle complete — no external files to clean up.
 
 ### Git Commit Tagging
 Use `[ai-{role-name}-sendback]` tag instead of `[ai-{role-name}]`. Extract `{role-name}` from role name (e.g., Worker → `worker`). Applies when `(in-sendback)` is present, or you just removed it as the original sending role.

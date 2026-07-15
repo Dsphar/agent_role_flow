@@ -60,7 +60,7 @@ Used by Finalizer after squashing commits. Update to reflect **current structura
 
 ### What Not to Do
 - **No changelog entries, recent changes, or loop history.** That data lives in git via `[ai-pipeline]` commits.
-- **Do not track known issues here.** Active: `send_back.md`; resolved: git history.
+- **Do not track known issues here.** Send-back issues live inline in `loop_state.md` under `### Send-Back Issues` subsections; resolved items are in git history.
 - **Do not modify code, tests, or docs** beyond what is needed for an accurate overview file.
 - **Keep concise but complete.** Every role reads this at startup — accuracy > brevity, but avoid unnecessary detail.
 

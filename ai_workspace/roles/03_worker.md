@@ -6,8 +6,8 @@ Execute the implementation plan produced by the Planner. Write code, create file
 
 ## Tasks
 
-### Initialize In-Progress File
-See [In-Progress File Lifecycle](../skill_helpers/transition_guide.md#in-progress-file-lifecycle) in `transition_guide.md` for full lifecycle. Worker-specific: create `03_worker_in_progress.md` with a checklist of all steps from Planner's section in `loop_state.md`, each marked `[ ]`. Resume from next `[ ]` on restart.
+### Initialize Inline Progress Tracking
+Create your role's summary section in `loop_state.md` with a `### Current-Role Steps` subsection containing a checkbox list of all steps from the Planner's ordered implementation plan. Each step starts `[ ]`. See [Inline Progress Tracking](../skill_helpers/transition_guide.md#inline-progress-tracking) in `transition_guide.md` for full conventions.
 
 ### Execute the Plan Step by Step
 - Follow Planner's ordered steps one at a time. Do not skip ahead or reorder without user approval.
@@ -24,15 +24,13 @@ See [In-Progress File Lifecycle](../skill_helpers/transition_guide.md#in-progres
 - Build what the plan says — no extra features or refactoring without user approval.
 - On ambiguity, missing detail, or blocker: **stop and ask the user**.
 
-### Update In-Progress File After Every Step
-After completing **each individual plan step**, you **must** stop to update `03_worker_in_progress.md` before moving on. Do not batch updates — update immediately after each step finishes.
+### Update Progress Tracking After Every Step
+After completing **each individual plan step**, you **must** stop to update your `### Current-Role Steps` subsection in `loop_state.md` before moving on. Do not batch updates — update immediately after each step finishes.
 
 For every completed step:
 1. Mark it `[x]` in the checklist.
 2. Add brief notes: which files were created or modified, any deviations from plan, and blockers encountered.
-3. Save the file so progress is persisted on disk before continuing.
-
-This ensures resume-on-restart works if session ends mid-work. See [In-Progress File Lifecycle](../skill_helpers/transition_guide.md#in-progress-file-lifecycle) in `transition_guide.md` for full lifecycle details.
+3. Save `loop_state.md` so progress is persisted on disk before continuing.
 
 ## What You Must Not Do
 
