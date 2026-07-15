@@ -62,7 +62,7 @@ Present findings: list each issue with file references, descriptions, recommende
 When `(in-sendback)` points to your role in `loop_state.md` line 2, you are in send-back mode. Read `send_back.md` for issues to fix.
 
 ### General Principles
-- Address each newly listed item from `send_back.md`. Do not redo all work from scratch — focus on sent-back items only.
+- Re-execute your complete original task suite against the fixed implementation. Treat sent-back fixes as additional focus areas on top of the full re-run — do not shortcut by checking only the sent-back items.
 - After fixes complete, update handoff line in `loop_state.md` to next role (see routing above). Keep `(in-sendback)` suffix if cycle continues.
 
 > **⚠ Guardrails Still Apply**

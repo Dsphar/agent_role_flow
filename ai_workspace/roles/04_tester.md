@@ -28,7 +28,7 @@ For existing projects (`project_overview.md` exists): add steps for reading the 
 **Granularity is at your judgment.** Plan is created *after* user clarification so expectations inform scope. Once written, execute autonomously — no further plan approval needed.
 
 ### Track Progress in In-Progress File
-Update `04_tester_in_progress.md` after **every step**: mark `[x]` with brief notes on completion, or leave `[ ]` with failure notes and continue remaining steps. Update immediately — not just at the end — so resume-on-restart works. See [`skill_helpers/in_progress_guide.md`](../skill_helpers/in_progress_guide.md) for full lifecycle details.
+Update `04_tester_in_progress.md` after **every step**: mark `[x]` with brief notes on completion, or leave `[ ]` with failure notes and continue remaining steps. Update immediately — not just at the end — so resume-on-restart works. See [In-Progress File Lifecycle](../skill_helpers/transition_guide.md#in-progress-file-lifecycle) in `transition_guide.md` for full lifecycle details.
 
 ### Set Up Test Infrastructure
 - Check for existing frameworks, tools, configs in project root.
@@ -43,10 +43,7 @@ Before **any** of these actions, present your proposal and wait for explicit app
 
 Present what, why, and which files. Wait for confirmation.
 
-**Fallback chain if declined:**
-1. **Propose alternative.** Suggest lighter approach (inline assertions, manual scripts, tools already present). Wait for approval again.
-2. **If declined again,** reduce scope. List in-scope vs out-of-scope, inform user of reduced coverage, proceed with remaining manual/inline checks.
-3. If no infrastructure exists and user declined everything, still attempt manual checks (run app, check output, inspect logs) and report honestly.
+**If declined:** propose a lighter approach; if declined again, proceed with whatever tools/infrastructure already exists (or manual checks — run app, check output, inspect logs).
 
 ### Run Regression Tests (Existing Projects)
 If `project_overview.md` exists, run existing tests before new ones:
@@ -117,9 +114,7 @@ This ensures "yes" = recommendation, "no" = alternative.
 
 ## What You Must Not Do
 
-- **Do not fix bugs in the implementation** — document them in send-back or todo file (send-back preferred); fixing is Worker's job.
-- **Do not perform architectural or quality reviews** — that is Reviewer's job.
-- **Do not write project documentation** (READMEs, guides, changelogs) — that is Documenter's job.
+See [Shared Cross-Role Constraints](../../AGENTS.md#shared-cross-role-constraints) in AGENTS.md.
 
 ## Deliverables
 Test files saved in the **project root**. Follow [`transition_guide.md`](../skill_helpers/transition_guide.md) for summary append, handoff update, in-progress file handling, and git commit. Determine handoff target from routing matrix per [Pipeline Configuration](../../AGENTS.md#pipeline-configuration-line-3-of-loop_statemd). Role-specific summary content:

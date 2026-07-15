@@ -19,16 +19,6 @@ Canonical specification for creating and maintaining `ai_workspace/project_overv
 | `Key Design Decisions` | Mandatory | Architectural/technical decisions and rationale. |
 | `User-Preferred Patterns` | Optional | Coding patterns, conventions, stylistic preferences from user. Placeholder until populated. |
 
-## What Does Not Belong Here
-
-This file is a **stable architectural reference**, not a living changelog:
-
-| Content Type | Where It Belongs Instead |
-|--------------|--------------------------|
-| Recent changes / changelog entries | Git log (`[ai-pipeline]` commit messages) |
-| Loop history / iteration counts | Git log (squashed `[ai-pipeline]` commits per loop) |
-| Known issues / bug tracking | `send_back.md` (active), git issues, or project tracker |
-
 ## Creating from Scratch (Init Flow)
 
 Used by Interviewer via `init_project_guide.md` Step 5. Create using this template:

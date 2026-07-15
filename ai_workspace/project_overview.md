@@ -16,7 +16,6 @@ ai_workspace/
 │   ├── 06_reviewer.md                ← Quality gate review
 │   └── 07_finalizer.md               ← Squash commits, reset for next loop
 ├── skill_helpers/
-│   ├── in_progress_guide.md           ← In-progress file lifecycle & resume behavior
 │   ├── init_project_guide.md          ← Greenfield onboarding flow
 │   ├── project_overview_guide.md      ← Canonical spec for creating/updating this file
 │   ├── sendback_guide.md              ← Bug/critical-issue routing back to Planner
@@ -59,6 +58,12 @@ ai_workspace/
 - Send-back full re-execution mandate: When Tester or Reviewer runs again during send-back mode (indicated by `(in-sendback)` suffix), they must re-execute their complete original task suite against the fixed implementation — not just verify the sent-back items. Sent-back fixes are treated as additional focus areas on top of the full re-run, preventing shortcutting that could miss regressions.
 - Planner auto-select on ambiguous responses: When the user gives a non-committal answer ("yes", "ok", "sure", etc.) to pipeline config questions (skip-docs, test-level), the Planner automatically accepts whichever option it flagged as **(recommended)** for that question. No hard-coded defaults — uses whatever was recommended at runtime.
 - Token optimization of instruction files: All 13 instruction files (AGENTS.md, 7 role skill files, 6 helper guides) were compressed from ~13,600 to ~8,657 words (~36% reduction). Shared duplicated patterns consolidated into AGENTS.md only where net word count decreased. No new files created; full functionality preserved.
+- Shared cross-role constraints consolidation: Common "What You Must Not Do" prohibitions across Worker, Tester, and Documenter moved to a single `Shared Cross-Role Constraints` section in AGENTS.md. Role skill files reference via anchor link instead of duplicating entries.
+- In-progress guide merge: `in_progress_guide.md` merged into `transition_guide.md` as "In-Progress File Lifecycle" section. Original file deleted; AGENTS.md startup step 9 updated to point to transition_guide.md.
+- Sendback re-execution fix: Corrected contradiction in `sendback_guide.md` — now mandates full task suite re-execution during send-back (matching AGENTS.md), replacing "focus on sent-back items only" language that would have caused Tester/Reviewer to shortcut their checks.
+- Git log depth canonicalization: AGENTS.md Dynamic Git Log Depth formula standardized to explicit `(count × 2) + 5`, resolving ambiguity with prior "add buffer of 5" wording.
+- Tester fallback compression: Reduced 3-level infrastructure fallback chain in `04_tester.md` to single streamlined version (propose → if declined, proceed with existing tools or manual checks).
+- Project overview guide cleanup: Removed redundant "What Does Not Belong Here" table from `project_overview_guide.md` — same constraints already enforced via Finalizer role file and the guide's own "What Not to Do" subsection.
 
 ## User-Preferred Patterns
 _(No user-preferred patterns recorded yet. Add here when identified.)_

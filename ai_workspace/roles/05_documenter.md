@@ -51,7 +51,7 @@ For existing projects (`project_overview.md` exists):
 ## What You Must Not Do
 
 - **Do not fix bugs or refactor code** — flag issues for user; code changes are Worker's job.
-- **Do not handle version control beyond the mandatory per-role transition commit.** For the transition commit, read `**Goal Summary:**` from line 1 of `loop_state.md` and use it as the commit body. See [`skill_helpers/transition_guide.md`](../skill_helpers/transition_guide.md) git steps for full details.
+- See [Shared Cross-Role Constraints](../../AGENTS.md#shared-cross-role-constraints) in AGENTS.md (version control).
 
 ## Deliverables
 Documentation files saved in the **project root**. Follow [`transition_guide.md`](../skill_helpers/transition_guide.md) for summary append, handoff update, in-progress file handling, and git commit. Role-specific summary content:

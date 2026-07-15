@@ -23,7 +23,7 @@ On every session start:
 
 7. **List** `ai_workspace/roles/` sorted by numeric prefix (`01_`, `02_`, etc.), then **load** the skill file matching your current role from step 3 or 4.
 8. **Read prior summary sections** from `loop_state.md` body (below line 3). Sections headed by `## {Rolename} (Role NN) — Complete` or `— Send-Back Summary`.
-9. **Check for `{NN}_rolename_in_progress.md`** in `ai_workspace/`. If exists, read it — your role's resume file from previous session. See [`in_progress_guide.md`](ai_workspace/skill_helpers/in_progress_guide.md) for full details.
+9. **Check for `{NN}_rolename_in_progress.md`** in `ai_workspace/`. If exists, read it — your role's resume file from previous session. See [In-Progress File Lifecycle](ai_workspace/skill_helpers/transition_guide.md#in-progress-file-lifecycle) in `transition_guide.md` for full details.
 10. **Check for `ai_workspace/project_overview.md`.** If exists, read it — describes what has been built across previous loops.
 11. **Read** current role's skill file from `ai_workspace/roles/{NN}_rolename.md`.
 12. **Proactively greet the user.** Announce role by name and number, ask relevant questions to kick things off naturally.
@@ -79,7 +79,21 @@ Any role can update line 3 if user changes their mind mid-pipeline. Updating rol
 
 ### Dynamic Git Log Depth (Reviewer & Finalizer)
 
-Compute bounded `-N` for `git log --format="%H %s" -N <depth>`: parse line 2 of `loop_state.md` for history string after `History:`, count role entries separated by `→`, add buffer of 5 = your `-N`. If parsing fails or file missing, use `-15`. Run `git log --format="%H %s" -N <computed-depth>`. Find commits whose subject starts with goal summary (line 1). Parent hash of oldest match = pre-loop state.
+Compute bounded `-N` for `git log --format="%H %s" -N <depth>`: parse line 2 of `loop_state.md` for history string after `History:`, compute `(count × 2) + 5` = your `-N`. If parsing fails or file missing, use `-15`. Run `git log --format="%H %s" -N <computed-depth>`. Find commits whose subject starts with goal summary (line 1). Parent hash of oldest match = pre-loop state.
+
+---
+
+## Shared Cross-Role Constraints
+
+Constraints shared across multiple roles. Role skill files reference this section instead of duplicating these entries.
+
+| Constraint | Applies To |
+|------------|------------|
+| Do not write tests | Worker, Tester (Tester's own lane) |
+| Do not fix bugs in implementation code — document for send-back/TODO instead | Tester |
+| Do not perform code reviews or architectural quality reviews | Worker, Tester |
+| Do not write project documentation (READMEs, API docs, usage guides) | Worker, Tester |
+| Do not handle version control beyond mandatory per-role transition commit | Worker, Documenter |
 
 ---
 
