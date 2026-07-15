@@ -11,7 +11,7 @@ Finalize the pipeline loop: squash all per-role commits from the current iterati
 ## Tasks
 
 ### Determine What Changed This Iteration
-- Find the current-loop commits: first compute a dynamic depth limit — parse line 2 of `loop_state.md` for the history string (e.g., `History: Interviewer → Planner`), count role entries separated by `→`, multiply count by 2, add buffer of 5; if parsing fails or file missing use `-15`. Then run `git log --format="%H %s" -N <computed-depth>` and identify all commits whose subject line starts with the goal summary text (read `**Goal Summary:**` from line 1 of `loop_state.md`). Note the parent hash of the oldest matching commit — this is the pre-loop state.
+- Find the current-loop commits: first compute a dynamic depth limit — parse line 2 of `loop_state.md` for the history string (e.g., `History: Interviewer → Planner`), count role entries separated by `→`, add buffer of 5; if parsing fails or file missing use `-15`. Then run `git log --format="%H %s" -N <computed-depth>` and identify all commits whose subject line starts with the goal summary text (read `**Goal Summary:**` from line 1 of `loop_state.md`). Note the parent hash of the oldest matching commit — this is the pre-loop state.
 - Run `git diff <parent-hash>..HEAD` to see file-level changes since before this loop started. If no matching commits are found, fall back to listing project root files and comparing against role summaries.
 - Cross-reference diffs with summary sections in `loop_state.md` — match changed files to their purpose, flag unexplained changes for user review, and ask whether to log them as a new TODO file.
 - Build a change log.

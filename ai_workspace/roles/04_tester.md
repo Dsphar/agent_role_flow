@@ -32,10 +32,10 @@ When running again during send-back mode, you must do the following:
    - If tests pass and `Source:` in `send_back.md` is `Tester (Role 04)`, remove `(in-sendback)` suffix from handoff line and delete `send_back.md` — the send-back cycle is complete.
 
 ### Review Testing Expectations with the User
-**First, check line 3 of `loop_state.md` for a pre-set `test_level`.** Line 3 is the global pipeline config line (format: `skip_docs={yes|no} | test_level={quick|deep|skip}`).
-- If `test_level=skip` is set on line 3, skip all testing. Proceed directly to transition — hand off per the routing matrix (see Deliverables).
-- If `test_level=quick` or `test_level=deep` is set on line 3, use that value as your scope. Inform the user of the pre-set level and continue.
-- If no `test_level` is set on line 3 (or line 3 doesn't exist), **ask the user** which testing depth they prefer using a numbered list:
+**First, check line 3 of `loop_state.md` for a pre-set `test_level`.** See [Pipeline Configuration](AGENTS.md#pipeline-configuration-line-3-of-loop_statemd) in AGENTS.md for format and parsing rules.
+- If `test_level=skip`, skip all testing. Proceed directly to transition — hand off per the routing matrix (see Deliverables).
+- If `test_level=quick` or `test_level=deep`, use that value as your scope. Inform the user of the pre-set level and continue.
+- If no `test_level` is set, **ask the user** which testing depth they prefer using a numbered list:
 
 1. Quick — verify only what was changed in this iteration (change-only testing).
 2. Deep — full suite covering unit + integration + edge cases.
@@ -142,10 +142,10 @@ If no suggestions arise, gracefully skip — do not present an awkward empty lis
 Wait for user acknowledgment or feedback before proceeding to the Skip-Docs prompt.
 
 ### Skip-Docs Prompt (Tests Passed Only)
-**First, check line 3 of `loop_state.md` for a pre-set `skip_docs`.**
-- If `skip_docs=yes` is set on line 3, skip this prompt entirely. Since skip_docs=yes, transition directly to Reviewer (Role 06) regardless of test_level.
-- If `skip_docs=no` is set on line 3, proceed with the prompt below — the user can still change their mind.
-- If no `skip_docs` value is on line 3, this is your fallback mid-pipeline prompt. Proceed with the prompt below.
+**First, check line 3 of `loop_state.md` for a pre-set `skip_docs`.** See [Pipeline Configuration](AGENTS.md#pipeline-configuration-line-3-of-loop_statemd) in AGENTS.md for format and parsing rules.
+- If `skip_docs=yes`, skip this prompt entirely. Transition directly to Reviewer (Role 06) regardless of test_level.
+- If `skip_docs=no`, proceed with the prompt below — the user can still change their mind.
+- If no `skip_docs` value is set, this is your fallback mid-pipeline prompt. Proceed with the prompt below.
 
 After all testing is complete **and all tests pass**, evaluate the context and recommend one of the following options:
 
@@ -198,16 +198,7 @@ Test files saved in the **project root** following project conventions, plus a s
   {or — Send-Back Summary if in send-back mode}
   ```
 - If `04_tester_in_progress.md` exists, append its contents as an `### In-Progress Notes` subsection under your summary, then delete the file.
-- Update the handoff line in `loop_state.md` to advance past your role. Determine your handoff target from the routing matrix using values on line 3:
-
-| skip_docs | test_level | Hands off to |
-|-----------|------------|---------------|
-| no        | deep       | Documenter (Role 05) |
-| no        | quick      | Documenter (Role 05) |
-| yes       | deep       | Reviewer (Role 06) — advance past Documenter |
-| yes       | quick      | Reviewer (Role 06) — advance past Documenter |
-
-If `test_level=skip`, you should not be here (Tester is skipped when test_level=skip). If somehow loaded, hand off per skip_docs value: to Documenter if no, to Reviewer if yes.
+- Update the handoff line in `loop_state.md` to advance past your role. Determine your handoff target from the routing matrix in [Pipeline Configuration](AGENTS.md#pipeline-configuration-line-3-of-loop_statemd) (AGENTS.md).
 
 - Include:
   - What was tested (unit tests + end-to-end tests).

@@ -74,39 +74,7 @@ A role may pre-create the next role's summary section in `loop_state.md` as part
 
 **Undoing a pre-created section:** If the user changes their mind after a role has pre-created the next section in `loop_state.md` (e.g., skipped docs but now wants them), they can edit `loop_state.md` to remove that appended section and revert the handoff line before starting the next session. On the next session start, the pipeline will load the correct role since Documenter no longer has a "Complete" entry in the history.
 
-### Pipeline Configuration (Line 3 of `loop_state.md`)
-
-Line 3 of `loop_state.md` is the **global mutable pipeline config line**. It stores key-value pairs that all downstream roles read at startup:
-```
-skip_docs={yes|no} | test_level={quick|deep|skip}<br>
-```
-
-> Lines 1–3 end with `<br>` so they render on separate visual lines in markdown viewers. Strip trailing `<br>` when parsing values.
-
-**Setting values:** The Planner sets initial values during its "Ask Pipeline Configuration Questions" task. If line 3 already has content, append new keys or update existing ones.
-
-**Reading values:** Any role that depends on pipeline config (Tester, Documenter) should check line 3 at startup before asking the user. Pre-set values take precedence over mid-pipeline prompts.
-
-**Mutability rules:** Any downstream role can update line 3 if the user changes their mind during that role's session. The updating role **must**:
-1. Update the relevant key-value pair on line 3.
-2. Note the change in its summary section appended to `loop_state.md` (e.g., "User changed skip_docs from yes to no mid-session").
-3. Recalculate its handoff target from the routing matrix below if needed.
-
-**Routing Matrix — Worker Handoff Targets:**
-| skip_docs | test_level | Worker hands off to |
-|-----------|------------|---------------------|
-| no        | deep       | Tester → Documenter (existing flow) |
-| no        | quick      | Tester → Documenter (Tester adjusts scope) |
-| no        | skip       | Documenter          |
-| yes       | deep       | Tester → Reviewer   |
-| yes       | quick      | Tester → Reviewer   |
-| yes       | skip       | Reviewer            |
-
-**Routing Matrix — Tester Handoff Targets:**
-| skip_docs | test_level | Tester hands off to |
-|-----------|------------|---------------------|
-| no        | deep/quick | Documenter (Role 05) |
-| yes       | deep/quick | Reviewer (Role 06) — advance past Documenter |
+> For line 3 format, parsing rules, mutability rules, and routing matrices, see [Pipeline Configuration](../../AGENTS.md#pipeline-configuration-line-3-of-loop_statemd) in AGENTS.md.
 
 ### Pipeline Routing Reference
 

@@ -49,24 +49,7 @@ After completing all planning tasks above and before wrapping up with deliverabl
 
 **Auto-select on ambiguous responses.** When the user's answer to either config question is non-committal or ambiguous — such as "yes", "y", "ok", "sure", "c", "sounds good", etc. — automatically accept whichever option you flagged as **(recommended)** for that specific question. This applies **only** to these two pipeline config questions (skip-docs, test-level) at end of session, not to other binary-choice prompts during your main planning work. There are no hard-coded defaults: auto-select uses whatever you recommended at runtime based on the current loop's context.
 
-**Record decisions on line 3 of `loop_state.md`.** Line 3 is the global pipeline config line with key-value pairs:
-```
-skip_docs={yes|no} | test_level={quick|deep|skip}
-```
-If line 3 already has content, append new keys or update existing ones.
-
-**Determine your handoff target from the routing matrix:**
-
-| skip_docs | test_level | Hands off to |
-|-----------|------------|---------------|
-| no        | deep       | Worker → (Worker hands to Tester) |
-| no        | quick      | Worker → (Worker hands to Tester) |
-| no        | skip       | Worker → (Worker hands to Documenter) |
-| yes       | deep       | Worker → (Worker hands to Tester) |
-| yes       | quick      | Worker → (Worker hands to Tester) |
-| yes       | skip       | Worker → (Worker hands to Reviewer) |
-
-Your handoff is always to `Worker (Role 03)`. The routing matrix above tells you what to note in your summary so the Worker knows who to hand off to after completing implementation.
+**Record decisions on line 3 of `loop_state.md`.** See [Pipeline Configuration](AGENTS.md#pipeline-configuration-line-3-of-loop_statemd) in AGENTS.md for format, parsing rules, and routing matrices. Your handoff is always to `Worker (Role 03)` — the routing matrix tells you what to note in your summary so the Worker knows who to hand off to after completing implementation.
 
 ## What You Must Not Do
 

@@ -51,6 +51,53 @@ When presenting a binary-choice prompt to the user, always list options as **"Op
 
 ---
 
+## Pipeline Configuration (Line 3 of `loop_state.md`)
+
+Line 3 is the **global mutable pipeline config line**. All parsing logic for this section lives here — role skill files and helper guides reference this section instead of duplicating it.
+
+### Format
+```
+skip_docs={yes|no} | test_level={quick|deep|skip}<br>
+```
+- Key-value pairs separated by ` | ` (space-pipe-space).
+- Line ends with `<br>` for markdown rendering. **Strip trailing `<br>` before parsing.**
+
+### Parsing Rules
+1. Read line 3 of `loop_state.md`.
+2. Strip any trailing `<br>`.
+3. Split on ` | ` to get individual key=value tokens.
+4. Extract the value after `=` for the key you need (e.g., `skip_docs`, `test_level`).
+
+### Guardrail — Unrecognized Values
+If a parsed value does not match its expected options:
+- `skip_docs` must be `yes` or `no`
+- `test_level` must be `quick`, `deep`, or `skip`
+
+**If unrecognized, ask the user directly for clarification.** Do not guess or assume. Record their answer on line 3 and note it in your summary section.
+
+### Mutability Rules
+Any role can update line 3 if the user changes their mind mid-pipeline. The updating role **must**:
+1. Update the relevant key-value pair on line 3.
+2. Note the change in its `loop_state.md` summary section (e.g., "User changed skip_docs from yes to no mid-session").
+
+### Routing Matrix — Worker Handoff Targets
+| skip_docs | test_level | Worker hands off to |
+|-----------|------------|---------------------|
+| no        | deep       | Tester → Documenter (existing flow) |
+| no        | quick      | Tester → Documenter (Tester adjusts scope) |
+| no        | skip       | Documenter          |
+| yes       | deep       | Tester → Reviewer   |
+| yes       | quick      | Tester → Reviewer   |
+| yes       | skip       | Reviewer            |
+
+### Routing Matrix — Tester Handoff Targets
+| skip_docs | test_level | Tester hands off to |
+|-----------|------------|---------------------|
+| no        | deep/quick | Documenter (Role 05) |
+| yes       | deep/quick | Reviewer (Role 06) — advance past Documenter |
+
+---
+
 ## Transitioning Between Roles
 
 When confident that you are ready to transition to the next role, automatically read and follow `ai_workspace/skill_helpers/transition_guide.md`.
