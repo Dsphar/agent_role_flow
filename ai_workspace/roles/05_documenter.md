@@ -9,9 +9,9 @@ Produce clear, comprehensive documentation for everything built or changed in th
 
 ## Tasks
 
-### Check Pipeline Config (Line 2)
-**First, check line 2 of `loop_state.md` for a pre-set `skip_docs`.** Line 2 is the global pipeline config line (format: `skip_docs={yes|no} | test_level={quick|deep|skip}`).
-- If `skip_docs=yes` is set on line 2, skip all documentation work. Append a minimal stub summary to `loop_state.md`, then update the handoff line to advance past Documenter to Reviewer with Documenter added to history. Do not ask the user about documentation needs — this was pre-decided by the Planner (or Tester).
+### Check Pipeline Config (Line 3)
+**First, check line 3 of `loop_state.md` for a pre-set `skip_docs`.** Line 3 is the global pipeline config line (format: `skip_docs={yes|no} | test_level={quick|deep|skip}`).
+- If `skip_docs=yes` is set on line 3, skip all documentation work. Append a minimal stub summary to `loop_state.md`, then update the handoff line to advance past Documenter to Reviewer with Documenter added to history. Do not ask the user about documentation needs — this was pre-decided by the Planner (or Tester).
 - If `skip_docs=no` or no value is set, proceed normally with the steps below.
 
 ### Determine Documentation Needs
@@ -27,7 +27,7 @@ Check `project_overview.md` or prior summaries for documentation standards. If n
 
 Let the user select multiple options by number, or pick 7 to skip.
 
-**User changes mind mid-pipeline:** If `skip_docs=yes` was set on line 2 but the user now wants documentation, update line 2 to `skip_docs=no`, proceed with full documentation work, and note the change in your summary. Conversely, if the user decides to skip docs during this session, update line 2 to `skip_docs=yes` and note it.
+**User changes mind mid-pipeline:** If `skip_docs=yes` was set on line 3 but the user now wants documentation, update line 3 to `skip_docs=no`, proceed with full documentation work, and note the change in your summary. Conversely, if the user decides to skip docs during this session, update line 3 to `skip_docs=yes` and note it.
 
 ### Write or Update Project Documentation
 Create/update docs in the **project root**, following existing conventions:
@@ -54,7 +54,7 @@ For existing projects (`project_overview.md` exists):
 ## What You Must Not Do
 
 - **Do not fix bugs or refactor code** — flag issues for the user; code changes are the Worker's job.
-- **Do not handle version control beyond the mandatory per-role transition commit.** For the transition commit, read `## Goal Summary` from the Interviewer's section in `loop_state.md` and use it as the commit body. See [`skill_helpers/transition_guide.md`](../skill_helpers/transition_guide.md) git steps for full details.
+- **Do not handle version control beyond the mandatory per-role transition commit.** For the transition commit, read `**Goal Summary:**` from line 1 of `loop_state.md` and use it as the commit body. See [`skill_helpers/transition_guide.md`](../skill_helpers/transition_guide.md) git steps for full details.
 - Out-of-scope requests → automatically capture as a new todo file per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
 
 ## Deliverables

@@ -28,9 +28,9 @@ Master instruction file for all send-back behavior. Every role should follow the
 
 ## Send-Back Detection
 
-Send-back mode is detected via the `(in-sendback)` suffix on the active role in `loop_state.md`'s handoff history line (line 1). Example:
+Send-back mode is detected via the `(in-sendback)` suffix on the active role in `loop_state.md`'s handoff history line (line 2). Example:
 ```
-Current Role: Planner (Role 02) (in-sendback) | History: Interviewer → Planner → Worker → Tester
+Current Role: Planner (Role 02) (in-sendback) | History: Interviewer → Planner → Worker → Tester<br>
 ```
 
 The `send_back.md` file is still created for detailed issue descriptions, but **detection** comes from the `(in-sendback)` suffix in `loop_state.md`.
@@ -71,10 +71,10 @@ When you find **Critical** issues:
      - Add your current role to the history trail.
      - Example (Tester initiating send-back):
        ```
-       Before:  Current Role: Tester (Role 04) | History: Interviewer → Planner → Worker
-       After:   Current Role: Planner (Role 02) (in-sendback) | History: Interviewer → Planner → Worker → Tester
+       Before:  Current Role: Tester (Role 04) | History: Interviewer → Planner → Worker<br>
+       After:   Current Role: Planner (Role 02) (in-sendback) | History: Interviewer → Planner → Worker → Tester<br>
        ```
-3. **Commit:** Read the Interviewer section's `## Goal Summary` from `loop_state.md` and use it as the commit body, with `[ai-{role-name}-sendback]` appended at end.
+3. **Commit:** Read `**Goal Summary:**` from line 1 of `loop_state.md` and use it as the commit body, with `[ai-{role-name}-sendback]` appended at end.
 
 ---
 
@@ -115,7 +115,7 @@ When in send-back mode (`(in-sendback)` present in `loop_state.md`, or you just 
 
 ### Full Transition Steps
 See [`transition_guide.md`](./transition_guide.md) for complete git steps, including:
-- Reading the Interviewer section's `## Goal Summary` from `loop_state.md` for the commit body.
+- Reading `**Goal Summary:**` from line 1 of `loop_state.md` for the commit body.
 - Staging and committing with the correct tag.
 - Blocking transition on commit failure.
 

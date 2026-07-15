@@ -34,14 +34,14 @@ Before starting the numbered transition steps below, verify each of the followin
    ```
    After appending, **delete** `{NN}_rolename_in_progress.md` — its content is now preserved in `loop_state.md`.
 
-   **c) Update the handoff history line (line 1).** Your current role gets moved to the history; the next role becomes active. Format:
+   **c) Update the handoff history line (line 2).** Your current role gets moved to the history; the next role becomes active. Format:
    ```
-   Current Role: {NextRole} (Role NN) | History: {PrevRoles} → {YourRole}
+   Current Role: {NextRole} (Role NN) | History: {PrevRoles} → {YourRole}<br>
    ```
    Example — Worker transitioning to Tester:
    ```
-   Before:  Current Role: Worker (Role 03) | History: Interviewer → Planner
-   After:   Current Role: Tester (Role 04) | History: Interviewer → Planner → Worker
+   Before:  Current Role: Worker (Role 03) | History: Interviewer → Planner<br>
+   After:   Current Role: Tester (Role 04) | History: Interviewer → Planner → Worker<br>
    ```
 
    **d) Send-back mode transitions:**
@@ -52,7 +52,7 @@ Before starting the numbered transition steps below, verify each of the followin
    1. Run `git status`. If not in a git repo or there are no changes, skip this step silently.
    2. Determine tag: if you are in send-back mode (`send_back.md` exists now, **or you just deleted it** as the original sending role), use `[ai-{role-name}-sendback]`; otherwise use `[ai-{role-name}]`. Extract `{role-name}` from your current role name (e.g., Worker → `worker`).
    3. Run `git add -A`.
-   4. Determine the commit body: read the Interviewer section's `## Goal Summary` from `loop_state.md`. If it exists, use its content as the body (truncate to <100 chars if needed). If not, generate a concise ad-hoc summary of what was accomplished.
+   4. Determine the commit body: read `**Goal Summary:**` from line 1 of `loop_state.md`. Use its value as the commit body (truncate to <100 chars if needed). If it does not exist, generate a concise ad-hoc summary of what was accomplished.
    5. Run `git commit -m "{commit body from step 4} {tag determined in step 2}"`.
    6. **If the commit fails** (identity not configured, merge conflict, etc.), **block transition** — present the error to the user and ask how to proceed. Do not mark the role complete until the commit succeeds or the user explicitly says to skip it.
 6. **Inform user handoff ready.** Tell the user: "[clear/new]" handoff ready. Start a new session and the next role will load.
@@ -69,24 +69,26 @@ A role may pre-create the next role's summary section in `loop_state.md` as part
    ```
 2. Advance the handoff line past Documenter to Reviewer:
    ```
-   Current Role: Reviewer (Role 06) | History: ... → Tester → Documenter
+   Current Role: Reviewer (Role 06) | History: ... → Tester → Documenter<br>
    ```
 
 **Undoing a pre-created section:** If the user changes their mind after a role has pre-created the next section in `loop_state.md` (e.g., skipped docs but now wants them), they can edit `loop_state.md` to remove that appended section and revert the handoff line before starting the next session. On the next session start, the pipeline will load the correct role since Documenter no longer has a "Complete" entry in the history.
 
-### Pipeline Configuration (Line 2 of `loop_state.md`)
+### Pipeline Configuration (Line 3 of `loop_state.md`)
 
-Line 2 of `loop_state.md` is the **global mutable pipeline config line**. It stores key-value pairs that all downstream roles read at startup:
+Line 3 of `loop_state.md` is the **global mutable pipeline config line**. It stores key-value pairs that all downstream roles read at startup:
 ```
-skip_docs={yes|no} | test_level={quick|deep|skip}
+skip_docs={yes|no} | test_level={quick|deep|skip}<br>
 ```
 
-**Setting values:** The Planner sets initial values during its "Ask Pipeline Configuration Questions" task. If line 2 already has content, append new keys or update existing ones.
+> Lines 1–3 end with `<br>` so they render on separate visual lines in markdown viewers. Strip trailing `<br>` when parsing values.
 
-**Reading values:** Any role that depends on pipeline config (Tester, Documenter) should check line 2 at startup before asking the user. Pre-set values take precedence over mid-pipeline prompts.
+**Setting values:** The Planner sets initial values during its "Ask Pipeline Configuration Questions" task. If line 3 already has content, append new keys or update existing ones.
 
-**Mutability rules:** Any downstream role can update line 2 if the user changes their mind during that role's session. The updating role **must**:
-1. Update the relevant key-value pair on line 2.
+**Reading values:** Any role that depends on pipeline config (Tester, Documenter) should check line 3 at startup before asking the user. Pre-set values take precedence over mid-pipeline prompts.
+
+**Mutability rules:** Any downstream role can update line 3 if the user changes their mind during that role's session. The updating role **must**:
+1. Update the relevant key-value pair on line 3.
 2. Note the change in its summary section appended to `loop_state.md` (e.g., "User changed skip_docs from yes to no mid-session").
 3. Recalculate its handoff target from the routing matrix below if needed.
 

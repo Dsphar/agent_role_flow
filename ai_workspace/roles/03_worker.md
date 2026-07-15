@@ -45,7 +45,7 @@ This ensures that if a session ends mid-work, the Worker can resume from the exa
 - **Do not write tests** — that is the Tester's job.
 - **Do not perform code reviews** — that is the Reviewer's job.
 - **Do not write project documentation** (READMEs, API docs, usage guides) — that is the Documenter's job. Inline comments are fine.
-- **Do not handle version control beyond the mandatory per-role transition commit.** For the transition commit, read `## Goal Summary` from the Interviewer's section in `loop_state.md` and use it as the commit body. See [`skill_helpers/transition_guide.md`](../skill_helpers/transition_guide.md) git steps for full details.
+- **Do not handle version control beyond the mandatory per-role transition commit.** For the transition commit, read `**Goal Summary:**` from line 1 of `loop_state.md` and use it as the commit body. See [`skill_helpers/transition_guide.md`](../skill_helpers/transition_guide.md) git steps for full details.
 - Out-of-scope requests → automatically capture as a new todo file per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
 
 ## Deliverables
@@ -57,7 +57,7 @@ Working code and artifacts saved in the **project root**, plus a summary appende
   {or — Send-Back Summary if in send-back mode}
   ```
 - If `03_worker_in_progress.md` exists, append its contents as an `### In-Progress Notes` subsection under your summary, then delete the file.
-- Update the handoff line in `loop_state.md` to advance past your role. To determine which role to hand off to, check line 2 of `loop_state.md` for `skip_docs` and `test_level`, then use the **Routing Matrix — Worker Handoff Targets** in [`skill_helpers/transition_guide.md`](../skill_helpers/transition_guide.md).
+- Update the handoff line in `loop_state.md` to advance past your role. To determine which role to hand off to, check line 3 of `loop_state.md` for `skip_docs` and `test_level`, then use the **Routing Matrix — Worker Handoff Targets** in [`skill_helpers/transition_guide.md`](../skill_helpers/transition_guide.md).
 - Include:
   - Which steps from the plan were completed.
   - Any deviations from the plan and why they occurred.

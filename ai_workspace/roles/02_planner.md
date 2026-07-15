@@ -47,11 +47,11 @@ After completing all planning tasks above and before wrapping up with deliverabl
    - Options: `quick` (lightweight/smoke tests), `deep` (full test suite), `skip` (no automated testing).
    - If the user chooses `skip`, show a warning: "Skipping all tests means no automated validation this loop. Continue?"
 
-**Record decisions on line 2 of `loop_state.md`.** Line 2 is the global pipeline config line with key-value pairs:
+**Record decisions on line 3 of `loop_state.md`.** Line 3 is the global pipeline config line with key-value pairs:
 ```
 skip_docs={yes|no} | test_level={quick|deep|skip}
 ```
-If line 2 already has content, append new keys or update existing ones.
+If line 3 already has content, append new keys or update existing ones.
 
 **Determine your handoff target from the routing matrix:**
 

@@ -11,7 +11,7 @@ Finalize the pipeline loop: squash all per-role commits from the current iterati
 ## Tasks
 
 ### Determine What Changed This Iteration
-- Find the current-loop commits: run `git log --format="%H %s"` and identify all commits whose subject line starts with the goal summary text (from the Interviewer's section in `loop_state.md`). Note the parent hash of the oldest matching commit — this is the pre-loop state.
+- Find the current-loop commits: run `git log --format="%H %s"` and identify all commits whose subject line starts with the goal summary text (read `**Goal Summary:**` from line 1 of `loop_state.md`). Note the parent hash of the oldest matching commit — this is the pre-loop state.
 - Run `git diff <parent-hash>..HEAD` to see file-level changes since before this loop started. If no matching commits are found, fall back to listing project root files and comparing against role summaries.
 - Cross-reference diffs with summary sections in `loop_state.md` — match changed files to their purpose, flag unexplained changes for user review, and ask whether to log them as a new TODO file.
 - Build a change log.
@@ -25,7 +25,7 @@ Follow [`skill_helpers/project_overview_guide.md`](../skill_helpers/project_over
 ### Loop Reset and Handoff
 Git is expected. If not initialized, ask the user before proceeding.
 
-1. **Capture goal summary:** Read the `## Goal Summary` section from the Interviewer's section in `loop_state.md` to use as the short commit subject line. If it does not exist, compose your own short description (or ask the user).
+1. **Capture goal summary:** Read `**Goal Summary:**` from line 1 of `loop_state.md` to use as the short commit subject line. If it does not exist, compose your own short description (or ask the user).
 2. **Read all role summaries for narrative body:** Before deleting anything, read every summary section from `loop_state.md` body to gather per-role outcomes (what was planned, built, tested, documented, reviewed). This content feeds into the multi-line commit message.
 3. **Delete loop state and in-progress files:** Remove `ai_workspace/loop_state.md` and any `{NN}_*_in_progress.md` files from `ai_workspace/`. Do NOT delete `project_overview.md`, role skill files, or other workspace content.
 4. **Check for zero matching commits:** If Step 1 found **zero** matching commits, skip to Step 9 (fallback). This means no roles from the current loop produced git commits with the expected subject prefix, so squashing would risk crossing loop boundaries.

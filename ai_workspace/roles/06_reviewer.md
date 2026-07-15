@@ -28,7 +28,7 @@ When running again during send-back mode, you must do the following:
    - If issues remain, update `send_back.md` with remaining issues and update handoff line in `loop_state.md` back to Planner (Role 02).
 
 ### Perform Scope Audit
-- **Discover loop commits** — Run `git log --format="%H %s"` to list all commits. Find every commit whose subject starts with the Goal Summary text from the Interviewer's section in `loop_state.md`. Note the parent hash of the oldest matching commit (this is the pre-loop state). If no matching commits are found, fall back to listing project root files and comparing against role summaries.
+- **Discover loop commits** — Run `git log --format="%H %s"` to list all commits. Read `**Goal Summary:**` from line 1 of `loop_state.md`. Find every commit whose subject starts with that goal summary text. Note the parent hash of the oldest matching commit (this is the pre-loop state). If no matching commits are found, fall back to listing project root files and comparing against role summaries.
 - **Run diff** — Execute `git diff <parent-hash>..HEAD` to get the full file-level set of changes for this pipeline loop.
 - **Load scope context** — Read the full problem statement from the Interviewer's section in `loop_state.md` (not just the Goal Summary line). If it does not exist, skip the scope audit and note the skip in your review report. Proceed to normal review tasks.
 - **Compare changes against scope** — Judge each changed file or change group against the full problem statement. Identify any changes that appear out of scope relative to what was originally requested.

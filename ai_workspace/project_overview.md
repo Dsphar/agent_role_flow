@@ -26,9 +26,10 @@ ai_workspace/
 ```
 
 ## Architecture Overview
-- **Sequential pipeline:** Roles execute in order (01→07). Each appends a summary section to `ai_workspace/loop_state.md` before transitioning. The handoff history line (line 1) tracks progress: `Current Role: {Role} (Role NN) | History: ...`
+- **Sequential pipeline:** Roles execute in order (01→07). Each appends a summary section to `ai_workspace/loop_state.md` before transitioning. The handoff history line (line 2) tracks progress: `**Current Role:** {Role} (Role NN) | History: ...<br>`
 - **Send-back loop:** Tester and Reviewer can route issues back to Planner for re-planning via `(in-sendback)` suffix in `loop_state.md` + `send_back.md` for issue details.
 - **Git strategy:** Per-role incremental commits during the pipeline, squashed into one `[ai-pipeline]` commit at end of each loop.
+- **Goal summary on line 1:** Line 1 of `loop_state.md` holds `**Goal Summary:** <text><br>` (<100 chars), set by the Interviewer. All roles read this value for their git commit messages instead of parsing the body section.
 - **Loop reset:** Finalizer deletes `loop_state.md`, updates this file, and resets for the next iteration.
 
 ## Tech Stack
@@ -39,9 +40,9 @@ ai_workspace/
 
 ## Key Design Decisions
 - Role separation enforced via "What You Must Not Do" sections in each skill file
-- Single shared `loop_state.md` replaces per-role `_complete.md` files; handoff history on line 1 uses format `Current Role: {Role} (Role NN) | History: ...`
+- Single shared `loop_state.md` replaces per-role `_complete.md` files; handoff history on line 2 uses format `**Current Role:** {Role} (Role NN) | History: ...<br>`
 - In-progress files (`_in_progress.md`) are appended to `loop_state.md` as subsections at transition time, then deleted
-- Goal summary from Interviewer's section in `loop_state.md` used as commit subject across all roles
+- Goal summary stored on line 1 of `loop_state.md` as `**Goal Summary:** <text><br>` (<100 chars), set by the Interviewer. All roles read this value for their git commit messages.
 - Out-of-scope requests are captured as individual files in `ai_workspace/TODO/` per `skill_helpers/todo_guide.md`. Only the Interviewer scans and presents pending TODOs at startup; all roles retain the ability to capture new ones.
 - Tool calling is LLM-driven — no hardcoded bash/shell assumptions
 - Only one `[ai-pipeline]` squash commit exists per pipeline loop; intermediate per-role commits are transient and do not persist post-Finalizer
@@ -53,7 +54,7 @@ ai_workspace/
 - Reviewer scope audit: the Reviewer (Role 06) performs a Scope Audit as its first task, using `git diff` to compare this loop's file-level changes against the full problem statement from the Interviewer. Out-of-scope items are presented with Absorb (recommended) or Revert options.
 - Tester flow refinement: "Suggestions" promoted from Deliverables bullet into its own task section ("Generate and Present Suggestions") to achieve temporal separation from the Skip-Docs prompt, avoiding numbered-list collision during user interaction.
 - Tester mandatory test plan tracking: The Tester must create `ai_workspace/04_tester_in_progress.md` with a checkbox list of all planned test steps after clarifying expectations with the user. Each step is marked `[x]` on completion or left `[ ]` with failure notes. The file is updated after every step for resume-on-restart support, appended to `loop_state.md` as a subsection at transition time, then deleted.
-- Pipeline configuration via line 2: Line 2 of `loop_state.md` carries global mutable key-value pairs (`skip_docs={yes|no} | test_level={quick|deep|skip}`). The Planner asks skip-docs and test-level questions upfront; any downstream role can update line 2 if the user changes their mind (with a summary note). A routing matrix in `transition_guide.md` determines Worker and Tester handoff targets based on these values.
+- Pipeline configuration via line 3: Line 3 of `loop_state.md` carries global mutable key-value pairs (`skip_docs={yes|no} | test_level={quick|deep|skip}`). The Planner asks skip-docs and test-level questions upfront; any downstream role can update line 3 if the user changes their mind (with a summary note). A routing matrix in `transition_guide.md` determines Worker and Tester handoff targets based on these values.
 - Routing matrix for dynamic pipeline paths: Six combinations of skip_docs/test_level map to specific handoff chains. Both roles skipped routes Worker → Reviewer directly. The matrix is replicated in Planner, transition guide, and referenced by Worker/Tester/Documenter roles.
 - Send-back full re-execution mandate: When Tester or Reviewer runs again during send-back mode (indicated by `(in-sendback)` suffix), they must re-execute their complete original task suite against the fixed implementation — not just verify the sent-back items. Sent-back fixes are treated as additional focus areas on top of the full re-run, preventing shortcutting that could miss regressions.
 

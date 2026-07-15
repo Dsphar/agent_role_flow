@@ -13,18 +13,24 @@ Check for `ai_workspace/send_back.md`. If it exists you may be in send-back mode
 
 ### Role Detection
 1. **If `send_back.md` exists AND `(in-sendback)` is in `loop_state.md`:** Extract your current role from the handoff line (the active, non-strikethrough role with `(in-sendback)` suffix). Load that role directly — skip step 2 below.
-2. **Otherwise, read `ai_workspace/loop_state.md`.** Parse the first line to find the active role:
+2. **Otherwise, read `ai_workspace/loop_state.md`.** Parse the second line to find the active role:
    ```
-   Current Role: {RoleName} (Role NN) | History: ...
+   **Current Role:** {RoleName} (Role NN) | History: ...
    ```
    The text after `Current Role:` and before `|` is your current role. If `(in-sendback)` suffix is present, you are in send-back mode — read `send_back.md` for details.
 3. **If `loop_state.md` does not exist**, this is a fresh pipeline start. Begin at `01_interviewer.md`.
-4. **List** role skill files in `ai_workspace/roles/` sorted by numeric prefix (`01_`, `02_`, etc.), then **load** the skill file matching your current role from step 2 or 3.
-5. **Read prior summary sections** from `loop_state.md` body (below line 1) to load cross-role context. Each section is headed by `## {Rolename} (Role NN) — Complete` or `— Send-Back Summary`.
-6. **Check for `{NN}_rolename_in_progress.md`** in `ai_workspace/`. If it exists, read it — this is your role's resume file from a previous session. See `ai_workspace/skill_helpers/in_progress_guide.md` for full details on in-progress file usage and resume behavior.
-7. **Check for `ai_workspace/project_overview.md`.** If it exists, read it — it describes what has been built across previous pipeline loops.
-8. **Read** the current role's skill file from `ai_workspace/roles/{NN}_rolename.md`.
-9. **Proactively greet the user.** Announce your role by name and number, then ask relevant questions to kick things off naturally.
+4. **Line 1 of `loop_state.md` holds the goal summary** as `**Goal Summary:** <text>`. All roles use this value for their git commit messages.
+5. **Line 3 of `loop_state.md` is the pipeline config line**, carrying key-value pairs like `skip_docs={yes|no}` and `test_level={quick|deep|skip}`. Any role can update these values if the user changes their mind (with a summary note).
+
+> **Note:** Lines 1–3 of `loop_state.md` end with `<br>` so they render on separate visual lines in markdown viewers. When parsing values from these lines, strip any trailing `<br>` before extracting data.
+>
+> **Why this order?** Line 1 carries the goal summary (read by every role for commit messages), line 2 tracks the active role and pipeline history (parsed at every session start), and line 3 holds mutable config (updated mid-pipeline as needed). Most frequently read values are placed first, with the most mutable config last.
+6. **List** role skill files in `ai_workspace/roles/` sorted by numeric prefix (`01_`, `02_`, etc.), then **load** the skill file matching your current role from step 2 or 3.
+7. **Read prior summary sections** from `loop_state.md` body (below line 3) to load cross-role context. Each section is headed by `## {Rolename} (Role NN) — Complete` or `— Send-Back Summary`.
+8. **Check for `{NN}_rolename_in_progress.md`** in `ai_workspace/`. If it exists, read it — this is your role's resume file from a previous session. See `ai_workspace/skill_helpers/in_progress_guide.md` for full details on in-progress file usage and resume behavior.
+9. **Check for `ai_workspace/project_overview.md`.** If it exists, read it — it describes what has been built across previous pipeline loops.
+10. **Read** the current role's skill file from `ai_workspace/roles/{NN}_rolename.md`.
+11. **Proactively greet the user.** Announce your role by name and number, then ask relevant questions to kick things off naturally.
 
 ### In-Progress Files
 See `ai_workspace/skill_helpers/in_progress_guide.md` for full details on in-progress file usage, naming, and lifecycle.

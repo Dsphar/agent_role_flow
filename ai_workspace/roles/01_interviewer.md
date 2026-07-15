@@ -50,17 +50,22 @@ After receiving answers to your initial questions, digest them and judge whether
 ## Deliverables
 A clear, well-scoped problem statement appended to `loop_state.md`:
 - **Create or update `ai_workspace/loop_state.md`:**
-  - If it does not exist (fresh pipeline start), create it with the handoff line as line 1:
+  - If it does not exist (fresh pipeline start), create it with goal summary as line 1 and handoff line as line 2:
     ```
-    Current Role: Planner (Role 02) | History: Interviewer
+    **Goal Summary:** <concise description of what this loop builds/changes, <100 chars><br>
+    **Current Role:** Planner (Role 02) | History: Interviewer<br>
+    **Pipeline Config:** skip_docs= | test_level=<br>
     ```
-  - If it already exists, update the handoff line to advance past your role.
-- Below the handoff line, append your summary section:
+  - If it already exists, update the handoff line on line 2 to advance past your role and set `**Goal Summary:**` on line 1.
+- Line 3 is reserved for pipeline config (`skip_docs` / `test_level`) — left blank by you, filled in by the Planner.
+
+> Lines 1–3 end with `<br>` so they render on separate visual lines in markdown viewers. Always include `<br>` at line ends when writing or updating these lines.
+- Below lines 1–3, append your summary section:
   ```
   ---
   ## Interviewer (Role 01) — Complete
   ```
-- **`## Goal Summary`** — Concise (<100 char) description of what this loop builds/changes. Used as commit body by all subsequent roles, with the role tag appended at the end (e.g., `<goal summary> [ai-{role-name}]`). Place at top of your section.
+- **`## Goal Summary`** — Concise (<100 char) description of what this loop builds/changes. Also record this same text as the `**Goal Summary:**` value on line 1 above. All roles read line 1 for their git commit messages.
 - What is being built or changed.
 - Why it matters (goals / success criteria).
 - Technical constraints and preferences.
