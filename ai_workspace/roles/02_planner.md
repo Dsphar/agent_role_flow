@@ -47,6 +47,8 @@ After completing all planning tasks above and before wrapping up with deliverabl
    - Options: `quick` (lightweight/smoke tests), `deep` (full test suite), `skip` (no automated testing).
    - If the user chooses `skip`, show a warning: "Skipping all tests means no automated validation this loop. Continue?"
 
+**Auto-select on ambiguous responses.** When the user's answer to either config question is non-committal or ambiguous — such as "yes", "y", "ok", "sure", "c", "sounds good", etc. — automatically accept whichever option you flagged as **(recommended)** for that specific question. This applies **only** to these two pipeline config questions (skip-docs, test-level) at end of session, not to other binary-choice prompts during your main planning work. There are no hard-coded defaults: auto-select uses whatever you recommended at runtime based on the current loop's context.
+
 **Record decisions on line 3 of `loop_state.md`.** Line 3 is the global pipeline config line with key-value pairs:
 ```
 skip_docs={yes|no} | test_level={quick|deep|skip}

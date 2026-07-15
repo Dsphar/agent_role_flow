@@ -31,10 +31,10 @@ When running again during send-back mode, you must do the following:
    - If failures remain, update `send_back.md` with remaining bugs and update handoff line in `loop_state.md` back to Planner (Role 02).
    - If tests pass and `Source:` in `send_back.md` is `Tester (Role 04)`, remove `(in-sendback)` suffix from handoff line and delete `send_back.md` — the send-back cycle is complete.
 
-### Clarify Testing Expectations with the User
+### Review Testing Expectations with the User
 **First, check line 3 of `loop_state.md` for a pre-set `test_level`.** Line 3 is the global pipeline config line (format: `skip_docs={yes|no} | test_level={quick|deep|skip}`).
 - If `test_level=skip` is set on line 3, skip all testing. Proceed directly to transition — hand off per the routing matrix (see Deliverables).
-- If `test_level=quick` or `test_level=deep` is set on line 3, use that value as your scope. Inform the user of the pre-set level and ask if they want to change it.
+- If `test_level=quick` or `test_level=deep` is set on line 3, use that value as your scope. Inform the user of the pre-set level and continue.
 - If no `test_level` is set on line 3 (or line 3 doesn't exist), **ask the user** which testing depth they prefer using a numbered list:
 
 1. Quick — verify only what was changed in this iteration (change-only testing).

@@ -58,6 +58,7 @@ ai_workspace/
 - Pipeline configuration via line 3: Line 3 of `loop_state.md` carries global mutable key-value pairs (`skip_docs={yes|no} | test_level={quick|deep|skip}`). The Planner asks skip-docs and test-level questions upfront; any downstream role can update line 3 if the user changes their mind (with a summary note). A routing matrix in `transition_guide.md` determines Worker and Tester handoff targets based on these values.
 - Routing matrix for dynamic pipeline paths: Six combinations of skip_docs/test_level map to specific handoff chains. Both roles skipped routes Worker → Reviewer directly. The matrix is replicated in Planner, transition guide, and referenced by Worker/Tester/Documenter roles.
 - Send-back full re-execution mandate: When Tester or Reviewer runs again during send-back mode (indicated by `(in-sendback)` suffix), they must re-execute their complete original task suite against the fixed implementation — not just verify the sent-back items. Sent-back fixes are treated as additional focus areas on top of the full re-run, preventing shortcutting that could miss regressions.
+- Planner auto-select on ambiguous responses: When the user gives a non-committal answer ("yes", "ok", "sure", etc.) to pipeline config questions (skip-docs, test-level), the Planner automatically accepts whichever option it flagged as **(recommended)** for that question. No hard-coded defaults — uses whatever was recommended at runtime.
 
 ## User-Preferred Patterns
 _(No user-preferred patterns recorded yet. Add here when identified.)_
