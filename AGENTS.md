@@ -24,6 +24,7 @@ On every session start:
 7. **Check for `ai_workspace/project_overview.md`.** If exists, read it — describes what has been built across previous loops.
 8. **Read** current role's skill file from `ai_workspace/roles/{NN}_rolename.md`.
 9. **Proactively greet the user.** Announce role by name and number, ask relevant questions to kick things off naturally.
+10. **Cancel awareness (Roles 01–06).** During your session, watch for the user saying "cancel" or equivalent. If detected, follow [`cancel_guide.md`](ai_workspace/skill_helpers/cancel_guide.md). Role 07 (Finalizer) ignores cancel requests.
 
 > **Migration note:** Stale `_in_progress.md` or `send_back.md` files from before this consolidation may still exist on disk. Ignore them — their content has been absorbed into `loop_state.md`. They will be cleaned up at the next Finalizer run.
 
@@ -93,6 +94,20 @@ Constraints shared across multiple roles. Role skill files reference this sectio
 | Do not perform code reviews or architectural quality reviews | Worker, Tester |
 | Do not write project documentation (READMEs, API docs, usage guides) | Worker, Tester |
 | Do not handle version control beyond mandatory per-role transition commit | Worker, Documenter |
+
+---
+
+## Mid-Loop Cancellation
+
+Roles 01–06 support mid-loop cancellation. Role 07 (Finalizer) is excluded — it is already performing loop cleanup.
+
+**Trigger:** User says "cancel" at any point during a role session. Do not execute immediately — follow the two-step confirmation flow in [`cancel_guide.md`](ai_workspace/skill_helpers/cancel_guide.md).
+
+**Two options presented to user:**
+- **(a) Cancel loop (keep TODO for later)** — Undo all work, restore original TODO item.
+- **(b) Cancel entirely** — Undo all work, permanently archive/delete the TODO item.
+
+Both paths perform a full git reset to pre-loop state and delete `loop_state.md`. See [`cancel_guide.md`](ai_workspace/skill_helpers/cancel_guide.md) for complete procedure including pre-loop state identification, failure handling, send-back mode behavior, and edge cases.
 
 ---
 

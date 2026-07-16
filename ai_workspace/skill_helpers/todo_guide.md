@@ -51,6 +51,28 @@ When a role's work satisfies a todo: **Delete** the file from `ai_workspace/TODO
 
 ---
 
+## TODO Restoration and Archival During Cancellation
+
+When a loop is cancelled per [`cancel_guide.md`](./cancel_guide.md), the TODO item that started the loop (if any) must be handled according to the user's chosen cancellation path.
+
+### Restore — "Cancel Loop" Path
+The user wants to revisit this goal later. The TODO file should be restored as a pending item:
+1. After `git reset --hard` restores the working tree, the original TODO file in `ai_workspace/TODO/` is automatically recovered (it existed before the loop).
+2. If git reset does not restore it (e.g., the file was never committed), search git history: `git log --diff-filter=D --name-only --format="" -- "ai_workspace/TODO/"` to find the deletion commit, then recover with `git show <commit-before-deletion>:<path> > ai_workspace/TODO/<filename>.md`.
+3. Verify the file exists in `ai_workspace/TODO/` after restoration.
+
+### Archive — "Cancel Entirely" Path
+The user wants to abandon this goal permanently:
+1. After `git reset --hard` restores the working tree (and thus the TODO file), move it to an archive:
+   - Create `ai_workspace/TODO/archive/` if it doesn't exist.
+   - Move the file: rename with `_cancelled_{YYYY-MM-DD}` suffix appended before `.md`. Example: `TODO_P2_add_cancel_support.md` → `ai_workspace/TODO/archive/TODO_P2_add_cancel_support_cancelled_{YYYY-MM-DD}.md`.
+2. If archive directory creation fails, simply delete the file and note this to the user.
+
+### No TODO Involved
+If the loop started from a fresh goal (not from an existing TODO item), skip restoration/archival entirely. Just perform git reset and `loop_state.md` deletion per [`cancel_guide.md`](./cancel_guide.md).
+
+---
+
 ## Rules
 
 - **One file per item.** Do not combine unrelated requests.

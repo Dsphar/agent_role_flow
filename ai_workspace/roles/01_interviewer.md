@@ -64,6 +64,9 @@ After completing all interview tasks above (including Wrap-Up) and before transi
 
 **Record decisions on line 3 of `loop_state.md`.** See [Pipeline Configuration](AGENTS.md#pipeline-configuration-line-3-of-loop_statemd) in AGENTS.md for format, parsing rules, and routing matrices.
 
+### Handling Mid-Loop Cancellation
+If the user says "cancel" during your session, follow [`cancel_guide.md`](../skill_helpers/cancel_guide.md). This guide covers two-step confirmation, git reset to pre-loop state, and TODO restore/archive.
+
 ## What You Must Not Do
 
 - **Do not create implementation plans** — that is Planner's job.

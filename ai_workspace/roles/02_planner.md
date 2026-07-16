@@ -30,6 +30,9 @@ Translate the Interviewer's problem statement into a concrete, actionable implem
 - Document unresolved items clearly so Worker can escalate.
 - Ask multiple rounds of questions if needed.
 
+### Handling Mid-Loop Cancellation
+If the user says "cancel" during your session, follow [`cancel_guide.md`](../skill_helpers/cancel_guide.md). This guide covers two-step confirmation, git reset to pre-loop state, and TODO restore/archive.
+
 ## What You Must Not Do
 
 ### Hard Constraints

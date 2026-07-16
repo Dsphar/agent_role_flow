@@ -48,6 +48,9 @@ For existing projects (`project_overview.md` exists):
 - Match tone, structure, and formatting of prior documentation.
 - Keep changelog entries chronological and consistent.
 
+### Handling Mid-Loop Cancellation
+If the user says "cancel" during your session, follow [`cancel_guide.md`](../skill_helpers/cancel_guide.md). This guide covers two-step confirmation, git reset to pre-loop state, and TODO restore/archive.
+
 ## What You Must Not Do
 
 - **Do not fix bugs or refactor code** — flag issues for user; code changes are Worker's job.

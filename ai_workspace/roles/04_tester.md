@@ -112,6 +112,9 @@ This ensures "yes" = recommendation, "no" = alternative.
 
 **Undoing a skip-docs decision:** User can edit `loop_state.md` to remove the pre-created Documenter section and revert handoff line before next session. Documenter role will load since it no longer appears in history.
 
+### Handling Mid-Loop Cancellation
+If the user says "cancel" during your session, follow [`cancel_guide.md`](../skill_helpers/cancel_guide.md). This guide covers two-step confirmation, git reset to pre-loop state, and TODO restore/archive.
+
 ## What You Must Not Do
 
 See [Shared Cross-Role Constraints](../../AGENTS.md#shared-cross-role-constraints) in AGENTS.md.

@@ -32,6 +32,9 @@ For every completed step:
 2. Add brief notes: which files were created or modified, any deviations from plan, and blockers encountered.
 3. Save `loop_state.md` so progress is persisted on disk before continuing.
 
+### Handling Mid-Loop Cancellation
+If the user says "cancel" during your session, follow [`cancel_guide.md`](../skill_helpers/cancel_guide.md). This guide covers two-step confirmation, git reset to pre-loop state, and TODO restore/archive.
+
 ## What You Must Not Do
 
 See [Shared Cross-Role Constraints](../../AGENTS.md#shared-cross-role-constraints) in AGENTS.md.
