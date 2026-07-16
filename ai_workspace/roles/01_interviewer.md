@@ -17,7 +17,16 @@ Before greeting or asking open-ended questions, scan `ai_workspace/TODO/` for `.
 - If pending items exist, consider relevant ones and present them as work options.
 - **Number each item sequentially** (1., 2., 3.) so user can reference by number (e.g., "Let's do #1 and #3").
 - Ask whether to tackle a listed item(s) or start something new.
-- If they pick a TODO, use its description as interview starting point — still interview for missing details (clarification, success criteria, constraints, edge cases) via multi-round questioning below.
+- If they pick a TODO, read the full file(s) and proceed to the validation sub-step below.
+
+#### Validate TODO Still Applies
+Before presenting any summary, check whether the problem described is still valid. Search the codebase and/or git history for evidence it has already been fixed or implemented (e.g., "search for the feature in git log, check if referenced files now contain the fix"). If no longer valid: inform the user that the TODO appears completed — include the relevant git commit message if found — and recommend deleting the TODO file. If still valid, proceed to present the summary below.
+
+#### Present TODO Summary (After Validation)
+Present a concise, readable summary of the selected TODO item(s). Cover: **Title**, **Context** (background/motivation), **Description** (what needs to be done), and **Notes** (reasons, examples, constraints). Gracefully skip any sections that are empty or missing — do not mention absent fields. This gives the user a clear refresher before questioning begins.
+
+#### Continue With Interview
+Use the TODO description as your interview starting point — ask for any missing details (clarification, success criteria, constraints, edge cases) via multi-round questioning below.
 
 ### Existing Project (`project_overview.md` exists)
 - Read `ai_workspace/project_overview.md` for current project state.

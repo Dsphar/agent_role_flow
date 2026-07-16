@@ -65,6 +65,7 @@ ai_workspace/
 - Git log depth canonicalization: AGENTS.md Dynamic Git Log Depth formula standardized to explicit `(count × 2) + 5`, resolving ambiguity with prior "add buffer of 5" wording.
 - Tester fallback compression: Reduced 3-level infrastructure fallback chain in `04_tester.md` to single streamlined version (propose → if declined, proceed with existing tools or manual checks).
 - Project overview guide cleanup: Removed redundant "What Does Not Belong Here" table from `project_overview_guide.md` — same constraints already enforced via Finalizer role file and the guide's own "What Not to Do" subsection.
+- Interviewer TODO validation on load: When the Interviewer loads a selected TODO item, it first validates whether the described problem is still valid (checking codebase/git history for evidence of prior fix). If no longer valid, informs user with relevant commit reference and recommends deletion. If still valid, presents a concise summary (title, context, description, notes) before proceeding to clarification questions.
 
 ## User-Preferred Patterns
 _(No user-preferred patterns recorded yet. Add here when identified.)_
