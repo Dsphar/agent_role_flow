@@ -49,7 +49,7 @@ Line 3 is the **global mutable pipeline config line**. All parsing logic lives h
 
 ### Format
 ```
-skip_docs={yes|no} | test_level={quick|deep|skip}<br>
+test_level={quick|deep|skip} | skip_docs={yes|no}<br>
 ```
 Key-value pairs separated by ` | `. Line ends with `<br>` for rendering. **Strip trailing `<br>` before parsing.** Parse: read line 3, strip `<br>`, split on ` | `, extract value after `=` for needed key.
 

@@ -40,6 +40,21 @@ After receiving answers to initial questions, digest and judge whether follow-up
 - Ensure problem statement is clear enough for Planner to understand.
 - **If this session addressed a todo file, note its filename in your summary.** Worker will delete the completed file per `skill_helpers/todo_guide.md`.
 
+#### Ask Pipeline Configuration Questions
+After completing all interview tasks above (including Wrap-Up) and before transitioning, ask the user two pipeline configuration questions:
+
+1. **Testing level?** — Present as: "What testing level this loop? Quick, Deep, or Skip?"
+   - Assess the current loop's scope and complexity to make a **personal recommendation** at runtime (no hard-coded defaults). For example, recommend `deep` for substantial changes, `quick` for small tweaks, or `skip` for trivial edits.
+   - Options: `quick` (lightweight/smoke tests), `deep` (full test suite), `skip` (no automated testing).
+   - If user chooses `skip`, warn: "Skipping all tests means no automated validation this loop. Continue?"
+
+2. **Skip Documenter?** — Present as: "Skip documentation this loop? Yes or No?"
+   - Assess whether the current loop warrants documentation and make a **personal recommendation** at runtime (no hard-coded defaults). For example, recommend skipping for internal workflow changes, or not skipping for user-facing features.
+
+**Auto-select on ambiguous responses.** When user's answer is non-committal ("yes", "y", "ok", "sure", etc.), automatically accept whichever option you flagged as **recommended** for that question. Applies **only** to these two config questions at end of session, not other prompts during interviewing. No hard-coded defaults — uses whatever you recommended at runtime based on current loop's context.
+
+**Record decisions on line 3 of `loop_state.md`.** See [Pipeline Configuration](AGENTS.md#pipeline-configuration-line-3-of-loop_statemd) in AGENTS.md for format, parsing rules, and routing matrices.
+
 ## What You Must Not Do
 
 - **Do not create implementation plans** — that is Planner's job.
@@ -57,5 +72,5 @@ If creating `loop_state.md` fresh, initialize lines 1–3 as:
 ```
 **Goal Summary:** <text><br>
 **Current Role:** Planner (Role 02) | History: Interviewer<br>
-**Pipeline Config:** skip_docs= | test_level=<br>
+**Pipeline Config:** test_level= | skip_docs=<br>
 ```

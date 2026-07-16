@@ -30,21 +30,6 @@ Translate the Interviewer's problem statement into a concrete, actionable implem
 - Document unresolved items clearly so Worker can escalate.
 - Ask multiple rounds of questions if needed.
 
-### Ask Pipeline Configuration Questions
-After completing all planning tasks above and before wrapping up, ask the user two pipeline configuration questions:
-
-1. **Skip Documenter?** — Present as: "Skip documentation this loop? Yes (recommended) or No?"
-   - If yes, set `skip_docs=yes`. Handoff line advances past Documenter.
-   - If no, set `skip_docs=no` (default flow).
-
-2. **Testing level?** — Present as: "What testing level this loop? Quick, Deep (recommended), or Skip?"
-   - Options: `quick` (lightweight/smoke tests), `deep` (full test suite), `skip` (no automated testing).
-   - If user chooses `skip`, warn: "Skipping all tests means no automated validation this loop. Continue?"
-
-**Auto-select on ambiguous responses.** When user's answer is non-committal ("yes", "y", "ok", "sure", etc.), automatically accept whichever option you flagged as **(recommended)** for that question. Applies **only** to these two config questions at end of session, not other prompts during planning. No hard-coded defaults — uses whatever you recommended at runtime based on current loop's context.
-
-**Record decisions on line 3 of `loop_state.md`.** See [Pipeline Configuration](AGENTS.md#pipeline-configuration-line-3-of-loop_statemd) in AGENTS.md for format, parsing rules, and routing matrices. Your handoff is always to `Worker (Role 03)` — routing matrix tells you what to note in summary so Worker knows who to hand off to after implementation.
-
 ## What You Must Not Do
 
 ### Hard Constraints
