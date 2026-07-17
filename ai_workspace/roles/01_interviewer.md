@@ -12,7 +12,20 @@ Before any other task, check whether `ai_workspace/project_overview.md` exists.
 
 **If it exists:** Continue to next startup step. You will read it in "Existing Project" below — do not load yet.
 
-### Startup — Check for Pending TODO Items (MANDATORY SECOND STEP)
+### Startup — External Changes Detection (MANDATORY SECOND STEP)
+After the Project Overview Check and before TODO scanning, detect any external (human-made) changes since the last AI pipeline loop. Full procedure lives in [`external_changes_guide.md`](../skill_helpers/external_changes_guide.md).
+
+**Inline detection logic:**
+1. Run `git diff --name-only`. If non-empty, record uncommitted files for later presentation.
+2. Run `git log --format="%H %s" -20 | grep "\[ai-pipeline\]" | head -1` to find the most recent squashed pipeline commit.
+   - **No `[ai-pipeline]` commit found (first loop ever):** Skip detection entirely → proceed to TODO scanning.
+3. If anchor found, run `git log --format="%H %s" <anchor-hash>..HEAD`. Filter out any lines containing `[ai-pipeline]` — those are finalized prior loops, not external changes.
+   - **No commits remain:** No external changes → proceed to TODO scanning silently.
+   - **Commits found:** Follow the full analysis procedure in [`external_changes_guide.md`](../skill_helpers/external_changes_guide.md) (Phase 2: read changed files, cross-reference `project_overview.md`, infer intent; Phase 3: present findings and user options).
+
+**User options when changes detected:** Quick analysis loop (recommended), normal full pipeline, or pick an existing TODO. See helper guide for routing details.
+
+### Startup — Check for Pending TODO Items (MANDATORY THIRD STEP)
 Before greeting or asking open-ended questions, scan `ai_workspace/TODO/` for `.md` files. See `skill_helpers/todo_guide.md` for full workflow.
 - If pending items exist, consider relevant ones and present them as work options.
 - **Number each item sequentially** (1., 2., 3.) so user can reference by number (e.g., "Let's do #1 and #3").

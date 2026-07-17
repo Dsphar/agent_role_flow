@@ -16,6 +16,8 @@ ai_workspace/
 │   ├── 06_reviewer.md                ← Quality gate review
 │   └── 07_finalizer.md               ← Squash commits, reset for next loop
 ├── skill_helpers/
+│   ├── cancel_guide.md                ← Mid-loop cancellation two-step flow (Roles 01–06)
+│   ├── external_changes_guide.md      ← Detecting human-made changes before TODO scanning
 │   ├── init_project_guide.md          ← Greenfield onboarding flow
 │   ├── project_overview_guide.md      ← Canonical spec for creating/updating this file
 │   ├── sendback_guide.md              ← Bug/critical-issue routing back to Planner
@@ -67,6 +69,7 @@ ai_workspace/
 - Tester fallback compression: Reduced 3-level infrastructure fallback chain in `04_tester.md` to single streamlined version (propose → if declined, proceed with existing tools or manual checks).
 - Project overview guide cleanup: Removed redundant "What Does Not Belong Here" table from `project_overview_guide.md` — same constraints already enforced via Finalizer role file and the guide's own "What Not to Do" subsection.
 - Interviewer TODO validation on load: When the Interviewer loads a selected TODO item, it first validates whether the described problem is still valid (checking codebase/git history for evidence of prior fix). If no longer valid, informs user with relevant commit reference and recommends deletion. If still valid, presents a concise summary (title, context, description, notes) before proceeding to clarification questions.
+- External changes detection: The Interviewer now detects human-made/external changes at startup (before TODO scanning) by running `git diff` for uncommitted changes and finding the most recent `[ai-pipeline]` commit as an anchor. Changes since that point are analyzed against `project_overview.md` to infer intent and impact. When found, the Interviewer offers a quick analysis loop (skipping Planner+Worker), normal full pipeline, or existing TODOs. Full procedure in `skill_helpers/external_changes_guide.md`.
 
 ## User-Preferred Patterns
 _(No user-preferred patterns recorded yet. Add here when identified.)_
