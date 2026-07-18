@@ -20,6 +20,14 @@ Record the chosen level on line 3 as `test_level={quick|deep|skip}` if not alrea
 
 > Code coverage percentages are a bad metric — let user define "enough" by test types and depth.
 
+### Consult Project Overview for Existing Test Context
+If `project_overview.md` exists, read it **before designing tests** to discover:
+- **Test stack:** frameworks, runners, assertion libraries already in use.
+- **Patterns and conventions:** naming schemes, directory structure, mock strategies, fixture patterns.
+- **Known gaps or limitations:** any documented test coverage holes or infrastructure constraints.
+
+Use this information to align your test plan with the project's established approach rather than introducing new conventions unnecessarily.
+
 ### Create Mandatory Test Plan (Inline)
 After clarifying expectations, create your role's summary section in `loop_state.md` with a `### Current-Role Steps` subsection containing a checkbox list (`- [ ]`) of all planned test steps. This is **mandatory** every session. Cover: framework installation (if needed), config changes, unit tests per module/component, integration/e2e tests per flow, regression suite re-run + new guards, and any setup steps.
 
