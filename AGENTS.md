@@ -50,16 +50,19 @@ Line 3 is the **global mutable pipeline config line**. All parsing logic lives h
 
 ### Format
 ```
-test_level={quick|deep|skip} | skip_docs={yes|no}<br>
+test_level={quick|deep|skip} | skip_docs={yes|no} | auto_handoff={yes|no}<br>
 ```
 Key-value pairs separated by ` | `. Line ends with `<br>` for rendering. **Strip trailing `<br>` before parsing.** Parse: read line 3, strip `<br>`, split on ` | `, extract value after `=` for needed key.
 
 ### Guardrail — Unrecognized Values
-- `skip_docs` must be `yes` or `no`; `test_level` must be `quick`, `deep`, or `skip`.
+- `skip_docs` must be `yes` or `no`; `test_level` must be `quick`, `deep`, or `skip`; `auto_handoff` must be `yes` or `no`.
 - **If unrecognized, ask user directly.** Do not guess. Record answer on line 3 and note in summary section.
 
 ### Mutability Rules
 Any role can update line 3 if user changes their mind mid-pipeline. Updating role **must**: (1) update relevant key-value pair on line 3; (2) note change in its `loop_state.md` summary section.
+
+### Auto-Handoff (`auto_handoff`)
+When set to `yes`, roles automatically call the `session_handoff("hi")` tool after completing their transition git commit. This starts a fresh session with zero context — AGENTS.md ingestion loads the next role from line 2 of `loop_state.md`. When `no`, the role informs the user and they manually start a new session. Set by the Interviewer at pipeline start.
 
 ### Routing Matrix — Worker Handoff Targets
 | skip_docs | test_level | Worker hands off to |

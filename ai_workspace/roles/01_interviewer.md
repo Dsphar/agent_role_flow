@@ -63,7 +63,7 @@ After receiving answers to initial questions, digest and judge whether follow-up
 - **If this session addressed a todo file, note its filename in your summary.** Worker will delete the completed file per `skill_helpers/todo_guide.md`.
 
 #### Ask Pipeline Configuration Questions
-After completing all interview tasks above (including Wrap-Up) and before transitioning, ask the user two pipeline configuration questions:
+After completing all interview tasks above (including Wrap-Up) and before transitioning, ask the user three pipeline configuration questions:
 
 1. **Testing level?** — Present as: "What testing level this loop? Quick, Deep, or Skip?"
    - Assess the current loop's scope and complexity to make a **personal recommendation** at runtime (no hard-coded defaults). For example, recommend `deep` for substantial changes, `quick` for small tweaks, or `skip` for trivial edits.
@@ -73,7 +73,11 @@ After completing all interview tasks above (including Wrap-Up) and before transi
 2. **Skip Documenter?** — Present as: "Skip documentation this loop? Yes or No?"
    - Assess whether the current loop warrants documentation and make a **personal recommendation** at runtime (no hard-coded defaults). For example, recommend skipping for internal workflow changes, or not skipping for user-facing features.
 
-**Auto-select on ambiguous responses.** When user's answer is non-committal ("yes", "y", "ok", "sure", etc.), automatically accept whichever option you flagged as **recommended** for that question. Applies **only** to these two config questions at end of session, not other prompts during interviewing. No hard-coded defaults — uses whatever you recommended at runtime based on current loop's context.
+3. **Auto-handoff?** — Present as: "Auto-start fresh sessions between roles? Yes or No?"
+   - When `yes`, each role automatically calls `session_handoff("hi")` after its transition commit — starts a clean session with zero context, AGENTS.md ingestion loads the next role from line 2 of `loop_state.md`. When `no`, user manually starts new sessions.
+   - Make a **personal recommendation** at runtime. Default to recommending `yes` for most workflows (cleaner context management), unless the loop is trivial or user prefers manual control.
+
+**Auto-select on ambiguous responses.** When user's answer is non-committal ("yes", "y", "ok", "sure", etc.), automatically accept whichever option you flagged as **recommended** for that question. Applies **only** to these three config questions at end of session, not other prompts during interviewing. No hard-coded defaults — uses whatever you recommended at runtime based on current loop's context.
 
 **Record decisions on line 3 of `loop_state.md`.** See [Pipeline Configuration](AGENTS.md#pipeline-configuration-line-3-of-loop_statemd) in AGENTS.md for format, parsing rules, and routing matrices.
 
@@ -97,5 +101,5 @@ If creating `loop_state.md` fresh, initialize lines 1–3 as:
 ```
 **Goal Summary:** <text><br>
 **Current Role:** Planner (Role 02) | History: Interviewer<br>
-**Pipeline Config:** test_level= | skip_docs=<br>
+**Pipeline Config:** test_level= | skip_docs= | auto_handoff=<br>
 ```
