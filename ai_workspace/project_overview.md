@@ -70,6 +70,7 @@ ai_workspace/
 - Project overview guide cleanup: Removed redundant "What Does Not Belong Here" table from `project_overview_guide.md` — same constraints already enforced via Finalizer role file and the guide's own "What Not to Do" subsection.
 - Interviewer TODO validation on load: When the Interviewer loads a selected TODO item, it first validates whether the described problem is still valid (checking codebase/git history for evidence of prior fix). If no longer valid, informs user with relevant commit reference and recommends deletion. If still valid, presents a concise summary (title, context, description, notes) before proceeding to clarification questions.
 - External changes detection: The Interviewer now detects human-made/external changes at startup (before TODO scanning) by running `git diff` for uncommitted changes and finding the most recent `[ai-pipeline]` commit as an anchor. Changes since that point are analyzed against `project_overview.md` to infer intent and impact. When found, the Interviewer offers a quick analysis loop (skipping Planner+Worker), normal full pipeline, or existing TODOs. Full procedure in `skill_helpers/external_changes_guide.md`.
+- Tester project overview consultation: The Tester (Role 04) now consults `project_overview.md` before designing tests to understand existing test stack, patterns, and conventions. This ensures test design is informed by the broader project context rather than starting from scratch.
 
 ## User-Preferred Patterns
 _(No user-preferred patterns recorded yet. Add here when identified.)_
