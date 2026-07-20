@@ -33,6 +33,28 @@ If no project files detected outside `ai_workspace/`, interview from scratch:
 
 Iterate until the full picture is clear. Present a complete summary for user confirmation before proceeding.
 
+## Step 4b — Generate `.gitignore`
+
+After confirming the tech stack (Step 3 for existing projects, Step 4 for greenfield), ensure a `.gitignore` file exists at the project root.
+
+**For existing projects:** Check if `.gitignore` already exists. If present, skip this step.
+
+**For new or missing `.gitignore`:** Create one combining:
+- **Global patterns (always include):**
+  - OS files: `Thumbs.db`, `*.DS_Store`, `.nf_*`
+  - IDE configs: `.vscode/`, `.idea/`, `*.swp`, `*.swo`
+  - Environment files: `.env`, `.env.*`, `!.env.example`
+- **Language/framework-specific patterns** based on detected or chosen stack. Reference [github/gitignore](https://github.com/github/gitignore) templates as the primary source:
+  - Node.js → `node_modules/`, `npm-debug.log*`, `yarn.lock` (if using npm), `dist/`, `build/`
+  - Python → `__pycache__/`, `*.py[cod]`, `venv/`, `.venv/`, `*.egg-info/`, `.pytest_cache/`
+  - Rust → `target/`, `Cargo.lock` (for libraries)
+  - Go → `vendor/`, `*.exe`, `*.test`
+  - Java/Kotlin → `*.class`, `*.jar`, `*.war`, `.gradle/`, `build/`, `target/`
+  - Ruby → `.bundle/`, `vendor/bundle/`, `Gemfile.lock` (if preferred)
+  - TypeScript → same as Node.js plus `.tsbuildinfo`
+
+Keep the file concise — prefer referencing [github/gitignore](https://github.com/github/gitignore) for comprehensive templates rather than hardcoding exhaustive lists inline.
+
 ## Step 5 — Write `project_overview.md`
 
 Create `ai_workspace/project_overview.md` following [`skill_helpers/project_overview_guide.md`](project_overview_guide.md) "Creating from Scratch" section.

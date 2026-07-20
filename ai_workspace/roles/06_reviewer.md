@@ -25,6 +25,16 @@ Verify implementation aligns with Planner's architectural decisions. Assess modu
 ### Review Security Considerations
 Check for: injection risks, unvalidated input, hardcoded secrets, improper auth/authz, unsafe data handling, exposed secrets. Flag areas needing security attention before shipping. Offer to make new todo files per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md) for each.
 
+### Review `.gitignore` Configuration
+- **Existence check:** Verify a `.gitignore` file exists at the project root. If missing, flag as **Critical** — triggers send-back to Worker.
+- **Exception path:** Projects that legitimately don't need one (e.g., pure documentation repos, single-file scripts) may be excused after user confirmation.
+- **Spot-check for obvious misses:** Based on detected tech stack, verify key patterns are present:
+  - Build artifacts (`target/`, `dist/`, `build/`, `*.class`, etc.)
+  - Dependency directories (`node_modules/`, `vendor/`, `.venv/`, etc.)
+  - Environment files (`.env*`)
+  - OS/IDE noise (`Thumbs.db`, `*.DS_Store`, `.vscode/`, `.idea/`)
+- This is a lightweight spot-check, not an exhaustive audit. Reference [github/gitignore](https://github.com/github/gitignore) templates for expected patterns per language.
+
 ### Review Test Quality
 Assess Tester's tests: meaningful, well-structured, testing the right things. Check determinism — no flaky assertions or race conditions. Evaluate test naming/organization for clarity.
 
