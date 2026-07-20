@@ -8,11 +8,11 @@ Master instruction file for all send-back behavior. Every role follows these rul
 
 ```
   Interviewer(01) → Planner(02) → Worker(03) → Tester(04) → Documenter(05) → Reviewer(06) → Finalizer(07)
-                        ↑                                                  │                    │
-                        └──────────── Send-back from Tester or Reviewer ────┴────────────────────┘
+                             ↑                                                  │                    │
+                             └──────────── Send-back from Tester or Reviewer ────┴────────────────────┘
 ```
 
-**Send-back routing:** Both Tester and Reviewer route issues back to Planner for re-planning.
+**Send-back routing:** Both Tester and Reviewer route issues back to Worker for fixes, skipping the re-planning step.
 
 ---
 
@@ -20,7 +20,7 @@ Master instruction file for all send-back behavior. Every role follows these rul
 
 Detected via `(in-sendback)` suffix on the active role in `loop_state.md` line 2:
 ```
-Current Role: Planner (Role 02) (in-sendback) | History: Interviewer → Planner → Worker → Tester<br>
+Current Role: Worker (Role 03) (in-sendback) | History: Interviewer → Planner → Worker → Tester<br>
 ```
 
 **Detection** comes solely from the `(in-sendback)` suffix. Issue details live inline in `loop_state.md` under `### Send-Back Issues` subsections within the Tester or Reviewer's summary section.
@@ -47,10 +47,10 @@ Present findings: list each issue with file references, descriptions, recommende
 
 2. If user chooses send-back:
    - Append a `### Send-Back Issues` subsection to your existing summary section in `loop_state.md`. List each issue with source role, file references, description, severity, and recommended fix. If the subsection already exists, append new items — do not overwrite.
-   - **Update handoff line in `loop_state.md`:** set active role to `Planner (Role 02) (in-sendback)`, add your current role to history trail. Example (Tester):
+   - **Update handoff line in `loop_state.md`:** set active role to `Worker (Role 03) (in-sendback)`, add your current role to history trail. Example (Tester):
      ```
      Before:  Current Role: Tester (Role 04) | History: Interviewer → Planner → Worker<br>
-     After:   Current Role: Planner (Role 02) (in-sendback) | History: Interviewer → Planner → Worker → Tester<br>
+     After:   Current Role: Worker (Role 03) (in-sendback) | History: Interviewer → Planner → Worker → Tester<br>
      ```
 
 3. **Commit:** Read `**Goal Summary:**` from line 1 of `loop_state.md`, use as commit body with `[ai-{role-name}-sendback]` appended.
@@ -66,15 +66,12 @@ When `(in-sendback)` points to your role in `loop_state.md` line 2, you are in s
 - After fixes complete, update handoff line in `loop_state.md` to next role (see routing above). Keep `(in-sendback)` suffix if cycle continues.
 
 > **⚠ Guardrails Still Apply**
-> Send-back changes *what* you work on, not *how*. Each role's "What You Must Not Do" rules remain fully in effect. Planner still only produces plans — never edits project files. Worker still doesn't write tests or docs. Trust the pipeline.
+> Send-back changes *what* you work on, not *how*. Each role's "What You Must Not Do" rules remain fully in effect. Worker still doesn't write tests, docs, or perform code reviews. Trust the pipeline.
 
 ### Per-Role Behavior
 
-#### Planner (Role 02)
-Append **planned** steps describing how each send-back item should be fixed. Do not perform fixes yourself — describe them for Worker. Do not re-plan from scratch; only add new steps needed. When done: update handoff to `Worker (Role 03) (in-sendback)`.
-
 #### Worker (Role 03)
-Fix each listed item. After completing fixes: update handoff to `Tester (Role 04) (in-sendback)`.
+Read the `### Send-Back Issues` subsection from the relevant Tester or Reviewer summary section in `loop_state.md`. Fix each listed item — you already have full loop context from `loop_state.md`, so ask the user directly if any issue needs clarification. After completing fixes: update handoff to `Tester (Role 04) (in-sendback)`.
 
 ---
 

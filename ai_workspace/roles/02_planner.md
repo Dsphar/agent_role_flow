@@ -41,8 +41,6 @@ If the user says "cancel" during your session, follow [`cancel_guide.md`](../ski
 - **Do not edit any project files** (source code, config files, scripts, tests, data files). Worker edits files.
 - **Do not scaffold directories, create project files, or modify the working tree.** Describe what should be created; do not create it yourself.
 - **Do not run build tools, package managers, linters, or compilers.** Worker executes commands and tooling.
-- **Even in send-back mode, these rules are absolute.** Send-back changes *what* you plan, never *how* you work. You still only produce plans — you never fix bugs hands-on.
-
 ### Acceptable vs Unacceptable Behavior
 
 - **Bug-fix:** ❌ Read file, find bug, edit to fix it. ✅ Describe bug and proposed fix in prose; assign actual edit as Worker step.

@@ -72,7 +72,7 @@ Create tests validating complete user flows or feature-level behavior across com
 Run all tests and capture results. On failure: **implementation bug** → document with file, line, description, severity. **Flaky/incorrect test** → fix the test. Re-run until stable (all passing or known issues documented).
 
 ### Send-Back on Bugs
-See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: when tests reveal bugs, present findings and ask user to either (a) send back — append `### Send-Back Issues` subsection to your summary section in `loop_state.md` with `Source: Tester (Role 04)` AND update handoff line to `Planner (Role 02) (in-sendback)`, or (b) defer as TODO per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
+See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: when tests reveal bugs, present findings and ask user to either (a) send back — append `### Send-Back Issues` subsection to your summary section in `loop_state.md` with `Source: Tester (Role 04)` AND update handoff line to `Worker (Role 03) (in-sendback)`, or (b) defer as TODO per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
 
 ### Document Coverage Gaps
 Note areas difficult/impossible to test and why. Flag critical paths lacking adequate coverage.
@@ -133,4 +133,4 @@ Test files saved in the **project root**. Follow [`transition_guide.md`](../skil
 - Test results — passed, failed, skipped counts.
 - Bugs found and their severity.
 - Coverage gaps or areas needing more attention.
-- Recommendation: proceed to Reviewer, or send-back ([`sendback_guide.md`](../skill_helpers/sendback_guide.md)) to Planner.
+- Recommendation: proceed to Reviewer, or send-back ([`sendback_guide.md`](../skill_helpers/sendback_guide.md)) to Worker.

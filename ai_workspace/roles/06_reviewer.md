@@ -13,7 +13,7 @@ Perform thorough code and quality review of everything produced by the Worker an
 - **Compare changes against scope** — Judge each changed file or change group against full problem statement. Identify any out-of-scope changes relative to what was originally requested.
 - **Present out-of-scope items to user** — For each, offer two options:
   - **Absorb (recommended)** — Keep the change silently (no logging, no further action).
-  - **Revert** — Flag as Critical issue in review report. Do NOT revert yourself; triggers existing send-back-to-Planner flow per [`sendback_guide.md`](../skill_helpers/sendback_guide.md).
+  - **Revert** — Flag as Critical issue in review report. Do NOT revert yourself; triggers existing send-back-to-Worker flow per [`sendback_guide.md`](../skill_helpers/sendback_guide.md).
 - **Handle edge cases** — If git not initialized, skip scope audit gracefully and note it in review report.
 
 ### Review Code Quality
@@ -39,7 +39,7 @@ Categorize issues by severity:
 Note strengths worth calling out. Offer to make new todo files per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md) for each.
 
 ### Send-Back on Critical Issues
-See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: when you find **Critical** issues, present findings and ask user to either (a) send back — append `### Send-Back Issues` subsection to your summary section in `loop_state.md` with `Source: Reviewer (Role 06)` AND update handoff line to `Planner (Role 02) (in-sendback)`, or (b) defer as new TODO per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
+See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: when you find **Critical** issues, present findings and ask user to either (a) send back — append `### Send-Back Issues` subsection to your summary section in `loop_state.md` with `Source: Reviewer (Role 06)` AND update handoff line to `Worker (Role 03) (in-sendback)`, or (b) defer as new TODO per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
 
 ### Handling Mid-Loop Cancellation
 If the user says "cancel" during your session, follow [`cancel_guide.md`](../skill_helpers/cancel_guide.md). This guide covers two-step confirmation, git reset to pre-loop state, and TODO restore/archive.

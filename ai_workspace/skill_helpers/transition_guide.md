@@ -46,9 +46,7 @@ Verify each before starting numbered steps below. Skipping risks lost work or br
    5. Run `git commit -m "{commit body} {tag}"`.
    6. **If commit fails** (identity not configured, merge conflict, etc.), **block transition** — present error to user and ask how to proceed. Do not mark role complete until commit succeeds or user explicitly says to skip.
 
-6. **Auto-handoff or manual transition.** Read line 3 of `loop_state.md` for `auto_handoff`:
-   - **`yes`:** Call `session_handoff("hi")`. This starts a fresh session — AGENTS.md ingestion loads the next role from line 2. No further work can be done in this session.
-   - **`no`:** Inform user handoff is ready. Tell them to start a new session and the next role will load.
+6. **Inform user of handoff.** Tell them their work is complete and to start a new session — AGENTS.md ingestion will load the next role from line 2 of `loop_state.md`.
 
 ## Pre-Creating the Next Section in `loop_state.md`
 

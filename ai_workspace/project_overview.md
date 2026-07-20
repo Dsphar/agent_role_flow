@@ -20,7 +20,7 @@ ai_workspace/
 │   ├── external_changes_guide.md      ← Detecting human-made changes before TODO scanning
 │   ├── init_project_guide.md          ← Greenfield onboarding flow
 │   ├── project_overview_guide.md      ← Canonical spec for creating/updating this file
-│   ├── sendback_guide.md              ← Bug/critical-issue routing back to Planner
+│   ├── sendback_guide.md              ← Bug/critical-issue routing back to Worker
 │   ├── todo_guide.md                  ← Out-of-scope item capture workflow + template
 │   └── transition_guide.md            ← Role completion & git commit rules
 └── TODO/                              ← Pending items (one .md file per item)
@@ -28,7 +28,7 @@ ai_workspace/
 
 ## Architecture Overview
 - **Sequential pipeline:** Roles execute in order (01→07). Each appends a summary section to `ai_workspace/loop_state.md` before transitioning. The handoff history line (line 2) tracks progress: `**Current Role:** {Role} (Role NN) | History: ...<br>`
-- **Send-back loop:** Tester and Reviewer can route issues back to Planner for re-planning via `(in-sendback)` suffix in `loop_state.md` line 2. Issue details live inline under `### Send-Back Issues` subsections within the relevant role's summary section.
+- **Send-back loop:** Tester and Reviewer can route issues back to Worker for fixes via `(in-sendback)` suffix in `loop_state.md` line 2. Issue details live inline under `### Send-Back Issues` subsections within the relevant role's summary section.
 - **Git strategy:** Per-role incremental commits during the pipeline, squashed into one `[ai-pipeline]` commit at end of each loop.
 - **Goal summary on line 1:** Line 1 of `loop_state.md` holds `**Goal Summary:** <text><br>` (<100 chars), set by the Interviewer. All roles read this value for their git commit messages instead of parsing the body section.
 - **Loop reset:** Finalizer deletes `loop_state.md`, updates this file, and resets for the next iteration.
@@ -71,6 +71,7 @@ ai_workspace/
 - Interviewer TODO validation on load: When the Interviewer loads a selected TODO item, it first validates whether the described problem is still valid (checking codebase/git history for evidence of prior fix). If no longer valid, informs user with relevant commit reference and recommends deletion. If still valid, presents a concise summary (title, context, description, notes) before proceeding to clarification questions.
 - External changes detection: The Interviewer now detects human-made/external changes at startup (before TODO scanning) by running `git diff` for uncommitted changes and finding the most recent `[ai-pipeline]` commit as an anchor. Changes since that point are analyzed against `project_overview.md` to infer intent and impact. When found, the Interviewer offers a quick analysis loop (skipping Planner+Worker), normal full pipeline, or existing TODOs. Full procedure in `skill_helpers/external_changes_guide.md`.
 - Tester project overview consultation: The Tester (Role 04) now consults `project_overview.md` before designing tests to understand existing test stack, patterns, and conventions. This ensures test design is informed by the broader project context rather than starting from scratch.
+- Send-back rerouting to Worker: Tester and Reviewer send-backs now route directly to Worker (Role 03) for fixes instead of Planner (Role 02). Worker already has `loop_state.md` context during send-back and can ask the user directly for clarification, making re-planning unnecessary overhead. Dead send-back receiving instructions removed from Planner role file.
 
 ## User-Preferred Patterns
 _(No user-preferred patterns recorded yet. Add here when identified.)_
