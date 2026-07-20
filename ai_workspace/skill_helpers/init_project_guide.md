@@ -45,12 +45,12 @@ After confirming the tech stack (Step 3 for existing projects, Step 4 for greenf
   - IDE configs: `.vscode/`, `.idea/`, `*.swp`, `*.swo`
   - Environment files: `.env`, `.env.*`, `!.env.example`
 - **Language/framework-specific patterns** based on detected or chosen stack. Reference [github/gitignore](https://github.com/github/gitignore) templates as the primary source:
-  - Node.js → `node_modules/`, `npm-debug.log*`, `yarn.lock` (if using npm), `dist/`, `build/`
+  - Node.js → `node_modules/`, `npm-debug.log*` (if using npm), `yarn.lock` (if using Yarn), `dist/`, `build/`
   - Python → `__pycache__/`, `*.py[cod]`, `venv/`, `.venv/`, `*.egg-info/`, `.pytest_cache/`
   - Rust → `target/`, `Cargo.lock` (for libraries)
   - Go → `vendor/`, `*.exe`, `*.test`
   - Java/Kotlin → `*.class`, `*.jar`, `*.war`, `.gradle/`, `build/`, `target/`
-  - Ruby → `.bundle/`, `vendor/bundle/`, `Gemfile.lock` (if preferred)
+  - Ruby → `.bundle/`, `vendor/bundle/`, `Gemfile.lock` (commit by default)
   - TypeScript → same as Node.js plus `.tsbuildinfo`
 
 Keep the file concise — prefer referencing [github/gitignore](https://github.com/github/gitignore) for comprehensive templates rather than hardcoding exhaustive lists inline.
