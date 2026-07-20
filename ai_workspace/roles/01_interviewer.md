@@ -75,7 +75,7 @@ After completing all interview tasks above (including Wrap-Up) and before transi
 
 3. **Auto-handoff?** — Present as: "Auto-start fresh sessions between roles? Yes or No?"
    - When `yes`, each role automatically calls `session_handoff("hi")` after its transition commit — starts a clean session with zero context, AGENTS.md ingestion loads the next role from line 2 of `loop_state.md`. When `no`, user manually starts new sessions.
-   - Make a **personal recommendation** at runtime. Default to recommending `yes` for most workflows (cleaner context management), unless the loop is trivial or user prefers manual control.
+   - **Always recommend `yes`** — auto-handoff is the default. Present as: "Auto-start fresh sessions between roles? Yes (recommended) or No?"
 
 **Auto-select on ambiguous responses.** When user's answer is non-committal ("yes", "y", "ok", "sure", etc.), automatically accept whichever option you flagged as **recommended** for that question. Applies **only** to these three config questions at end of session, not other prompts during interviewing. No hard-coded defaults — uses whatever you recommended at runtime based on current loop's context.
 
