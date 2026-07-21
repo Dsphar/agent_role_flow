@@ -25,6 +25,10 @@ const MAX_SESSIONS = 50;
 const LOOP_STATE_FILE = "ai_workspace/loop_state.md";
 const STUCK_THRESHOLD = 3; // warn after this many consecutive same-role runs
 
+// Track whether pipeline-auto has completed a run in this extension lifecycle.
+// Used to clear previous output when user types /new after the pipeline finishes.
+let _pipelineCompleted = false;
+
 /**
  * Resolve the path to the pi executable that should be used for spawning.
  */
@@ -391,8 +395,16 @@ async function handler(_args: string, ctx: ExtensionCommandContext): Promise<voi
 
     const roleHistory: string[] = [];
 
-    // Clear terminal (screen + scrollback) before pipeline banner
-    process.stdout.write("\x1b[2J\x1b[3J\x1b[H");
+    // Clear terminal (screen + scrollback) before pipeline banner.
+    // Delayed to avoid race condition with pi's TUI status bar rendering —
+    // if we clear immediately, pi may draw its footer items after our escape codes,
+    // leaving them as artifacts on screen.
+    await new Promise<void>((resolve) => {
+        setTimeout(() => {
+            process.stdout.write("\x1b[2J\x1b[3J\x1b[H");
+            resolve();
+        }, 100);
+    });
 
     console.log("");
     console.log("═".repeat(60));
@@ -455,11 +467,13 @@ async function handler(_args: string, ctx: ExtensionCommandContext): Promise<voi
             console.log("");
             console.log("\u2713 Pipeline complete — loop_state.md removed by Finalizer.");
             console.log(`  Finished in ${i} session${i > 1 ? "s" : ""}.`);
+            _pipelineCompleted = true;
             return;
         }
     }
 
     // Safety cutoff reached
+    _pipelineCompleted = true;
     console.log("");
     console.log(`\u26A0 Max sessions (${MAX_SESSIONS}) reached. Stopping.`);
     console.log("  If the pipeline should still be running, check for infinite loops.");
@@ -482,8 +496,17 @@ export default function (pi: ExtensionAPI) {
         }
     };
 
-    // On session start so footer appears when pi loads
-    pi.on("session_start", (_event, ctx) => updateStatus(ctx));
+    // On session start: update footer status and clear previous pipeline output on /new.
+    // When user types /new after the auto-loop completes, this clears the terminal
+    // so previous extension console.log output doesn't remain on screen.
+    pi.on("session_start", (event, ctx) => {
+        updateStatus(ctx);
+        const e = event as { reason?: string };
+        if (e.reason === "new" && _pipelineCompleted) {
+            process.stdout.write("\x1b[2J\x1b[3J\x1b[H");
+            _pipelineCompleted = false;
+        }
+    });
     // On each turn end to pick up changes mid-session
     pi.on("turn_end", (_event, ctx) => updateStatus(ctx));
     // Clear footer status on session replacement (/new, /resume, /fork)
