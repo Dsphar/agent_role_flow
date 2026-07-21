@@ -44,7 +44,7 @@ Update your `### Current-Role Steps` subsection in `loop_state.md` after **every
 - Follow existing naming conventions if tests already exist.
 
 #### User-Approval Gate for Infrastructure Changes
-Before **any** of these actions, present your proposal and wait for explicit approval:
+Before **any** of these actions, present your proposal:
   - Installing new packages or testing frameworks.
   - Creating config files (e.g., `jest.config.js`, `pytest.ini`).
   - Editing existing configs that affect test behavior.
@@ -52,6 +52,8 @@ Before **any** of these actions, present your proposal and wait for explicit app
 Present what, why, and which files. Wait for confirmation.
 
 **If declined:** propose a lighter approach; if declined again, proceed with whatever tools/infrastructure already exists (or manual checks — run app, check output, inspect logs).
+
+**Auto-mode (user away):** Always present your proposal, but **never auto-install packages or create new configs**. If the user is not responding, proceed with existing tools/infrastructure only (or manual checks).
 
 ### Run Regression Tests (Existing Projects)
 If `project_overview.md` exists, run existing tests before new ones:
@@ -74,6 +76,8 @@ Run all tests and capture results. On failure: **implementation bug** → docume
 ### Send-Back on Bugs
 See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: when tests reveal bugs, present findings and ask user to either **(a) send back (recommended)** — append `### Send-Back Issues` subsection to your summary section in `loop_state.md` with `Source: Tester (Role 04)` AND update handoff line to `Worker (Role 03) (in-sendback)`, or **(b) defer as TODO** per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md). Exception: pre-existing bugs clearly unrelated to this loop's work should be deferred as TODOs rather than sent back.
 
+**Auto-mode (user away):** Default to send-back for in-scope issues. Defer only pre-existing/unrelated bugs as TODOs.
+
 ### Document Coverage Gaps
 Note areas difficult/impossible to test and why. Flag critical paths lacking adequate coverage.
 
@@ -82,11 +86,15 @@ After testing, generate suggestions **only if** something genuinely worth noting
 
 Present as a **numbered list** so user can reference items when creating TODOs via [`todo_guide.md`](../skill_helpers/todo_guide.md). Each suggestion: one-line description. If none arise, skip gracefully — no empty list. Wait for user acknowledgment before proceeding to Skip-Docs prompt.
 
+**Auto-mode (user away):** Generate suggestions if warranted and note them in your summary section. Do not wait for acknowledgment — proceed directly to the Skip-Docs step.
+
 ### Skip-Docs Prompt (Tests Passed Only)
 **First, check line 3 of `loop_state.md` for a pre-set `skip_docs`.** See [Pipeline Configuration](AGENTS.md#pipeline-configuration-line-3-of-loop_statemd) in AGENTS.md.
 - If `skip_docs=true`, skip this prompt entirely. Transition to Reviewer (Role 06).
 - If `skip_docs=false`, proceed below — user can still change their mind.
 - If unset, this is your fallback mid-pipeline prompt. Proceed below.
+
+**Auto-mode (user away):** Evaluate criteria and silently apply your recommendation. Record the choice on line 3 if not already set.
 
 After all testing complete **and all tests pass**, evaluate context and recommend:
 

@@ -9,7 +9,7 @@ Finalize the pipeline loop: squash all per-role commits from current iteration i
 ### Determine What Changed This Iteration
 - Find current-loop commits: compute dynamic depth per [Dynamic Git Log Depth](../../AGENTS.md#dynamic-git-log-depth-reviewer--finalizer) in AGENTS.md. Identify commits whose subject starts with goal summary (line 1). Note parent hash of oldest match = pre-loop state.
 - Run `git diff <parent-hash>..HEAD` for file-level changes since before this loop started. If no matching commits found, fall back to listing project root files and comparing against role summaries.
-- Cross-reference diffs with summary sections in `loop_state.md` — match changed files to purpose, flag unexplained changes for user review, ask whether to log as new TODO file.
+- Cross-reference diffs with summary sections in `loop_state.md` — match changed files to purpose, flag unexplained changes for user review, ask whether to log as new TODO file. **Auto-mode (user away):** Log unexplained changes as a TODO silently.
 - Build a change log.
 
 ### Update Project Overview

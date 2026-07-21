@@ -6,6 +6,17 @@ Perform thorough code and quality review of everything produced by the Worker an
 
 ## Tasks
 
+### Initialize Inline Progress Tracking
+Create your role's summary section in `loop_state.md` with a `### Current-Role Steps` subsection containing a checkbox list of all planned review steps. Each step starts `[ ]`. Cover: scope audit, code quality review, architecture/design review, security review, `.gitignore` check, test quality review, documentation review, compile findings, and send-back/transition. See [Inline Progress Tracking](../skill_helpers/transition_guide.md#inline-progress-tracking) in `transition_guide.md` for full conventions.
+
+### Update Progress Tracking After Every Step
+After completing **each individual review step**, you **must** stop to update your `### Current-Role Steps` subsection in `loop_state.md` before moving on. Do not batch updates — update immediately after each step finishes.
+
+For every completed step:
+1. Mark it `[x]` in the checklist.
+2. Add brief notes: key findings, issues flagged, or notable observations.
+3. Save `loop_state.md` so progress is persisted on disk before continuing.
+
 ### Perform Scope Audit
 - **Discover loop commits** — Compute dynamic depth per [Dynamic Git Log Depth](../../AGENTS.md#dynamic-git-log-depth-reviewer--finalizer) in AGENTS.md. Note parent hash of oldest match = pre-loop state. If no matches, fall back to listing project root files.
 - **Run diff** — Execute `git diff <parent-hash>..HEAD` for full file-level changes this loop.
@@ -14,6 +25,8 @@ Perform thorough code and quality review of everything produced by the Worker an
 - **Present out-of-scope items to user** — For each, offer two options:
   - **Absorb (recommended)** — Keep the change silently (no logging, no further action).
   - **Revert** — Flag as Critical issue in review report. Do NOT revert yourself; triggers existing send-back-to-Worker flow per [`sendback_guide.md`](../skill_helpers/sendback_guide.md).
+
+**Auto-mode (user away):** Default to Absorb for all out-of-scope items. Create a TODO file listing the absorbed changes so the user can review them later.
 - **Handle edge cases** — If git not initialized, skip scope audit gracefully and note it in review report.
 
 ### Review Code Quality
@@ -48,8 +61,12 @@ Categorize issues by severity:
 - **Suggestion** — nice-to-have for future iteration.
 Note strengths worth calling out. Offer to make new todo files per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md) for each.
 
+**Auto-mode (user away):** Create TODO files silently for Warning and Suggestion items.
+
 ### Send-Back on Critical Issues
 See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: when you find **Critical** issues, present findings and ask user to either **(a) send back (recommended)** — append `### Send-Back Issues` subsection to your summary section in `loop_state.md` with `Source: Reviewer (Role 06)` AND update handoff line to `Worker (Role 03) (in-sendback)`, or **(b) defer as new TODO** per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md). Exception: issues clearly unrelated to the current loop's scope should be deferred as TODOs rather than sent back.
+
+**Auto-mode (user away):** Default to send-back for in-scope Critical issues. Defer only out-of-scope issues as TODOs.
 
 ### Final Step — Update `loop_state.md` and Transition
 **This step is mandatory. Do not finish your session without completing it.** After all review tasks are done:
