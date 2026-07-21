@@ -5,9 +5,9 @@ An AI agent sequential-pipeline system — 7 roles flowing through a structured 
 
 ## File Structure
 ```
+.gitignore                             ← Git ignore rules (Node.js, TypeScript, env files, IDE, OS noise)
 AGENTS.md                              ← Master workflow orchestrator
-ai_workspace/
-├── roles/
+ai_workspace/├── roles/
 │   ├── 01_interviewer.md              ← Discovery & scoping
 │   ├── 02_planner.md                  ← Architecture & implementation plan
 │   ├── 03_worker.md                   ← Code execution
