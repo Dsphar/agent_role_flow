@@ -84,8 +84,8 @@ Present as a **numbered list** so user can reference items when creating TODOs v
 
 ### Skip-Docs Prompt (Tests Passed Only)
 **First, check line 3 of `loop_state.md` for a pre-set `skip_docs`.** See [Pipeline Configuration](AGENTS.md#pipeline-configuration-line-3-of-loop_statemd) in AGENTS.md.
-- If `skip_docs=yes`, skip this prompt entirely. Transition to Reviewer (Role 06).
-- If `skip_docs=no`, proceed below — user can still change their mind.
+- If `skip_docs=true`, skip this prompt entirely. Transition to Reviewer (Role 06).
+- If `skip_docs=false`, proceed below — user can still change their mind.
 - If unset, this is your fallback mid-pipeline prompt. Proceed below.
 
 After all testing complete **and all tests pass**, evaluate context and recommend:

@@ -178,6 +178,9 @@ async function handler(_args: string, ctx: ExtensionCommandContext): Promise<voi
 
     const roleHistory: string[] = [];
 
+    // Clear terminal (screen + scrollback) before pipeline banner
+    process.stdout.write("\x1b[2J\x1b[3J\x1b[H");
+
     console.log("");
     console.log("═".repeat(60));
     console.log("  Auto-Loop Pipeline Runner");
@@ -264,4 +267,9 @@ export default function (pi: ExtensionAPI) {
     pi.on("session_start", (_event, ctx) => updateStatus(ctx));
     // On each turn end to pick up changes mid-session
     pi.on("turn_end", (_event, ctx) => updateStatus(ctx));
+    // Clear footer status on session replacement (/new, /resume, /fork)
+    pi.on("session_shutdown", (_event, ctx) => {
+        if (!ctx.hasUI) return;
+        ctx.ui.setStatus("pipeline-push", undefined);
+    });
 }

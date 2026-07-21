@@ -78,12 +78,12 @@ Present as: "Quick analysis loop (recommended), normal full pipeline, or pick an
 ### If User Chooses Quick Analysis Loop
 
 1. **Auto-generate Goal Summary:** `External change analysis: {<100 char summary of detected changes>}`. Keep the summary portion under 100 characters total (including "External change analysis: ").
-2. **Set pipeline config on line 3:** `test_level=quick | skip_docs=no` (default — adjust if user requests otherwise).
+2. **Set pipeline config on line 3:** `test_level=quick | skip_docs=false` (default — adjust if user requests otherwise).
 3. **Create `loop_state.md`:**
    ```
    **Goal Summary:** External change analysis: {summary}<br>
    **Current Role:** Tester (Role 04) | History: Interviewer<br>
-   **Pipeline Config:** test_level=quick | skip_docs=no<br>
+   **Pipeline Config:** test_level=quick | skip_docs=false<br>
    ```
 4. Skip Planner and Worker — hand off directly to Tester. The Interviewer's summary section in `loop_state.md` should document what was detected so downstream roles have context.
 

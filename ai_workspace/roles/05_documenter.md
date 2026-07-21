@@ -7,9 +7,9 @@ Produce clear, comprehensive documentation for everything built or changed in th
 ## Tasks
 
 ### Check Pipeline Config (Line 3)
-**First, check line 3 of `loop_state.md` for a pre-set `skip_docs`.** Line 3 format: `skip_docs={yes|no} | test_level={quick|deep|skip}`.
-- If `skip_docs=yes`, skip all documentation work. Append minimal stub summary to `loop_state.md`, update handoff line past Documenter to Reviewer with Documenter added to history. Do not ask user about docs — this was pre-decided by Planner or Tester.
-- If `skip_docs=no` or unset, proceed normally below.
+**First, check line 3 of `loop_state.md` for a pre-set `skip_docs`.** Line 3 format: `skip_docs={true|false} | test_level={quick|deep|skip}`.
+- If `skip_docs=true`, skip all documentation work. Append minimal stub summary to `loop_state.md`, update handoff line past Documenter to Reviewer with Documenter added to history. Do not ask user about docs — this was pre-decided by Planner or Tester.
+- If `skip_docs=false` or unset, proceed normally below.
 
 ### Determine Documentation Needs
 Check `project_overview.md` or prior summaries for documentation standards. If none exist, present numbered list and let user pick by number:
@@ -24,7 +24,7 @@ Check `project_overview.md` or prior summaries for documentation standards. If n
 
 Let user select multiple by number, or pick 7 to skip.
 
-**User changes mind mid-pipeline:** If `skip_docs=yes` was set but user now wants docs, update line 3 to `skip_docs=no`, proceed with full work, and note change in summary. Conversely, if user decides to skip during session, update line 3 to `skip_docs=yes` and note it.
+**User changes mind mid-pipeline:** If `skip_docs=true` was set but user now wants docs, update line 3 to `skip_docs=false`, proceed with full work, and note change in summary. Conversely, if user decides to skip during session, update line 3 to `skip_docs=true` and note it.
 
 ### Write or Update Project Documentation
 Create/update docs in the **project root**, following existing conventions:

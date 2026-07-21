@@ -50,12 +50,12 @@ Line 3 is the **global mutable pipeline config line**. All parsing logic lives h
 
 ### Format
 ```
-test_level={quick|deep|skip} | skip_docs={yes|no} | can_loop={true|false}<br>
+test_level={quick|deep|skip} | skip_docs={true|false} | can_loop={true|false}<br>
 ```
 Key-value pairs separated by ` | `. Line ends with `<br>` for rendering. **Strip trailing `<br>` before parsing.** Parse: read line 3, strip `<br>`, split on ` | `, extract value after `=` for needed key.
 
 ### Guardrail — Unrecognized Values
-- `skip_docs` must be `yes` or `no`; `test_level` must be `quick`, `deep`, or `skip`; `can_loop` must be `true` or `false`.
+- `skip_docs` must be `true` or `false`; `test_level` must be `quick`, `deep`, or `skip`; `can_loop` must be `true` or `false`.
 - **If unrecognized, ask user directly.** Do not guess. Record answer on line 3 and note in summary section.
 
 ### Mutability Rules
@@ -64,18 +64,18 @@ Any role can update line 3 if user changes their mind mid-pipeline. Updating rol
 ### Routing Matrix — Worker Handoff Targets
 | skip_docs | test_level | Worker hands off to |
 |-----------|------------|---------------------|
-| no        | deep       | Tester → Documenter (existing flow) |
-| no        | quick      | Tester → Documenter (Tester adjusts scope) |
-| no        | skip       | Documenter          |
-| yes       | deep       | Tester → Reviewer   |
-| yes       | quick      | Tester → Reviewer   |
-| yes       | skip       | Reviewer            |
+| false     | deep       | Tester → Documenter (existing flow) |
+| false     | quick      | Tester → Documenter (Tester adjusts scope) |
+| false     | skip       | Documenter          |
+| true      | deep       | Tester → Reviewer   |
+| true      | quick      | Tester → Reviewer   |
+| true      | skip       | Reviewer            |
 
 ### Routing Matrix — Tester Handoff Targets
 | skip_docs | test_level | Tester hands off to |
 |-----------|------------|---------------------|
-| no        | deep/quick | Documenter (Role 05) |
-| yes       | deep/quick | Reviewer (Role 06) — advance past Documenter |
+| false     | deep/quick | Documenter (Role 05) |
+| true      | deep/quick | Reviewer (Role 06) — advance past Documenter |
 
 ### Dynamic Git Log Depth (Reviewer & Finalizer)
 
