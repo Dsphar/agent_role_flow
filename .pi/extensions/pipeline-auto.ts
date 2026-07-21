@@ -189,9 +189,34 @@ function runSubAgent(cwd: string): Promise<void> {
         let textBuffer = ""; // accumulated text_delta content, flushed line-by-line
         let agentEnded = false;
         let resolved = false; // guard against double-resolution
-        let promptAccepted = false;
 
         const pendingTools: Array<{ name: string; status: "pending" | "success" | "error" }> = [];
+
+        /** Flush buffered text line-by-line, keeping the last incomplete segment. */
+        function flushBufferedLines(): void {
+            const lines = textBuffer.split("\n");
+            // Keep the last (possibly incomplete) segment in the buffer
+            for (let i = 0; i < lines.length - 1; i++) {
+                console.log(lines[i]);
+            }
+            textBuffer = lines[lines.length - 1];
+        }
+
+        /** Flush all buffered text including pending tool call results. */
+        function flushAllBufferedText(): void {
+            // Print any pending tool call results inline (not as standalone lines)
+            if (pendingTools.length > 0) {
+                for (const tool of pendingTools) {
+                    const emoji = tool.status === "error" ? "\u274C" : "\u2705";
+                    console.log(`  \u{1F9F0} ${tool.name} ${emoji}`);
+                }
+                pendingTools.length = 0;
+            }
+            if (textBuffer) {
+                console.log(textBuffer);
+                textBuffer = "";
+            }
+        }
 
         // Parse JSONL from stdout (split on \n only per RPC protocol)
         function processLine(line: string): void {
@@ -206,36 +231,6 @@ function runSubAgent(cwd: string): Promise<void> {
             }
 
             const type = parsed.type as string | undefined;
-
-            function flushBufferedLines() {
-                const lines = textBuffer.split("\n");
-                // Keep the last (possibly incomplete) segment in the buffer
-                for (let i = 0; i < lines.length - 1; i++) {
-                    console.log(lines[i]);
-                }
-                textBuffer = lines[lines.length - 1];
-            }
-
-            function flushAllBufferedText() {
-                // Print any pending tool call results inline (not as standalone lines)
-                if (pendingTools.length > 0) {
-                    for (const tool of pendingTools) {
-                        const emoji = tool.status === "error" ? "\u274C" : "\u2705";
-                        console.log(`  \u{1F9F0} ${tool.name} ${emoji}`);
-                    }
-                    pendingTools.length = 0;
-                }
-                if (textBuffer) {
-                    console.log(textBuffer);
-                    textBuffer = "";
-                }
-            }
-
-            // RPC command response (prompt acceptance)
-            if (type === "response" && parsed.command === "prompt") {
-                promptAccepted = parsed.success === true;
-                return;
-            }
 
             // Extension UI request — auto-respond with recommended defaults
             if (type === "extension_ui_request") {
@@ -314,10 +309,6 @@ function runSubAgent(cwd: string): Promise<void> {
                 const line = jsonBuffer.endsWith("\r") ? jsonBuffer.slice(0, -1) : jsonBuffer;
                 processLine(line);
             }
-        });
-
-        child.stderr?.on("data", (chunk: Buffer) => {
-            // stderr is inherited but also captured for errors
         });
 
         // Send the initial prompt to start the sub-agent working

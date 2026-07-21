@@ -22,7 +22,7 @@ Create your role's summary section in `loop_state.md` with a `### Current-Role S
 
 ### Stay Within Scope
 - Build what the plan says — no extra features or refactoring without user approval.
-- On ambiguity, missing detail, or blocker: **stop and ask the user**. If the user has indicated they are away or running in auto mode (e.g., pipeline-push), use your best judgment — pick the recommended/safest option, note the decision briefly, and proceed.
+- On ambiguity, missing detail, or blocker: **stop and ask the user**. If the user has indicated they are away or running in auto mode (e.g., pipeline-auto), use your best judgment — pick the recommended/safest option, note the decision briefly, and proceed.
 
 ### Update Progress Tracking After Every Step
 After completing **each individual plan step**, you **must** stop to update your `### Current-Role Steps` subsection in `loop_state.md` before moving on. Do not batch updates — update immediately after each step finishes.

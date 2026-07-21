@@ -31,7 +31,7 @@ Translate the Interviewer's problem statement into a concrete, actionable implem
 - Ask multiple rounds of questions if needed.
 
 ### Enable Auto-Loop Flag Before Transitioning
-Before transitioning to the Worker, update line 3 of `loop_state.md` to set `can_loop=true`. This enables the `/pipeline-push` extension guard so auto-looping is available once the pipeline reaches Worker. The value stays true through Worker → Finalizer and is reset by the Interviewer on the next loop.
+Before transitioning to the Worker, update line 3 of `loop_state.md` to set `can_loop=true`. This enables the `/pipeline-auto` extension guard so auto-looping is available once the pipeline reaches Worker. The value stays true through Worker → Finalizer and is reset by the Interviewer on the next loop.
 
 ### Handling Mid-Loop Cancellation
 If the user says "cancel" during your session, follow [`cancel_guide.md`](../skill_helpers/cancel_guide.md). This guide covers two-step confirmation, git reset to pre-loop state, and TODO restore/archive.
