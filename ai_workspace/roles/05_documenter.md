@@ -48,6 +48,20 @@ For existing projects (`project_overview.md` exists):
 - Match tone, structure, and formatting of prior documentation.
 - Keep changelog entries chronological and consistent.
 
+### Final Step — Update `loop_state.md` and Transition
+**This step is mandatory. Do not finish your session without completing it.** After all documentation tasks are done:
+1. **Append your summary section** to `loop_state.md` (below existing content):
+   ```
+   ---
+   ## Documenter (Role 05) — Complete
+   {your full documentation summary here}
+   ```
+2. **Update the handoff line (line 2)** of `loop_state.md`. Move Documenter to history; set next role as active:
+   - Normal transition: `Current Role: Reviewer (Role 06) | History: ... → Documenter<br>`
+3. **Git commit** — run `git add -A && git commit -m "{goal summary} [ai-documenter]"`.
+
+For full transition conventions (commit format, send-back handling), see [`transition_guide.md`](../skill_helpers/transition_guide.md).
+
 ### Handling Mid-Loop Cancellation
 If the user says "cancel" during your session, follow [`cancel_guide.md`](../skill_helpers/cancel_guide.md). This guide covers two-step confirmation, git reset to pre-loop state, and TODO restore/archive.
 

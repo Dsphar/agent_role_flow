@@ -74,6 +74,7 @@ ai_workspace/
 - Send-back rerouting to Worker: Tester and Reviewer send-backs now route directly to Worker (Role 03) for fixes instead of Planner (Role 02). Worker already has `loop_state.md` context during send-back and can ask the user directly for clarification, making re-planning unnecessary overhead. Dead send-back receiving instructions removed from Planner role file.
 - Init guide `.gitignore` generation: Step 4b added to `init_project_guide.md` — guides the Interviewer to create a `.gitignore` combining global patterns (OS files, IDE configs, env files) and language-specific patterns referencing [github/gitignore](https://github.com/github/gitignore). Skip-if-exists logic for existing projects.
 - Reviewer `.gitignore` verification: New sub-task added to `06_reviewer.md` — existence check (Critical/send-back if missing), exception path for legitimate cases, spot-check for build artifacts, dependency dirs, env files, and OS/IDE noise. Lightweight, not exhaustive.
+- Send-back as default recommended option: When Tester or Reviewer finds issues relevant to the current loop's work, send-back is now explicitly marked as **(recommended)** over deferral as a TODO. Deferral remains for issues clearly unrelated to this loop's scope. Applied across `sendback_guide.md`, `04_tester.md`, and `06_reviewer.md`.
 
 ## User-Preferred Patterns
 _(No user-preferred patterns recorded yet. Add here when identified.)_

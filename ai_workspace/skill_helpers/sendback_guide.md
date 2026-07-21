@@ -41,9 +41,9 @@ Present findings: list each issue with file references, descriptions, recommende
 
 ### Common Steps (All Sending Roles)
 
-1. **Ask how to proceed** — evaluate context and mark the most appropriate option as "(recommended)":
-   - **(a) Send back** — append `### Send-Back Issues` subsection to your `loop_state.md` summary section, update handoff line (below).
-   - **(b) Defer as TODO file** — capture per [`todo_guide.md`](./todo_guide.md). Continue without interruption.
+1. **Ask how to proceed** — send-back is the default recommendation for issues related to this loop's work; defer only for issues clearly unrelated to current scope:
+   - **(a) Send back (recommended)** — append `### Send-Back Issues` subsection to your `loop_state.md` summary section, update handoff line (below).
+   - **(b) Defer as TODO file** — capture per [`todo_guide.md`](./todo_guide.md). Continue without interruption. Use only for issues clearly unrelated to this loop's scope.
 
 2. If user chooses send-back:
    - Append a `### Send-Back Issues` subsection to your existing summary section in `loop_state.md`. List each issue with source role, file references, description, severity, and recommended fix. If the subsection already exists, append new items — do not overwrite.

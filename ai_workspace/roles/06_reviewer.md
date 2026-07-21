@@ -49,7 +49,22 @@ Categorize issues by severity:
 Note strengths worth calling out. Offer to make new todo files per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md) for each.
 
 ### Send-Back on Critical Issues
-See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: when you find **Critical** issues, present findings and ask user to either (a) send back — append `### Send-Back Issues` subsection to your summary section in `loop_state.md` with `Source: Reviewer (Role 06)` AND update handoff line to `Worker (Role 03) (in-sendback)`, or (b) defer as new TODO per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
+See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: when you find **Critical** issues, present findings and ask user to either **(a) send back (recommended)** — append `### Send-Back Issues` subsection to your summary section in `loop_state.md` with `Source: Reviewer (Role 06)` AND update handoff line to `Worker (Role 03) (in-sendback)`, or **(b) defer as new TODO** per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md). Exception: issues clearly unrelated to the current loop's scope should be deferred as TODOs rather than sent back.
+
+### Final Step — Update `loop_state.md` and Transition
+**This step is mandatory. Do not finish your session without completing it.** After all review tasks are done:
+1. **Append your summary section** to `loop_state.md` (below existing content):
+   ```
+   ---
+   ## Reviewer (Role 06) — Complete
+   {your full review summary here}
+   ```
+2. **Update the handoff line (line 2)** of `loop_state.md`. Move Reviewer to history; set next role as active:
+   - Normal transition: `Current Role: Finalizer (Role 07) | History: ... → Reviewer<br>`
+   - Send-back to Worker: append `### Send-Back Issues` subsection with `Source: Reviewer (Role 06)`, then set handoff to `Worker (Role 03) (in-sendback)` and keep `(in-sendback)` suffix.
+3. **Git commit** — run `git add -A && git commit -m "{goal summary} [ai-reviewer]"`. Use `[ai-reviewer-sendback]` tag if in send-back mode.
+
+For full transition conventions (commit format, send-back handling), see [`transition_guide.md`](../skill_helpers/transition_guide.md).
 
 ### Handling Mid-Loop Cancellation
 If the user says "cancel" during your session, follow [`cancel_guide.md`](../skill_helpers/cancel_guide.md). This guide covers two-step confirmation, git reset to pre-loop state, and TODO restore/archive.
