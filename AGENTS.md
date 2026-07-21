@@ -50,12 +50,12 @@ Line 3 is the **global mutable pipeline config line**. All parsing logic lives h
 
 ### Format
 ```
-test_level={quick|deep|skip} | skip_docs={yes|no}<br>
+test_level={quick|deep|skip} | skip_docs={yes|no} | can_loop={true|false}<br>
 ```
 Key-value pairs separated by ` | `. Line ends with `<br>` for rendering. **Strip trailing `<br>` before parsing.** Parse: read line 3, strip `<br>`, split on ` | `, extract value after `=` for needed key.
 
 ### Guardrail — Unrecognized Values
-- `skip_docs` must be `yes` or `no`; `test_level` must be `quick`, `deep`, or `skip`.
+- `skip_docs` must be `yes` or `no`; `test_level` must be `quick`, `deep`, or `skip`; `can_loop` must be `true` or `false`.
 - **If unrecognized, ask user directly.** Do not guess. Record answer on line 3 and note in summary section.
 
 ### Mutability Rules

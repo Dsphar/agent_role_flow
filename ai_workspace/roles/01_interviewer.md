@@ -75,7 +75,7 @@ After completing all interview tasks above (including Wrap-Up) and before transi
 
 **Auto-select on ambiguous responses.** When user's answer is non-committal ("yes", "y", "ok", "sure", etc.), automatically accept whichever option you flagged as **recommended** for that question. Applies **only** to these two config questions at end of session, not other prompts during interviewing. No hard-coded defaults — uses whatever you recommended at runtime based on current loop's context.
 
-**Record decisions on line 3 of `loop_state.md`.** See [Pipeline Configuration](AGENTS.md#pipeline-configuration-line-3-of-loop_statemd) in AGENTS.md for format, parsing rules, and routing matrices.
+**Record decisions on line 3 of `loop_state.md`.** Always set `can_loop=false` (Planner sets it to true later). See [Pipeline Configuration](AGENTS.md#pipeline-configuration-line-3-of-loop_statemd) in AGENTS.md for format, parsing rules, and routing matrices.
 
 ### Handling Mid-Loop Cancellation
 If the user says "cancel" during your session, follow [`cancel_guide.md`](../skill_helpers/cancel_guide.md). This guide covers two-step confirmation, git reset to pre-loop state, and TODO restore/archive.
@@ -97,5 +97,5 @@ If creating `loop_state.md` fresh, initialize lines 1–3 as:
 ```
 **Goal Summary:** <text><br>
 **Current Role:** Planner (Role 02) | History: Interviewer<br>
-**Pipeline Config:** test_level= | skip_docs=<br>
+**Pipeline Config:** test_level= | skip_docs= | can_loop=false<br>
 ```

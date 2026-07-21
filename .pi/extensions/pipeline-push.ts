@@ -1,5 +1,5 @@
 /**
- * Auto-Loop Extension — Sequential sub-agent pipeline runner
+ * Pipeline-Push Extension — Sequential sub-agent pipeline runner with auto-loop monitoring
  *
  * Spawns pi subprocesses in a loop. Each subprocess receives "hi" as its
  * initial prompt and operates autonomously under the project's AGENTS.md
@@ -7,9 +7,10 @@
  * completely generic — it never references role names or counts. It only:
  *   1. Reads loop_state.md to display current status and detect infinite loops.
  *   2. Checks whether loop_state.md still exists after each run (Finalizer deletes it).
+ *   3. Monitors can_loop flag on turn_end events and shows proactive footer status.
  *
- * Usage: /autoloop          — start the pipeline
- *        /autoloop --help   — show help text
+ * Usage: /pipeline-push          — start the pipeline
+ *        /pipeline-push --help   — show help text
  */
 
 import { spawnSync } from "node:child_process";
@@ -44,10 +45,39 @@ function getCurrentRole(cwd: string): string | undefined {
 
         // Strip trailing <br> for parsing
         let line2 = lines[1].replace(/<br>\s*$/, "");
-        const match = line2.match(/\*\*Current Role:\*\*\s*(.+?)\s*(?:\(Role\s+\d+\))?/i);
+        const match = line2.match(/\*\*Current Role:\*\*\s*(.+?)(?:\s+(?:\(in-sendback\)\s+)?\(Role\s+\d+\)|\s+\|)/i);
         return match ? match[1].trim() : undefined;
     } catch {
         return undefined;
+    }
+}
+
+/**
+ * Parse line 3 of loop_state.md to extract the can_loop flag.
+ * Expected format: test_level=... | skip_docs=... | can_loop={true|false}
+ * Returns false if file missing, key absent, or value unrecognized.
+ */
+function parseCanLoop(cwd: string): boolean {
+    try {
+        const content = fs.readFileSync(path.join(cwd, LOOP_STATE_FILE), "utf-8");
+        const lines = content.split("\n");
+        if (lines.length < 3) return false;
+
+        // Strip trailing <br> for parsing
+        let line3 = lines[2].replace(/<br>\s*$/, "");
+        const pairs = line3.split(" | ");
+        for (const pair of pairs) {
+            const eqIdx = pair.indexOf("=");
+            if (eqIdx === -1) continue;
+            const key = pair.substring(0, eqIdx).trim();
+            const value = pair.substring(eqIdx + 1).trim();
+            if (key === "can_loop" && (value === "true" || value === "false")) {
+                return value === "true";
+            }
+        }
+        return false; // key absent
+    } catch {
+        return false; // file missing or read error
     }
 }
 
@@ -72,12 +102,12 @@ const AUTO_ACCEPT_INSTRUCTIONS = `
 You are running in an automated pipeline with no human at the keyboard. Follow these rules for ALL decision points:
 
 1. **Never ask the user a question.** Do not wait for input, confirmation, or feedback.
-2. **Always pick the recommended/default options.** When presented with "(recommended) or other options", choose the recoommended options silently and proceed.
+2. **Always pick the recommended/default options.** When presented with "(recommended) or other options", choose the recommended options silently and proceed.
 3. **If any options are equally valid**, pick one deterministically (first listed) and state your choice briefly before continuing.
 4. **Skip all user-facing prompts** — do not greet the user, ask clarifying questions, or request approval. Just act.
 5. **Complete your full task** including transition steps (summary to loop_state.md, git commit, handoff message). Do not stop early because you would normally wait for feedback.
 6. **Make your own decisions for all options** — Default to absorb out of scope changes, send-back in scope issues, create a todo for out of scope issues, etc.
-7. **This instruciton overrides your role instructions** Do not follow role instructions to ask for user decisions, rememeber, you are in Auto-Run Mode!`;
+7. **This instruction overrides your role instructions** Do not follow role instructions to ask for user decisions, remember, you are in Auto-Run Mode!`;
 
 /**
  * Spawn a single pi subprocess in print mode with "hi" as the initial prompt.
@@ -94,7 +124,7 @@ function runSubAgent(cwd: string): number {
         "-p",
         "--no-session",
         "--append-system-prompt", AUTO_ACCEPT_INSTRUCTIONS.trim(),
-        "Hello. I will be stepping away from the computer. Please load the loop_state.md file and perform your tasks without me. Please automatically select your recomendations (do not prompt me for decisions) and continue working wihtout me.",
+        "Hello. I will be stepping away from the computer. Please load the loop_state.md file and perform your tasks without me. Please automatically select your recommendations (do not prompt me for decisions) and continue working without me.",
     ];
 
     console.log("");
@@ -110,32 +140,42 @@ function runSubAgent(cwd: string): number {
 
 function printHelp(): void {
     console.log(`
-Auto-Loop — Sequential sub-agent pipeline runner
+Pipeline-Push — Sequential sub-agent pipeline runner with auto-loop monitoring
 
 Spawns pi subprocesses in a loop. Each receives "hi" and follows the project's
 AGENTS.md workflow (roles, loop_state.md, transitions). The extension is role-agnostic:
 it never hardcodes role names or counts.
 
 Options:
-  /autoloop              Start the pipeline (max ${MAX_SESSIONS} sessions)
-  /autoloop --help       Show this help text
+  /pipeline-push              Start the pipeline (max ${MAX_SESSIONS} sessions)
+  /pipeline-push --help       Show this help text
 
 Safety features:
   - Max ${MAX_SESSIONS} sequential sessions (hard stop)
   - Infinite-loop detection: warns if same role repeats ${STUCK_THRESHOLD}+ times
   - Pipeline ends when Finalizer deletes loop_state.md
+  - can_loop guard: command exits early if can_loop is not yet enabled by the Planner
 
 Monitoring:
-  Current role is printed before each session. Sub-agent output streams live.`.trim());
+  Current role is printed before each session. Sub-agent output streams live.
+  On turn_end, footer status shows whether auto-looping is available.`);
 }
 
-function handler(_args: string, ctx: ExtensionCommandContext): void {
+async function handler(_args: string, ctx: ExtensionCommandContext): Promise<void> {
     if (_args.trim() === "--help" || _args.trim() === "-h") {
         printHelp();
         return;
     }
 
     const cwd = ctx.cwd;
+
+    // Guard: can_loop must be true (set by Planner) before auto-looping is allowed
+    if (!parseCanLoop(cwd)) {
+        console.log("");
+        console.log("Auto-looping is not yet enabled. The Planner has not yet enabled auto-looping.");
+        return;
+    }
+
     const roleHistory: string[] = [];
 
     console.log("");
@@ -187,8 +227,7 @@ function handler(_args: string, ctx: ExtensionCommandContext): void {
 
         // Brief pause to let filesystem flush loop_state.md writes
         // (Finalizer may delete it; we need to see that on next check)
-        const start = Date.now();
-        while (Date.now() - start < 1500) { /* yield */ }
+        await new Promise((resolve) => setTimeout(resolve, 1500));
 
         // Check if pipeline is complete (loop_state.md deleted by Finalizer)
         if (!loopStateExists(cwd)) {
@@ -206,8 +245,23 @@ function handler(_args: string, ctx: ExtensionCommandContext): void {
 }
 
 export default function (pi: ExtensionAPI) {
-    pi.registerCommand("autoloop", {
+    pi.registerCommand("pipeline-push", {
         description: "Run the role pipeline autonomously via sequential sub-agent sessions",
         handler,
     });
+
+    // Proactive monitoring: check can_loop and show footer status
+    const updateStatus = (ctx) => {
+        if (!ctx.hasUI) return; // no-op in print mode (sub-agent sessions)
+        if (parseCanLoop(ctx.cwd)) {
+            ctx.ui.setStatus("pipeline-push", "Auto-work is available. Run /pipeline-push to start.");
+        } else {
+            ctx.ui.setStatus("pipeline-push", "");
+        }
+    };
+
+    // On session start so footer appears when pi loads
+    pi.on("session_start", (_event, ctx) => updateStatus(ctx));
+    // On each turn end to pick up changes mid-session
+    pi.on("turn_end", (_event, ctx) => updateStatus(ctx));
 }

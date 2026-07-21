@@ -34,10 +34,10 @@ ai_workspace/├── roles/
 - **Loop reset:** Finalizer deletes `loop_state.md`, updates this file, and resets for the next iteration.
 
 ## Tech Stack
-- **Language:** Markdown (skill files, summaries, orchestration)
+- **Language:** Markdown (skill files, summaries, orchestration), TypeScript (pi extensions)
 - **Tooling:** Left to the LLM — no prescribed tool-calling framework or shell dependency. Whatever tools the running model has access to are used as needed.
 - **Version Control:** Git (per-role incremental commits, squashed by Finalizer)
-- **No runtime code** — this is a prompt/orchestration system, not an application
+- **Pi Extensions:** TypeScript extension files in `.pi/extensions/` using pi ExtensionAPI (`ctx.ui.setStatus`, `runSubAgent`, event listeners)
 
 ## Key Design Decisions
 - Role separation enforced via "What You Must Not Do" sections in each skill file
@@ -76,6 +76,8 @@ ai_workspace/├── roles/
 - Reviewer `.gitignore` verification: New sub-task added to `06_reviewer.md` — existence check (Critical/send-back if missing), exception path for legitimate cases, spot-check for build artifacts, dependency dirs, env files, and OS/IDE noise. Lightweight, not exhaustive.
 - Send-back as default recommended option: When Tester or Reviewer finds issues relevant to the current loop's work, send-back is now explicitly marked as **(recommended)** over deferral as a TODO. Deferral remains for issues clearly unrelated to this loop's scope. Applied across `sendback_guide.md`, `04_tester.md`, and `06_reviewer.md`.
 - Worker TODO-deletion step in pipeline: When a loop starts from an existing TODO item, the Interviewer now notes the TODO filename AND instructs the Planner to include a deletion step for the Worker. The Worker deletes the TODO file upon completing the addressed work. Mid-loop TODO captures remain deletable by any role that satisfies them. Clarified in `01_interviewer.md` and `todo_guide.md`.
+- Pipeline-push extension (`.pi/extensions/pipeline-push.ts`): Renamed from `/autoloop` to `/pipeline-push`. Spawns sub-agent sessions for each pipeline loop iteration. Includes a `can_loop={true|false}` guard — the Planner sets it to `true` on line 3 of `loop_state.md`, and the extension refuses to spawn sessions if the flag is absent or false. Proactive monitoring via `turn_end`/`session_start` event listeners shows footer status when auto-looping is available.
+- can_loop config flag: Line 3 of `loop_state.md` carries `can_loop={true|false}` alongside `test_level` and `skip_docs`. Interviewer initializes it to `false`; Planner sets it to `true` before transitioning. The pipeline-push extension reads this flag for its guard and proactive footer status.
 
 ## User-Preferred Patterns
 _(No user-preferred patterns recorded yet. Add here when identified.)_
