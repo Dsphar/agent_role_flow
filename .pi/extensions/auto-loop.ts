@@ -94,8 +94,7 @@ function runSubAgent(cwd: string): number {
         "-p",
         "--no-session",
         "--append-system-prompt", AUTO_ACCEPT_INSTRUCTIONS.trim(),
-        "hi",
-        //AUTO_ACCEPT_INSTRUCTIONS,
+        "Hello. I will be stepping away from the computer. Please load the loop_state.md file and perform your tasks without me. Please automatically select your recomendations (do not prompt me for decisions) and continue working wihtout me.",
     ];
 
     console.log("");

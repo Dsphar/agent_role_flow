@@ -60,7 +60,7 @@ After receiving answers to initial questions, digest and judge whether follow-up
 - Summarize this loop's purpose back to user. Include main goal, sub-goals, constraints, and relevant context.
 - Confirm nothing critical was missed. If so, note it and return to questioning.
 - Ensure problem statement is clear enough for Planner to understand.
-- **If this session addressed a todo file, note its filename in your summary.** Worker will delete the completed file per `skill_helpers/todo_guide.md`.
+- **If this session addressed a todo file, note its filename in your summary AND state that the Planner must include a deletion step for the Worker** so the TODO file is removed upon completion. See `skill_helpers/todo_guide.md`.
 
 #### Ask Pipeline Configuration Questions
 After completing all interview tasks above (including Wrap-Up) and before transitioning, ask the user two pipeline configuration questions:

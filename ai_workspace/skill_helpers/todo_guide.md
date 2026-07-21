@@ -41,13 +41,16 @@ Copy this into each new todo file:
 
 ## Presenting Pending Items
 
-**Only the Interviewer (Role 01)** scans and presents pending TODOs at session start. All other roles can *capture* new items and *delete* completed ones, but do **not** proactively scan or present existing TODOs at startup.
+**Only the Interviewer (Role 01)** scans and presents pending TODOs at session start. All other roles can *capture* new items, but do **not** proactively scan or present existing TODOs at startup.
+
+**Deletion responsibility:** When a loop starts from an existing TODO item, only the Worker (Role 03) deletes that TODO file — and only as part of a planned step included by the Planner. Mid-loop captures (items created during a session for later work) can be deleted by any role whose work satisfies them.
 
 ---
 
 ## Tracking Completion
 
-When a role's work satisfies a todo: **Delete** the file from `ai_workspace/TODO/`. Optionally note in your `loop_state.md` section which todo was addressed. Delete all satisfied files together if multiple completed in one pass.
+- **Loop-start TODOs (addressed from an existing item):** Only the Worker deletes these, as a planned step from the Planner's implementation plan. Other roles must not delete loop-start TODOs.
+- **Mid-loop captures (created during a session for later work):** Any role whose work satisfies such a capture may delete it immediately.
 
 ---
 
