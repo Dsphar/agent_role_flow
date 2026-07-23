@@ -6,6 +6,7 @@ An AI agent sequential-pipeline system — 7 roles flowing through a structured 
 ## File Structure
 ```
 .gitignore                             ← Git ignore rules (Node.js, TypeScript, env files, IDE, OS noise)
+README.md                              ← GitHub-ready project overview (casual tone, disclaimers, getting started)
 AGENTS.md                              ← Master workflow orchestrator
 ai_workspace/├── roles/
 │   ├── 01_interviewer.md              ← Discovery & scoping
@@ -81,6 +82,9 @@ ai_workspace/├── roles/
 - Reviewer inline progress tracking: Added `Initialize Inline Progress Tracking` and `Update Progress Tracking After Every Step` tasks to `06_reviewer.md`, matching the checkbox-based pattern already used by Worker and Tester. Covers all review steps: scope audit, code quality, architecture/design, security, `.gitignore`, test quality, documentation, compile findings, send-back/transition.
 - Auto-mode softening (Worker through Finalizer): When user is away (pipeline-auto mode), roles no longer hang waiting for input at decision points. Worker uses best judgment on ambiguity/blockers; Tester defaults to send-back for in-scope bugs and silently applies skip-docs recommendations (never auto-installs packages); Reviewer absorbs out-of-scope items with TODO creation and defaults to send-back on critical issues; Finalizer logs unexplained changes as TODOs silently. Triggered by user indicating they're away, not the `can_loop` flag.
 - TODO deletion enforcement hardening: Interviewer's Wrap-Up TODO bullet converted from bold prose (`**If this session...**`) into a mandatory checkbox item (`- [ ] If this session addressed...`) with "explicitly instruct" language. Planner's conditional ("if noted") replaced with active mandatory check — must verify Interviewer summary and use `MUST` keyword for Worker deletion step. Closes the gap where TODO files slipped through undeleted.
+- GitHub README created: A user-facing `README.md` added at project root with casual/approachable tone, covering what the pipeline is, all 7 roles, getting started (two paths), disclaimers & warnings, and a "Files Not to Copy" table. Both pi users and non-pi users are addressed — pi steps marked optional.
+- Interviewer summary mandates enhanced: `01_interviewer.md` Deliverables section now requires richer loop_state summaries including success criteria/acceptance conditions, integration points, background/motivation, user-facing behavior changes, and relevant file/code references.
+- Planner summary mandates enhanced: `02_planner.md` Deliverables section now requires richer loop_state summaries including design rationale (why), expected outcomes per step, testing strategy overview, dependencies/rollback considerations, and project conventions/patterns to respect.
 
 ## User-Preferred Patterns
 _(No user-preferred patterns recorded yet. Add here when identified.)_

@@ -90,6 +90,11 @@ If the user says "cancel" during your session, follow [`cancel_guide.md`](../ski
 Follow [`transition_guide.md`](../skill_helpers/transition_guide.md) for summary append, handoff update, in-progress file handling, and git commit. Role-specific summary content:
 - **Goal Summary** — Concise (<100 char) description of what this loop builds/changes. Record as `**Goal Summary:**` on line 1 of `loop_state.md`. All roles read line 1 for their git commit messages.
 - What is being built or changed, why it matters (goals / success criteria).
+- **Detailed success criteria / acceptance conditions** — specific, testable conditions that define "done" so downstream roles know exactly what to aim for.
+- **Integration points with existing project components** — which modules, files, APIs, or services the new work touches or depends on.
+- **Background/motivation** — *why* this work matters beyond the feature description. Context about user pain points, business goals, or technical debt being addressed.
+- **User-facing behavior changes** — any visible changes to how users interact with the system (UI updates, new workflows, changed defaults).
+- **Relevant file/code references** — specific files, functions, or code paths discovered during questioning that downstream roles should be aware of.
 - Technical constraints and preferences.
 - Edge cases or special considerations.
 

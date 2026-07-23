@@ -57,6 +57,11 @@ If the user says "cancel" during your session, follow [`cancel_guide.md`](../ski
 ## Deliverables
 Follow [`transition_guide.md`](../skill_helpers/transition_guide.md) for summary append, handoff update, in-progress file handling, and git commit. Role-specific summary content:
 - **Architecture overview** — high-level design and key decisions with brief justifications.
+- **Design rationale** — *why* each architectural decision was made, not just what was chosen. Explain trade-offs considered and rejected alternatives so the Worker understands the reasoning behind the plan.
 - **File/module map** — what gets created, modified, or deleted.
 - **Ordered implementation steps** — numbered list the Worker will follow.
+- **Expected outcomes per step** — what "done" looks like for each implementation step. Concrete descriptions of observable results so the Worker can self-validate progress without guessing.
+- **Testing strategy overview** — what should be tested, at what level (unit, integration, manual), and any specific edge cases worth verifying.
+- **Dependencies between steps and rollback considerations** — which steps depend on others completing first, and how to roll back if a step fails mid-way through the plan.
+- **Project conventions/patterns to respect** — naming conventions, architectural patterns, coding styles, or project-specific norms that should be followed during implementation.
 - **Risks and open questions** — anything needing user attention before execution.
