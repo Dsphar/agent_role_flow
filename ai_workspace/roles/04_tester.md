@@ -58,7 +58,7 @@ Present what, why, and which files. Wait for confirmation.
 ### Run Regression Tests (Existing Projects)
 If `project_overview.md` exists, run existing tests before new ones:
 - Ensure nothing was broken by Worker's changes.
-- On failure: diagnose regression from this iteration vs pre-existing issue.
+- **All tests must pass — no exceptions.** Pre-existing failures are not excused. If any test fails (whether from this iteration or earlier), the project code must be fixed so it passes.
 - Add regression guards for functionality the Worker touched.
 
 ### Write Unit Tests
@@ -71,12 +71,14 @@ If new functionality was added, create tests confirming it continues working in 
 Create tests validating complete user flows or feature-level behavior across components. Cover integration points: API endpoints, database interactions, file I/O, external service calls (mocked where appropriate). Verify Interviewer's success criteria end-to-end.
 
 ### Execute Tests and Report Results
-Run all tests and capture results. On failure: **implementation bug** → document with file, line, description, severity. **Flaky/incorrect test** → fix the test. Re-run until stable (all passing or known issues documented).
+Run all tests and capture results. On failure: **implementation bug** → fix the project code so it passes. **Flaky/incorrect test** → fix the test. Re-run until **all tests pass**. There is no "known issues" escape hatch — every failing test must be resolved.
 
 ### Send-Back on Bugs
-See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: when tests reveal bugs, present findings and ask user to either **(a) send back (recommended)** — append `### Send-Back Issues` subsection to your summary section in `loop_state.md` with `Source: Tester (Role 04)` AND update handoff line to `Worker (Role 03) (in-sendback)`, or **(b) defer as TODO** per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md). Exception: pre-existing bugs clearly unrelated to this loop's work should be deferred as TODOs rather than sent back.
+See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full send-back instructions. In brief: when tests reveal bugs, present findings and ask user to either **(a) send back (recommended)** — append `### Send-Back Issues` subsection to your summary section in `loop_state.md` with `Source: Tester (Role 04)` AND update handoff line to `Worker (Role 03) (in-sendback)`, or **(b) defer as TODO** per [`skill_helpers/todo_guide.md`](../skill_helpers/todo_guide.md).
 
-**Auto-mode (user away):** Default to send-back for in-scope issues. Defer only pre-existing/unrelated bugs as TODOs.
+**All failing tests must be addressed.** Pre-existing failures are not excused — they should be sent back for fixes just like new ones. Do not let any test fail and move on.
+
+**Auto-mode (user away):** Default to send-back for all issues.
 
 ### Document Coverage Gaps
 Note areas difficult/impossible to test and why. Flag critical paths lacking adequate coverage.
