@@ -23,7 +23,7 @@ Translate the Interviewer's problem statement into a concrete, actionable implem
 - Numbered list of implementation steps in execution order — specific enough for independent Worker completion.
 - Group related tasks logically (e.g., scaffolding → core logic → integration).
 - Note dependencies between steps.
-- **If Interviewer's section notes a todo file was addressed, include a step for Worker to delete that completed file from `ai_workspace/TODO/`.** See `skill_helpers/todo_guide.md`.
+- Check the Interviewer's summary in loop_state.md for any addressed TODO filename. If one is documented, you MUST include a step for the Worker to delete that completed file from `ai_workspace/TODO/`. See `skill_helpers/todo_guide.md`.
 
 ### Identify Risks and Open Questions
 - Flag technical risks, unknowns, or decisions needing user input before coding.
