@@ -77,6 +77,7 @@ The `.pi/extensions/pipeline-auto.ts` file is a pi extension that runs the role 
 - **RPC mode** — Spawns `pi --mode rpc` subprocesses with JSONL communication on stdout/stdin
 - **Live streaming** — Non-thinking text streams live via `message_update/text_delta` events, tool calls shown inline (🛠 name, ✅/❌ results)
 - **Auto-response** — Extension UI dialogs (`confirm`, `select`, `input`, `editor`) are auto-responded with recommended/default values
+- **Context usage display:** Every streamed line shows a colored prefix like `[12.3k/128.0k (9.6%)]` with real-time token consumption per sub-agent session. Green (< 60%), yellow (60–85%), red (> 85%). Silently hidden when stats are unavailable.
 - **Safety features:** Max 50 sessions, infinite-loop detection (warns after 3+ consecutive same-role runs), `can_loop` guard (exits if Planner hasn't enabled it)
 
 **Usage:** `/pipeline-auto` — start the pipeline | `/pipeline-auto --help` — show help text
@@ -157,6 +158,14 @@ ai_workspace/
 - **Mid-loop cancellation** supported via two-step confirmation (Roles 01–06)
 
 ## Changelog
+
+### 2026-07-27 — Context Usage Display for Pipeline-Auto Extension
+
+- **Added** real-time context usage prefix to every streamed console line in `pipeline-auto.ts`. Format: `[N.Nk/T.Tk (P.P%)]` with one decimal for percentage.
+- **Added** color-coded display using ANSI codes: green (< 60%), yellow (60–85%), red (> 85%).
+- **Polling strategy:** Opportunistic `get_session_stats` RPC call on every buffer flush (newline event) — no timers, fresh data per line.
+- **Graceful degradation:** Prefix silently omitted when `contextUsage` is null/missing (e.g., post-compaction) or RPC fails. Extension continues normally.
+- **Compaction handling:** Stats reset to empty after compaction until fresh response arrives.
 
 ### 2026-07-23 — README Rewrite + Interviewer/Planner Summary Enhancements
 

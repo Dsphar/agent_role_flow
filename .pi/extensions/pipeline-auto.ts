@@ -192,12 +192,51 @@ function runSubAgent(cwd: string): Promise<void> {
 
         const pendingTools: Array<{ name: string; status: "pending" | "success" | "error" }> = [];
 
+        // Context usage state, updated by get_session_stats responses
+        let contextUsageTokens: number | null = null;
+        let contextUsageWindow: number | null = null;
+        let contextUsagePercent: number | null = null;
+
+        /**
+         * Send a get_session_stats RPC command to poll for current token usage.
+         * Response is handled asynchronously — updates prefix value on arrival.
+         */
+        function fetchContextStats(stdin: NodeJS.WritableStream): void {
+            sendRpcCommand(stdin, { type: "get_session_stats" });
+        }
+
+        /** Build a colored context usage prefix string using ANSI codes. */
+        function buildColoredPrefix(): string {
+            if (contextUsageTokens === null || contextUsageWindow === null || contextUsagePercent === null) {
+                return "";
+            }
+            const raw = `${(contextUsageTokens / 1000).toFixed(1)}k /${(contextUsageWindow / 1000).toFixed(1)}k (${contextUsagePercent.toFixed(1)}%) `;
+            // ANSI color based on usage percentage
+            let color: string;
+            if (contextUsagePercent < 60) {
+                color = "\x1b[32m"; // green
+            } else if (contextUsagePercent < 85) {
+                color = "\x1b[33m"; // yellow
+            } else {
+                color = "\x1b[31m"; // red
+            }
+            return `${color}${raw}\x1b[0m`;
+        }
+
         /** Flush buffered text line-by-line, keeping the last incomplete segment. */
         function flushBufferedLines(): void {
+            // Trigger a stats poll on every flush (async — response updates prefix later)
+            fetchContextStats(child.stdin!);
+
             const lines = textBuffer.split("\n");
+            const prefix = buildColoredPrefix();
             // Keep the last (possibly incomplete) segment in the buffer
             for (let i = 0; i < lines.length - 1; i++) {
-                console.log(lines[i]);
+                let line = lines[i];
+                if (prefix && line.trim().length > 0) {
+                    line = `${prefix} ${line}`;
+                }
+                console.log(line);
             }
             textBuffer = lines[lines.length - 1];
         }
@@ -268,10 +307,34 @@ function runSubAgent(cwd: string): Promise<void> {
                 return;
             }
 
+            // Handle get_session_stats response — update context usage prefix
+            if (type === "response" && parsed.command === "get_session_stats") {
+                const data = parsed.data as Record<string, unknown> | undefined;
+                const stats = data?.contextUsage as Record<string, unknown> | undefined;
+                if (stats) {
+                    const tokens = stats.tokens as number | null | undefined;
+                    const window = stats.contextWindow as number | undefined;
+                    const percent = stats.percent as number | null | undefined;
+                    // contextUsage.tokens and .percent can be null immediately after compaction
+                    if (tokens !== null && tokens !== undefined && window !== undefined && percent !== null && percent !== undefined) {
+                        contextUsageTokens = tokens;
+                        contextUsageWindow = window;
+                        contextUsagePercent = percent;
+                    } else {
+                        contextUsageTokens = contextUsageWindow = contextUsagePercent = null; // data incomplete or null post-compaction
+                    }
+                } else {
+                    contextUsageTokens = contextUsageWindow = contextUsagePercent = null; // no model/window available
+                }
+                return;
+            }
+
             if (type === "compaction_start") {
                 flushAllBufferedText();
                 console.log("");
                 console.log("  \u{1F504} Compacting context...");
+                // Reset stats — data is stale after compaction until fresh response arrives
+                contextUsageTokens = contextUsageWindow = contextUsagePercent = null;
                 return;
             }
 
