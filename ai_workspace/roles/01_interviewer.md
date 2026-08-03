@@ -94,6 +94,12 @@ Follow [`transition_guide.md`](../skill_helpers/transition_guide.md) for summary
 - **Integration points with existing project components** — which modules, files, APIs, or services the new work touches or depends on.
 - **Background/motivation** — *why* this work matters beyond the feature description. Context about user pain points, business goals, or technical debt being addressed.
 - **User-facing behavior changes** — any visible changes to how users interact with the system (UI updates, new workflows, changed defaults).
+- **Clarification log** — questions asked during multi-round questioning and user answers, recorded under `### Clarification Log` in your summary section using question/answer pairs format:
+  ```
+  ### Clarification Log
+  - **Q:** <question>
+    **A:** <user answer>
+  ```
 - **Relevant file/code references** — specific files, functions, or code paths discovered during questioning that downstream roles should be aware of.
 - Technical constraints and preferences.
 - Edge cases or special considerations.

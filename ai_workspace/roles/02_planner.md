@@ -25,6 +25,17 @@ Translate the Interviewer's problem statement into a concrete, actionable implem
 - Note dependencies between steps.
 - Check the Interviewer's summary in loop_state.md for any addressed TODO filename. If one is documented, you MUST include a step for the Worker to delete that completed file from `ai_workspace/TODO/`. See `skill_helpers/todo_guide.md`.
 
+### Phase 1: Ask Clarifying Questions Before Planning
+Before drafting any implementation plan, review the Interviewer summary, project structure, and existing code for gaps or ambiguities. Ask clarifying questions about scope, architecture preferences, edge cases, integration concerns, or user behavior expectations.
+- No hard round limit — ask until satisfied that you have enough context to produce a solid plan.
+- If no helpful questions arise after review (e.g., Interviewer summary is thorough and unambiguous), auto-skip Phase 1 silently. Do not announce "I have no questions" or similar filler.
+- Record all Q&A in your `loop_state.md` summary section under `### Pre-Plan Questions` using question/answer pairs format:
+  ```
+  ### Pre-Plan Questions
+  - **Q:** <question>
+    **A:** <user answer>
+  ```
+
 ### Identify Risks and Open Questions
 - Flag technical risks, unknowns, or decisions needing user input before coding.
 - Document unresolved items clearly so Worker can escalate.
@@ -44,6 +55,14 @@ Support iterative feedback rounds: if the user requests changes, revise the rele
 
 ### Enable Auto-Loop Flag Before Transitioning
 Before transitioning to the Worker, update line 3 of `loop_state.md` to set `can_loop=true`. This enables the `/pipeline-auto` extension guard so auto-looping is available once the pipeline reaches Worker. The value stays true through Worker → Finalizer and is reset by the Interviewer on the next loop.
+
+**Write order matters.** Follow this exact sequence during transition:
+1. Append your summary body to `loop_state.md` (including Pre-Plan Q&A log).
+2. Update handoff history line (line 2) to point to Worker.
+3. Set `can_loop=true` on line 3.
+4. Git commit.
+
+Do **not** set `can_loop=true` before the summary body and handoff line are written — doing so risks partial state if something fails mid-transition.
 
 ### Handling Mid-Loop Cancellation
 If the user says "cancel" during your session, follow [`cancel_guide.md`](../skill_helpers/cancel_guide.md). This guide covers two-step confirmation, git reset to pre-loop state, and TODO restore/archive.
@@ -69,6 +88,7 @@ If the user says "cancel" during your session, follow [`cancel_guide.md`](../ski
 
 ## Deliverables
 Follow [`transition_guide.md`](../skill_helpers/transition_guide.md) for summary append, handoff update, in-progress file handling, and git commit. Role-specific summary content:
+- **Pre-plan Q&A log** — questions asked during Phase 1 and user answers, recorded under `### Pre-Plan Questions` in your summary section.
 - **Architecture overview** — high-level design and key decisions with brief justifications.
 - **Design rationale** — *why* each architectural decision was made, not just what was chosen. Explain trade-offs considered and rejected alternatives so the Worker understands the reasoning behind the plan.
 - **File/module map** — what gets created, modified, or deleted.
