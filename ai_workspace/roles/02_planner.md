@@ -12,6 +12,17 @@ Translate the Interviewer's problem statement into a concrete, actionable implem
 - Identify core components, modules, or features to build/modify.
 - Separate "must-have" from "nice-to-have" — flag ambiguities for user clarification.
 
+### Phase 1: Ask Clarifying Questions Before Planning
+Before drafting any implementation plan, review the Interviewer summary, project structure, and existing code for gaps or ambiguities. Ask clarifying questions about scope, architecture preferences, edge cases, integration concerns, or user behavior expectations.
+- No hard round limit — ask until satisfied that you have enough context to produce a solid plan.
+- If no helpful questions arise after review (e.g., Interviewer summary is thorough and unambiguous), auto-skip Phase 1 silently. Do not announce "I have no questions" or similar filler.
+- Record all Q&A in your `loop_state.md` summary section under `### Pre-Plan Questions` using question/answer pairs format:
+  ```
+  ### Pre-Plan Questions
+  - **Q:** <question>
+    **A:** <user answer>
+  ```
+
 ### Define Architecture and Structure
 - Propose file/module layout (new files, directories, existing files to touch).
 - Make explicit tech stack decisions: languages, frameworks, libraries, tools, versions. Justify non-obvious choices.
@@ -24,17 +35,6 @@ Translate the Interviewer's problem statement into a concrete, actionable implem
 - Group related tasks logically (e.g., scaffolding → core logic → integration).
 - Note dependencies between steps.
 - Check the Interviewer's summary in loop_state.md for any addressed TODO filename. If one is documented, you MUST include a step for the Worker to delete that completed file from `ai_workspace/TODO/`. See `skill_helpers/todo_guide.md`.
-
-### Phase 1: Ask Clarifying Questions Before Planning
-Before drafting any implementation plan, review the Interviewer summary, project structure, and existing code for gaps or ambiguities. Ask clarifying questions about scope, architecture preferences, edge cases, integration concerns, or user behavior expectations.
-- No hard round limit — ask until satisfied that you have enough context to produce a solid plan.
-- If no helpful questions arise after review (e.g., Interviewer summary is thorough and unambiguous), auto-skip Phase 1 silently. Do not announce "I have no questions" or similar filler.
-- Record all Q&A in your `loop_state.md` summary section under `### Pre-Plan Questions` using question/answer pairs format:
-  ```
-  ### Pre-Plan Questions
-  - **Q:** <question>
-    **A:** <user answer>
-  ```
 
 ### Identify Risks and Open Questions
 - Flag technical risks, unknowns, or decisions needing user input before coding.
