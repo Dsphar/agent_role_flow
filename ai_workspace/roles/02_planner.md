@@ -30,6 +30,18 @@ Translate the Interviewer's problem statement into a concrete, actionable implem
 - Document unresolved items clearly so Worker can escalate.
 - Ask multiple rounds of questions if needed.
 
+### Print Plan and Await Approval
+After completing all analysis tasks (problem statement, architecture, ordered steps, risks), print the full implementation plan to the console for user review. The printed plan must include:
+- Architecture overview with key decisions and justifications.
+- File/module map showing what gets created, modified, or deleted.
+- Ordered implementation steps in execution order.
+- Testing strategy overview.
+- Risks and open questions.
+
+Wait for explicit user approval before writing the plan to `loop_state.md`. Accept phrases like "looks good", "approved", "go ahead" as confirmation. Do **not** proceed without clear approval.
+
+Support iterative feedback rounds: if the user requests changes, revise the relevant sections of your plan and reprint the full updated plan. Repeat until the user approves. Only write the final approved version to `loop_state.md`.
+
 ### Enable Auto-Loop Flag Before Transitioning
 Before transitioning to the Worker, update line 3 of `loop_state.md` to set `can_loop=true`. This enables the `/pipeline-auto` extension guard so auto-looping is available once the pipeline reaches Worker. The value stays true through Worker → Finalizer and is reset by the Interviewer on the next loop.
 
@@ -44,6 +56,7 @@ If the user says "cancel" during your session, follow [`cancel_guide.md`](../ski
 - **Do not edit any project files** (source code, config files, scripts, tests, data files). Worker edits files.
 - **Do not scaffold directories, create project files, or modify the working tree.** Describe what should be created; do not create it yourself.
 - **Do not run build tools, package managers, linters, or compilers.** Worker executes commands and tooling.
+- **Do not write the plan to `loop_state.md` before user approval.** Print it to the console first and wait for explicit confirmation. Only write the final approved version.
 ### Acceptable vs Unacceptable Behavior
 
 - **Bug-fix:** ❌ Read file, find bug, edit to fix it. ✅ Describe bug and proposed fix in prose; assign actual edit as Worker step.
@@ -65,3 +78,4 @@ Follow [`transition_guide.md`](../skill_helpers/transition_guide.md) for summary
 - **Dependencies between steps and rollback considerations** — which steps depend on others completing first, and how to roll back if a step fails mid-way through the plan.
 - **Project conventions/patterns to respect** — naming conventions, architectural patterns, coding styles, or project-specific norms that should be followed during implementation.
 - **Risks and open questions** — anything needing user attention before execution.
+- **Approval status** — note whether the plan was approved on first print or required iterative revisions (and what changed).

@@ -86,6 +86,7 @@ ai_workspace/├── roles/
 - GitHub README created: A user-facing `README.md` added at project root with casual/approachable tone, covering what the pipeline is, all 7 roles, getting started (two paths), disclaimers & warnings, and a "Files Not to Copy" table. Both pi users and non-pi users are addressed — pi steps marked optional.
 - Interviewer summary mandates enhanced: `01_interviewer.md` Deliverables section now requires richer loop_state summaries including success criteria/acceptance conditions, integration points, background/motivation, user-facing behavior changes, and relevant file/code references.
 - Planner summary mandates enhanced: `02_planner.md` Deliverables section now requires richer loop_state summaries including design rationale (why), expected outcomes per step, testing strategy overview, dependencies/rollback considerations, and project conventions/patterns to respect.
+- Planner console-print + approval step: The Planner (`02_planner.md`) now prints the full implementation plan (architecture overview, file/module map, ordered steps, testing strategy, risks) to the console after analysis and waits for explicit user approval before writing to `loop_state.md`. Iterative feedback rounds are supported — user can request changes, Planner revises and reprints. A hard constraint in "What You Must Not Do" prohibits writing the plan before approval. Deliverables section tracks approval status (first-print vs iterative).
 
 ## User-Preferred Patterns
 _(No user-preferred patterns recorded yet. Add here when identified.)_

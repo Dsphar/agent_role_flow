@@ -520,7 +520,7 @@ async function handler(_args: string, ctx: ExtensionCommandContext): Promise<voi
         if (!loopStateExists(cwd)) {
             console.log("");
             console.log("\u2713 Pipeline complete — loop_state.md removed by Finalizer.");
-            console.log(`  Finished in ${i} session${i > 1 ? "s" : ""}.`);
+            console.log(`  Finished in ${i} session${i > 1 ? "s" : ""}. Type /new to continue to a new session.`);
             _pipelineCompleted = true;
             return;
         }
