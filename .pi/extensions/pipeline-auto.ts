@@ -32,6 +32,10 @@ let _pipelineCompleted = false;
 // Track role at session start to detect handoffs mid-session.
 let _sessionStartRole: string | undefined = undefined;
 
+// Track the last known role from loop_state.md so we can detect post-Finalizer completion
+// even when the session started on an earlier role and progressed through Finalizer mid-session.
+let _lastKnownRole: string | undefined = undefined;
+
 // Cache goal summary at session start so it survives loop_state.md deletion by Finalizer.
 let _cachedGoalSummary: string | undefined = undefined;
 
@@ -47,56 +51,51 @@ function getPiCommand(): { command: string; args: string[] } {
 }
 
 /**
- * Parse line 2 of loop_state.md to extract the current role name.
- * Expected format: **Current Role:** {RoleName} (Role NN) | History: ...
+ * Parsed state from loop_state.md — all values extracted in a single file read.
  */
-function getCurrentRole(cwd: string): string | undefined {
-    try {
-        const content = fs.readFileSync(path.join(cwd, LOOP_STATE_FILE), "utf-8");
-        const lines = content.split("\n");
-        if (lines.length < 2) return undefined;
-
-        // Strip trailing <br> for parsing
-        let line2 = lines[1].replace(/<br>\s*$/, "");
-        const match = line2.match(/\*\*Current Role:\*\*\s*(.+?)(?:\s+(?:\(in-sendback\)\s+)?\(Role\s+\d+\)|\s+\|)/i);
-        return match ? match[1].trim() : undefined;
-    } catch {
-        return undefined;
-    }
+interface LoopStateParsed {
+    goalSummary: string | undefined;
+    currentRole: string | undefined;
+    canLoop: boolean;
+    isSendBack: boolean;
 }
 
 /**
- * Parse line 1 of loop_state.md to extract the goal summary.
- * Expected format: **Goal Summary:** <text>
+ * Read and parse loop_state.md once, extracting all header values (lines 1–3).
+ * Replaces five separate fs.readFileSync calls with a single read.
  */
-function getGoalSummary(cwd: string): string | undefined {
+function parseLoopState(cwd: string): LoopStateParsed {
+    let content: string;
     try {
-        const content = fs.readFileSync(path.join(cwd, LOOP_STATE_FILE), "utf-8");
-        const lines = content.split("\n");
-        if (lines.length < 1) return undefined;
+        content = fs.readFileSync(path.join(cwd, LOOP_STATE_FILE), "utf-8");
+    } catch {
+        return { goalSummary: undefined, currentRole: undefined, canLoop: false, isSendBack: false };
+    }
 
-        // Strip trailing <br> for parsing
-        let line1 = lines[0].replace(/<br>\s*$/, "");
+    const lines = content.split("\n");
+
+    // Line 1 — Goal Summary
+    let goalSummary: string | undefined;
+    if (lines.length >= 1) {
+        const line1 = lines[0].replace(/<br>\s*$/, "");
         const match = line1.match(/\*\*Goal Summary:\*\*\s*(.+)/i);
-        return match ? match[1].trim() : undefined;
-    } catch {
-        return undefined;
+        goalSummary = match ? match[1].trim() : undefined;
     }
-}
 
-/**
- * Parse line 3 of loop_state.md to extract the can_loop flag.
- * Expected format: test_level=... | do_docs=... | can_loop={true|false}
- * Returns false if file missing, key absent, or value unrecognized.
- */
-function parseCanLoop(cwd: string): boolean {
-    try {
-        const content = fs.readFileSync(path.join(cwd, LOOP_STATE_FILE), "utf-8");
-        const lines = content.split("\n");
-        if (lines.length < 3) return false;
+    // Line 2 — Current Role + send-back detection
+    let currentRole: string | undefined;
+    let isSendBack = false;
+    if (lines.length >= 2) {
+        const line2 = lines[1].replace(/<br>\s*$/, "");
+        const roleMatch = line2.match(/\*\*Current Role:\*\*\s*(.+?)(?:\s+(?:\(in-sendback\)\s+)?\(Role\s+\d+\)|\s+\|)/i);
+        currentRole = roleMatch ? roleMatch[1].trim() : undefined;
+        isSendBack = /\(in-sendback\)/i.test(line2);
+    }
 
-        // Strip trailing <br> for parsing
-        let line3 = lines[2].replace(/<br>\s*$/, "");
+    // Line 3 — can_loop flag
+    let canLoop = false;
+    if (lines.length >= 3) {
+        const line3 = lines[2].replace(/<br>\s*$/, "");
         const pairs = line3.split(" | ");
         for (const pair of pairs) {
             const eqIdx = pair.indexOf("=");
@@ -104,13 +103,37 @@ function parseCanLoop(cwd: string): boolean {
             const key = pair.substring(0, eqIdx).trim();
             const value = pair.substring(eqIdx + 1).trim();
             if (key === "can_loop" && (value === "true" || value === "false")) {
-                return value === "true";
+                canLoop = value === "true";
+                break;
             }
         }
-        return false; // key absent
-    } catch {
-        return false; // file missing or read error
     }
+
+    return { goalSummary, currentRole, canLoop, isSendBack };
+}
+
+/**
+ * Parse line 2 of loop_state.md to extract the current role name.
+ * Kept for callers outside updateStatus (pipeline-auto handler, session_start).
+ */
+function getCurrentRole(cwd: string): string | undefined {
+    return parseLoopState(cwd).currentRole;
+}
+
+/**
+ * Parse line 1 of loop_state.md to extract the goal summary.
+ * Kept for callers outside updateStatus (session_start caching).
+ */
+function getGoalSummary(cwd: string): string | undefined {
+    return parseLoopState(cwd).goalSummary;
+}
+
+/**
+ * Parse line 3 of loop_state.md to extract the can_loop flag.
+ * Kept for callers outside updateStatus (pipeline-auto handler guard).
+ */
+function parseCanLoop(cwd: string): boolean {
+    return parseLoopState(cwd).canLoop;
 }
 
 /**
@@ -118,17 +141,7 @@ function parseCanLoop(cwd: string): boolean {
  * Reads line 2 of loop_state.md for `(in-sendback)` suffix.
  */
 function isInSendBack(cwd: string): boolean {
-    try {
-        const content = fs.readFileSync(path.join(cwd, LOOP_STATE_FILE), "utf-8");
-        const lines = content.split("\n");
-        if (lines.length < 2) return false;
-
-        // Strip trailing <br> for parsing
-        let line2 = lines[1].replace(/<br>\s*$/, "");
-        return /\(in-sendback\)/i.test(line2);
-    } catch {
-        return false; // file missing or read error
-    }
+    return parseLoopState(cwd).isSendBack;
 }
 
 /**
@@ -587,16 +600,23 @@ export default function (pi: ExtensionAPI) {
         const c = ctx as { hasUI?: boolean; cwd?: string; ui?: { setStatus: (key: string, text: string | undefined) => void } };
         if (!c?.hasUI || !c?.cwd || !c?.ui) return; // no-op in print mode (sub-agent sessions)
 
-        const role = getCurrentRole(c.cwd);
-        const goal = getGoalSummary(c.cwd);
-        const canLoop = parseCanLoop(c.cwd);
+        const state = parseLoopState(c.cwd);
+        const role = state.currentRole;
+        const goal = state.goalSummary;
+        const canLoop = state.canLoop;
 
         // Post-Finalizer ready message: pipeline just completed, file deleted by Finalizer.
-        // Only show when session started as Finalizer AND loop_state.md no longer exists.
-        if (_sessionStartRole === "Finalizer" && !loopStateExists(c.cwd)) {
+        // Show when the last known role was Finalizer AND loop_state.md no longer exists.
+        // This works whether the session started as Finalizer or progressed to it mid-session.
+        if (_lastKnownRole === "Finalizer" && !loopStateExists(c.cwd)) {
             const cachedGoal = _cachedGoalSummary ?? "(no goal summary)";
             c.ui.setStatus("pipeline-auto", `Pipeline complete | ${cachedGoal} | Ready for new loop`);
             return;
+        }
+
+        // Update last known role so we can detect post-Finalizer completion even in mid-session handoffs.
+        if (role) {
+            _lastKnownRole = role;
         }
 
         // Build the always-visible status text: role + goal summary
@@ -609,7 +629,7 @@ export default function (pi: ExtensionAPI) {
         let roleLabel = `Role: ${displayRole}`;
 
         // Append (in-sendback) suffix when current role is in send-back recovery mode
-        if (isInSendBack(c.cwd)) {
+        if (state.isSendBack) {
             roleLabel += " (in-sendback)";
         }
 
@@ -631,8 +651,10 @@ export default function (pi: ExtensionAPI) {
     // On session start: capture current role for handoff detection, update footer status.
     pi.on("session_start", (event, ctx) => {
         const c = ctx as { cwd?: string };
-        _sessionStartRole = getCurrentRole(c.cwd ?? ".") ?? "Interviewer";
-        _cachedGoalSummary = getGoalSummary(c.cwd ?? ".");
+        const state = parseLoopState(c.cwd ?? ".");
+        _sessionStartRole = state.currentRole ?? "Interviewer";
+        _lastKnownRole = state.currentRole;
+        _cachedGoalSummary = state.goalSummary;
         updateStatus(ctx);
         const e = event as { reason?: string };
         if (e.reason === "new" && _pipelineCompleted) {
@@ -642,6 +664,8 @@ export default function (pi: ExtensionAPI) {
     });
     // On each turn end to pick up changes mid-session
     pi.on("turn_end", (_event, ctx) => updateStatus(ctx));
+    // Final checkpoint after agent fully completes — catches post-Finalizer loop_state.md deletion
+    pi.on("agent_end", (_event, ctx) => updateStatus(ctx));
     // Clear footer status on session replacement (/new, /resume, /fork)
     pi.on("session_shutdown", (_event, ctx) => {
         const c = ctx as { hasUI?: boolean; ui?: { setStatus: (key: string, text: string | undefined) => void } };
