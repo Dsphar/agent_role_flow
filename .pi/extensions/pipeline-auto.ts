@@ -71,7 +71,7 @@ function getGoalSummary(cwd: string): string | undefined {
 
         // Strip trailing <br> for parsing
         let line1 = lines[0].replace(/<br>\s*$/, "");
-        const match = line1.match(/\*\*Goal Summary:\*\*\s*(.+?)/i);
+        const match = line1.match(/\*\*Goal Summary:\*\*\s*(.+)/i);
         return match ? match[1].trim() : undefined;
     } catch {
         return undefined;
@@ -570,17 +570,16 @@ export default function (pi: ExtensionAPI) {
         // Build the always-visible status text: role + goal summary
         let parts: string[] = [];
         const displayRole = role ?? "Interviewer"; // default to Interviewer when no loop_state.md or role parsed
-        parts.push(`Role: ${displayRole}`);
+        if (canLoop) {
+            parts.push(`Role: ${displayRole} ⚡`); // compact auto-work indicator after role
+        } else {
+            parts.push(`Role: ${displayRole}`);
+        }
         if (goal) {
             parts.push(goal);
         }
 
-        const baseStatus = parts.join(" | ");
-        if (canLoop) {
-            c.ui.setStatus("pipeline-auto", `${baseStatus} — Auto-work available (/pipeline-auto)`);
-        } else {
-            c.ui.setStatus("pipeline-auto", baseStatus);
-        }
+        c.ui.setStatus("pipeline-auto", parts.join(" | "));
     };
 
     // On session start: update footer status and clear previous pipeline output on /new.
