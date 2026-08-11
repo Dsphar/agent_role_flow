@@ -89,7 +89,7 @@ Line 3 of `loop_state.md` carries global mutable key-value pairs that any role c
 | Key | Values | Description |
 |-----|--------|-------------|
 | `test_level` | `quick`, `deep`, `skip` | How thorough the Tester should be |
-| `skip_docs` | `true`, `false` | Whether to skip the Documenter role entirely |
+| `do_docs` | `true`, `false` | Whether to include the Documenter role |
 | `can_loop` | `true`, `false` | Whether auto-looping is allowed (set by Planner) |
 
 ### Routing — Where Does Work Go Next?
@@ -98,19 +98,19 @@ The pipeline dynamically routes based on config. Here's how it works:
 
 **Worker hands off to:**
 
-| skip_docs | test_level | Hands off to |
-|-----------|------------|--------------|
-| false     | deep/quick | Tester → Documenter |
-| false     | skip       | Documenter         |
-| true      | deep/quick | Tester → Reviewer  |
-| true      | skip       | Reviewer           |
+| do_docs | test_level | Hands off to |
+|---------|------------|--------------|
+| true    | deep/quick | Tester → Documenter |
+| true    | skip       | Documenter         |
+| false   | deep/quick | Tester → Reviewer  |
+| false   | skip       | Reviewer           |
 
 **Tester hands off to:**
 
-| skip_docs | test_level | Hands off to |
-|-----------|------------|--------------|
-| false     | deep/quick | Documenter (Role 05) |
-| true      | deep/quick | Reviewer (Role 06)   |
+| do_docs | test_level | Hands off to |
+|---------|------------|--------------|
+| true    | deep/quick | Documenter (Role 05) |
+| false   | deep/quick | Reviewer (Role 06)   |
 
 ### State Management
 

@@ -1,5 +1,5 @@
 /**
- * Quick tests for pipeline-push.ts helper functions.
+ * Quick tests for pipeline-auto.ts helper functions.
  * Replicates getCurrentRole() and parseCanLoop() logic in plain JS,
  * testing against various inputs including edge cases from the spec.
  */
@@ -21,7 +21,7 @@ function assert(condition, testName) {
     }
 }
 
-// --- Replicate getCurrentRole() logic from pipeline-push.ts ---
+// --- Replicate getCurrentRole() logic from pipeline-auto.ts ---
 function getCurrentRole(content) {
     const lines = content.split("\n");
     if (lines.length < 2) return undefined;
@@ -107,17 +107,17 @@ function makeContent3(line3) {
 }
 
 // Basic true/false parsing
-assert(parseCanLoop(makeContent3("test_level=quick | skip_docs=no | can_loop=true")) === true,
+assert(parseCanLoop(makeContent3("test_level=quick | do_docs=no | can_loop=true")) === true,
     "Returns true when can_loop=true");
 
-assert(parseCanLoop(makeContent3("test_level=deep | skip_docs=yes | can_loop=false")) === false,
+assert(parseCanLoop(makeContent3("test_level=deep | do_docs=yes | can_loop=false")) === false,
     "Returns false when can_loop=false");
 
 // Key in different positions
-assert(parseCanLoop(makeContent3("can_loop=true | test_level=quick | skip_docs=no")) === true,
+assert(parseCanLoop(makeContent3("can_loop=true | test_level=quick | do_docs=no")) === true,
     "Parses can_loop when it's the first key");
 
-assert(parseCanLoop(makeContent3("skip_docs=no | can_loop=true | test_level=quick")) === true,
+assert(parseCanLoop(makeContent3("do_docs=no | can_loop=true | test_level=quick")) === true,
     "Parses can_loop when it's in the middle");
 
 // Edge cases — missing file content (simulated by short arrays)
@@ -126,7 +126,7 @@ assert(parseCanLoop(noLine3) === false,
     "Returns false when file has < 3 lines");
 
 // Missing key
-assert(parseCanLoop(makeContent3("test_level=quick | skip_docs=no")) === false,
+assert(parseCanLoop(makeContent3("test_level=quick | do_docs=no")) === false,
     "Returns false when can_loop key is absent");
 
 // Unrecognized values (should return false per spec)
@@ -142,16 +142,16 @@ assert(parseCanLoop(makeContent3("can_loop=TRUE")) === false,
 // ============================================================
 console.log("\n=== Test Suite: Command rename verification ===\n");
 
-const extSource = fs.readFileSync(path.join(__dirname, ".pi", "extensions", "pipeline-push.ts"), "utf-8");
+const extSource = fs.readFileSync(path.join(__dirname, ".pi", "extensions", "pipeline-auto.ts"), "utf-8");
 
 assert(!extSource.includes("/autoloop"),
     "No '/autoloop' references remain in extension source");
 
-assert(extSource.includes("registerCommand(\"pipeline-push\""),
-    "Command registered as 'pipeline-push'");
+assert(extSource.includes("registerCommand(\"pipeline-auto\""),
+    "Command registered as 'pipeline-auto'");
 
-assert(extSource.includes("/pipeline-push"),
-    "Help text uses '/pipeline-push'");
+assert(extSource.includes("/pipeline-auto"),
+    "Help text uses '/pipeline-auto'");
 
 // ============================================================
 console.log("\n=== Test Suite: can_loop guard in handler ===\n");
@@ -168,11 +168,11 @@ console.log("\n=== Test Suite: turn_end listener ===\n");
 assert(extSource.includes('pi.on("turn_end"'),
     'Registers turn_end event listener');
 
-assert(extSource.includes("ctx.hasUI"),
-    "Listener guards behind ctx.hasUI (no-op in print mode)");
+assert(extSource.includes("c?.hasUI") || extSource.includes("ctx.hasUI"),
+    "Listener guards behind hasUI check (no-op in print mode)");
 
-assert(extSource.includes('setStatus("pipeline-push"'),
-    "Uses setStatus with 'pipeline-push' key for footer status");
+assert(extSource.includes('setStatus("pipeline-auto"'),
+    "Uses setStatus with 'pipeline-auto' key for footer status");
 
 // ============================================================
 console.log("\n=== Test Suite: AGENTS.md updates ===\n");

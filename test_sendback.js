@@ -1,5 +1,5 @@
 /**
- * Send-back re-test for pipeline-push extension fixes.
+ * Send-back re-test for pipeline-auto extension fixes.
  * Covers: (1) Reviewer's 3 send-back issues, (2) full regression of original tests.
  */
 
@@ -25,7 +25,7 @@ function assert(condition, label) {
 // ──────────────────────────────────────────────
 console.log("\n=== Section 1: Typo fixes (Reviewer send-back #1) ===");
 
-const extPath = path.join(".pi", "extensions", "pipeline-push.ts");
+const extPath = path.join(".pi", "extensions", "pipeline-auto.ts");
 const extContent = fs.readFileSync(extPath, "utf-8");
 
 // Check AUTO_ACCEPT_INSTRUCTIONS for typos
@@ -125,15 +125,15 @@ function testParseCanLoop(line3Raw) {
     return false;
 }
 
-assert(testParseCanLoop("test_level=quick | skip_docs=no | can_loop=true") === true,
+assert(testParseCanLoop("test_level=quick | do_docs=no | can_loop=true") === true,
     "parseCanLoop returns true for can_loop=true");
-assert(testParseCanLoop("test_level=deep | skip_docs=yes | can_loop=false") === false,
+assert(testParseCanLoop("test_level=deep | do_docs=yes | can_loop=false") === false,
     "parseCanLoop returns false for can_loop=false");
-assert(testParseCanLoop("can_loop=true | test_level=quick | skip_docs=no") === true,
+assert(testParseCanLoop("can_loop=true | test_level=quick | do_docs=no") === true,
     "parseCanLoop finds key in different position (first)");
 
 // Edge cases
-assert(testParseCanLoop("test_level=quick | skip_docs=no") === false,
+assert(testParseCanLoop("test_level=quick | do_docs=no") === false,
     "parseCanLoop returns false when can_loop key absent");
 assert(testParseCanLoop("can_loop=yes") === false,
     "parseCanLoop returns false for unrecognized value 'yes'");
@@ -145,7 +145,7 @@ assert(testParseCanLoop("") === false,
 // ──────────────────────────────────────────────
 console.log("\n=== Section 6: Regression — Command rename (original tests) ===");
 
-assert(extContent.includes('pi.registerCommand("pipeline-push"'), "registerCommand uses 'pipeline-push' name");
+assert(extContent.includes('pi.registerCommand("pipeline-auto"'), "registerCommand uses 'pipeline-auto' name");
 assert(!extContent.includes("/autoloop"), "No '/autoloop' references remain in file");
 assert(!extContent.includes('"autoloop"') && !extContent.includes("'autoloop'"),
     'No bare "autoloop" string remains');
@@ -166,7 +166,7 @@ console.log("\n=== Section 8: Regression — Event listeners (original tests) ==
 
 assert(extContent.includes('pi.on("turn_end"'), "Registered turn_end event listener");
 assert(extContent.includes('pi.on("session_start"'), "Registered session_start event listener");
-assert(extContent.includes("ctx.hasUI"), "Listeners guard behind ctx.hasUI check");
+assert(extContent.includes("c?.hasUI") || extContent.includes("ctx.hasUI"), "Listeners guard behind hasUI check");
 
 // ──────────────────────────────────────────────
 // SECTION 9: AGENTS.md and role files still correct
@@ -192,7 +192,7 @@ console.log("\n=== Section 10: File structure ===");
 
 assert(!fs.existsSync(path.join(".pi", "extensions", "auto-loop.ts")),
     "Old auto-loop.ts file does not exist (renamed)");
-assert(fs.existsSync(extPath), "New pipeline-push.ts exists at correct path");
+assert(fs.existsSync(extPath), "New pipeline-auto.ts exists at correct path");
 
 // ──────────────────────────────────────────────
 // Summary

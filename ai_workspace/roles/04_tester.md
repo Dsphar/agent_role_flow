@@ -86,14 +86,14 @@ Note areas difficult/impossible to test and why. Flag critical paths lacking ade
 ### Generate and Present Suggestions
 After testing, generate suggestions **only if** something genuinely worth noting surfaced — do not manufacture a list. Quality over quantity. Draw from: bugs found (even resolved ones revealing deeper concerns), coverage gaps, infrastructure observations (missing mocks, slow tests, flaky patterns), or other actionable insights.
 
-Present as a **numbered list** so user can reference items when creating TODOs via [`todo_guide.md`](../skill_helpers/todo_guide.md). Each suggestion: one-line description. If none arise, skip gracefully — no empty list. Wait for user acknowledgment before proceeding to Skip-Docs prompt.
+Present as a **numbered list** so user can reference items when creating TODOs via [`todo_guide.md`](../skill_helpers/todo_guide.md). Each suggestion: one-line description. If none arise, skip gracefully — no empty list. Wait for user acknowledgment before proceeding to Docs-Inclusion prompt.
 
-**Auto-mode (user away):** Generate suggestions if warranted and note them in your summary section. Do not wait for acknowledgment — proceed directly to the Skip-Docs step.
+**Auto-mode (user away):** Generate suggestions if warranted and note them in your summary section. Do not wait for acknowledgment — proceed directly to the Docs-Inclusion step.
 
-### Skip-Docs Prompt (Tests Passed Only)
-**First, check line 3 of `loop_state.md` for a pre-set `skip_docs`.** See [Pipeline Configuration](AGENTS.md#pipeline-configuration-line-3-of-loop_statemd) in AGENTS.md.
-- If `skip_docs=true`, skip this prompt entirely. Transition to Reviewer (Role 06).
-- If `skip_docs=false`, proceed below — user can still change their mind.
+### Docs-Inclusion Prompt (Tests Passed Only)
+**First, check line 3 of `loop_state.md` for a pre-set `do_docs`.** See [Pipeline Configuration](AGENTS.md#pipeline-configuration-line-3-of-loop_statemd) in AGENTS.md.
+- If `do_docs=false`, skip this prompt entirely. Transition to Reviewer (Role 06).
+- If `do_docs=true`, proceed below — user can still change their mind.
 - If unset, this is your fallback mid-pipeline prompt. Proceed below.
 
 **Auto-mode (user away):** Evaluate criteria and silently apply your recommendation. Record the choice on line 3 if not already set.
@@ -124,11 +124,11 @@ This ensures "yes" = recommendation, "no" = alternative.
    ```
 3. Proceed to normal transition — Reviewer loads next since Documenter has "Complete" entry.
 
-**If user chooses not to skip:** proceed normally to Documenter (Role 05).
+**If user chooses to include documentation:** proceed normally to Documenter (Role 05).
 
 **User changes mind mid-pipeline:** Update line 3 with new value and note change in summary section.
 
-**Undoing a skip-docs decision:** User can edit `loop_state.md` to remove the pre-created Documenter section and revert handoff line before next session. Documenter role will load since it no longer appears in history.
+**Undoing a docs-skip decision:** User can edit `loop_state.md` to remove the pre-created Documenter section and revert handoff line before next session. Documenter role will load since it no longer appears in history.
 
 ### Handling Mid-Loop Cancellation
 If the user says "cancel" during your session, follow [`cancel_guide.md`](../skill_helpers/cancel_guide.md). This guide covers two-step confirmation, git reset to pre-loop state, and TODO restore/archive.

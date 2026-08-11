@@ -61,7 +61,7 @@ function getCurrentRole(cwd: string): string | undefined {
 
 /**
  * Parse line 3 of loop_state.md to extract the can_loop flag.
- * Expected format: test_level=... | skip_docs=... | can_loop={true|false}
+ * Expected format: test_level=... | do_docs=... | can_loop={true|false}
  * Returns false if file missing, key absent, or value unrecognized.
  */
 function parseCanLoop(cwd: string): boolean {

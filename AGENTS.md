@@ -4,6 +4,18 @@ AI assistant working through a **sequential pipeline of roles**. Each role is a 
 
 ---
 
+## User Profile
+
+The user is **returning to software development after an extended hiatus**. Adapt your communication accordingly:
+
+- **Education**: Help the user refresh their skills. When making decisions — architectural choices, tool selections, patterns — explain *why* you are doing something. Reference industry-standard design patterns by name (e.g., "This uses the Factory pattern because...") and briefly describe them.
+- **Pacing**: Assume the user may not recall modern conventions or recent framework changes. Introduce terminology when used for the first time.
+- **Tone**: Respectful and supportive — never condescending. The user has real experience; they just need a refresher, not a beginner tutorial.
+
+All roles apply this profile during their sessions.
+
+---
+
 ## Session Startup — Determine Current Role
 
 On every session start:
@@ -40,7 +52,7 @@ On every session start:
 
 ### User-Facing Prompt Conventions
 
-Binary-choice prompts: always list as **"Option A (recommended) or Option B?"** so "yes" = recommended/default, "no" = alternative. Applies to skip-docs, send-back vs defer, and any future binary choices across all roles. If both options equally valid, pick one as default and state it clearly — never leave "yes" undefined.
+Binary-choice prompts: always list as **"Option A (recommended) or Option B?"** so "yes" = recommended/default, "no" = alternative. Applies to docs inclusion, send-back vs defer, and any future binary choices across all roles. If both options equally valid, pick one as default and state it clearly — never leave "yes" undefined.
 
 ---
 
@@ -50,32 +62,32 @@ Line 3 is the **global mutable pipeline config line**. All parsing logic lives h
 
 ### Format
 ```
-test_level={quick|deep|skip} | skip_docs={true|false} | can_loop={true|false}<br>
+test_level={quick|deep|skip} | do_docs={true|false} | can_loop={true|false}<br>
 ```
 Key-value pairs separated by ` | `. Line ends with `<br>` for rendering. **Strip trailing `<br>` before parsing.** Parse: read line 3, strip `<br>`, split on ` | `, extract value after `=` for needed key.
 
 ### Guardrail — Unrecognized Values
-- `skip_docs` must be `true` or `false`; `test_level` must be `quick`, `deep`, or `skip`; `can_loop` must be `true` or `false`.
+- `do_docs` must be `true` or `false`; `test_level` must be `quick`, `deep`, or `skip`; `can_loop` must be `true` or `false`.
 - **If unrecognized, ask user directly.** Do not guess. Record answer on line 3 and note in summary section.
 
 ### Mutability Rules
 Any role can update line 3 if user changes their mind mid-pipeline. Updating role **must**: (1) update relevant key-value pair on line 3; (2) note change in its `loop_state.md` summary section.
 
 ### Routing Matrix — Worker Handoff Targets
-| skip_docs | test_level | Worker hands off to |
-|-----------|------------|---------------------|
-| false     | deep       | Tester → Documenter (existing flow) |
-| false     | quick      | Tester → Documenter (Tester adjusts scope) |
-| false     | skip       | Documenter          |
-| true      | deep       | Tester → Reviewer   |
-| true      | quick      | Tester → Reviewer   |
-| true      | skip       | Reviewer            |
+| do_docs | test_level | Worker hands off to |
+|---------|------------|---------------------|
+| true    | deep       | Tester → Documenter (existing flow) |
+| true    | quick      | Tester → Documenter (Tester adjusts scope) |
+| true    | skip       | Documenter          |
+| false   | deep       | Tester → Reviewer   |
+| false   | quick      | Tester → Reviewer   |
+| false   | skip       | Reviewer            |
 
 ### Routing Matrix — Tester Handoff Targets
-| skip_docs | test_level | Tester hands off to |
-|-----------|------------|---------------------|
-| false     | deep/quick | Documenter (Role 05) |
-| true      | deep/quick | Reviewer (Role 06) — advance past Documenter |
+| do_docs | test_level | Tester hands off to |
+|---------|------------|---------------------|
+| true    | deep/quick | Documenter (Role 05) |
+| false   | deep/quick | Reviewer (Role 06) — advance past Documenter |
 
 ### Dynamic Git Log Depth (Reviewer & Finalizer)
 

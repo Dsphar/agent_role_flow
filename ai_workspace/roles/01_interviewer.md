@@ -70,8 +70,8 @@ After completing all interview tasks above (including Wrap-Up) and before transi
    - Options: `quick` (lightweight/smoke tests), `deep` (full test suite), `skip` (no automated testing).
    - If user chooses `skip`, warn: "Skipping all tests means no automated validation this loop. Continue?"
 
-2. **Skip Documenter?** — Present as: "Skip documentation this loop? Yes or No?"
-   - Assess whether the current loop warrants documentation and make a **personal recommendation** at runtime (no hard-coded defaults). For example, recommend skipping for internal workflow changes, or not skipping for user-facing features.
+2. **Include documentation?** — Present as: "Include documentation this loop? Yes or No?"
+   - Assess whether the current loop warrants documentation and make a **personal recommendation** at runtime (no hard-coded defaults). For example, recommend including docs for user-facing features, or skipping for internal workflow changes.
 
 **Auto-select on ambiguous responses.** When user's answer is non-committal ("yes", "y", "ok", "sure", etc.), automatically accept whichever option you flagged as **recommended** for that question. Applies **only** to these two config questions at end of session, not other prompts during interviewing. No hard-coded defaults — uses whatever you recommended at runtime based on current loop's context.
 
@@ -108,5 +108,5 @@ If creating `loop_state.md` fresh, initialize lines 1–3 as:
 ```
 **Goal Summary:** <text><br>
 **Current Role:** Planner (Role 02) | History: Interviewer<br>
-**Pipeline Config:** test_level= | skip_docs= | can_loop=false<br>
+**Pipeline Config:** test_level= | do_docs= | can_loop=false<br>
 ```
