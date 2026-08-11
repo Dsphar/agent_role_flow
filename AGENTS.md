@@ -20,7 +20,7 @@ All roles apply this profile during their sessions.
 
 On every session start:
 
-0. **Second Opinion trigger detection.** Check if the user's initial message contains "Load second opinion" (case-insensitive). If detected: parse optional focus targeting (e.g., "focus on planning"), skip steps 1–10, load `ai_workspace/roles/manual_second_opinion.md` directly, and proceed as that role.
+0. **Second Opinion trigger detection.** Check if the user's initial message contains any of these phrases (case-insensitive substring match): "load second opinion", "second eyes", or "load eyes". If detected: parse optional focus targeting (e.g., "focus on planning"), skip steps 1–10, load `ai_workspace/roles/manual_second_opinion.md` directly, and proceed as that role.
 1. **Read `ai_workspace/loop_state.md`.** Parse line 2 for active role:
    ```
    **Current Role:** {RoleName} (Role NN) | History: ...
