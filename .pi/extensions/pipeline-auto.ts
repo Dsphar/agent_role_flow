@@ -32,6 +32,9 @@ let _pipelineCompleted = false;
 // Track role at session start to detect handoffs mid-session.
 let _sessionStartRole: string | undefined = undefined;
 
+// Cache goal summary at session start so it survives loop_state.md deletion by Finalizer.
+let _cachedGoalSummary: string | undefined = undefined;
+
 /**
  * Resolve the path to the pi executable that should be used for spawning.
  */
@@ -105,6 +108,24 @@ function parseCanLoop(cwd: string): boolean {
             }
         }
         return false; // key absent
+    } catch {
+        return false; // file missing or read error
+    }
+}
+
+/**
+ * Check whether the current role is in send-back mode.
+ * Reads line 2 of loop_state.md for `(in-sendback)` suffix.
+ */
+function isInSendBack(cwd: string): boolean {
+    try {
+        const content = fs.readFileSync(path.join(cwd, LOOP_STATE_FILE), "utf-8");
+        const lines = content.split("\n");
+        if (lines.length < 2) return false;
+
+        // Strip trailing <br> for parsing
+        let line2 = lines[1].replace(/<br>\s*$/, "");
+        return /\(in-sendback\)/i.test(line2);
     } catch {
         return false; // file missing or read error
     }
@@ -570,6 +591,14 @@ export default function (pi: ExtensionAPI) {
         const goal = getGoalSummary(c.cwd);
         const canLoop = parseCanLoop(c.cwd);
 
+        // Post-Finalizer ready message: pipeline just completed, file deleted by Finalizer.
+        // Only show when session started as Finalizer AND loop_state.md no longer exists.
+        if (_sessionStartRole === "Finalizer" && !loopStateExists(c.cwd)) {
+            const cachedGoal = _cachedGoalSummary ?? "(no goal summary)";
+            c.ui.setStatus("pipeline-auto", `Pipeline complete | ${cachedGoal} | Ready for new loop`);
+            return;
+        }
+
         // Build the always-visible status text: role + goal summary
         let parts: string[] = [];
         const displayRole = _sessionStartRole ?? (role ?? "Interviewer");
@@ -578,6 +607,12 @@ export default function (pi: ExtensionAPI) {
         // Show original role with new role as handoff target
         const isHandoff = role && _sessionStartRole !== undefined && role !== _sessionStartRole;
         let roleLabel = `Role: ${displayRole}`;
+
+        // Append (in-sendback) suffix when current role is in send-back recovery mode
+        if (isInSendBack(c.cwd)) {
+            roleLabel += " (in-sendback)";
+        }
+
         if (canLoop) {
             roleLabel += " ⚡";
         }
@@ -597,6 +632,7 @@ export default function (pi: ExtensionAPI) {
     pi.on("session_start", (event, ctx) => {
         const c = ctx as { cwd?: string };
         _sessionStartRole = getCurrentRole(c.cwd ?? ".") ?? "Interviewer";
+        _cachedGoalSummary = getGoalSummary(c.cwd ?? ".");
         updateStatus(ctx);
         const e = event as { reason?: string };
         if (e.reason === "new" && _pipelineCompleted) {
