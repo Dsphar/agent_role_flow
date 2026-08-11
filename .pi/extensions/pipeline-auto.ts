@@ -29,6 +29,9 @@ const STUCK_THRESHOLD = 3; // warn after this many consecutive same-role runs
 // Used to clear previous output when user types /new after the pipeline finishes.
 let _pipelineCompleted = false;
 
+// Track role at session start to detect handoffs mid-session.
+let _sessionStartRole: string | undefined = undefined;
+
 /**
  * Resolve the path to the pi executable that should be used for spawning.
  */
@@ -569,12 +572,20 @@ export default function (pi: ExtensionAPI) {
 
         // Build the always-visible status text: role + goal summary
         let parts: string[] = [];
-        const displayRole = role ?? "Interviewer"; // default to Interviewer when no loop_state.md or role parsed
+        const displayRole = _sessionStartRole ?? (role ?? "Interviewer");
+
+        // Detect handoff: role in loop_state.md changed since session start
+        // Show original role with new role as handoff target
+        const isHandoff = role && _sessionStartRole !== undefined && role !== _sessionStartRole;
+        let roleLabel = `Role: ${displayRole}`;
         if (canLoop) {
-            parts.push(`Role: ${displayRole} ⚡`); // compact auto-work indicator after role
-        } else {
-            parts.push(`Role: ${displayRole}`);
+            roleLabel += " ⚡";
         }
+        if (isHandoff) {
+            roleLabel += ` (${role} Handoff Ready)`;
+        }
+        parts.push(roleLabel);
+
         if (goal) {
             parts.push(goal);
         }
@@ -582,10 +593,10 @@ export default function (pi: ExtensionAPI) {
         c.ui.setStatus("pipeline-auto", parts.join(" | "));
     };
 
-    // On session start: update footer status and clear previous pipeline output on /new.
-    // When user types /new after the auto-loop completes, this clears the terminal
-    // so previous extension console.log output doesn't remain on screen.
+    // On session start: capture current role for handoff detection, update footer status.
     pi.on("session_start", (event, ctx) => {
+        const c = ctx as { cwd?: string };
+        _sessionStartRole = getCurrentRole(c.cwd ?? ".") ?? "Interviewer";
         updateStatus(ctx);
         const e = event as { reason?: string };
         if (e.reason === "new" && _pipelineCompleted) {

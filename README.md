@@ -118,6 +118,23 @@ The pipeline dynamically routes based on config. Here's how it works:
 - **Send-back loop** — Tester/Reviewer can route issues back to Worker via `(in-sendback)` suffix on line 2. Issues live inline under `### Send-Back Issues` subsections.
 - **Git strategy** — Per-role incremental commits during the pipeline, squashed into one `[ai-pipeline]` commit by Finalizer at loop end.
 
+### Second Opinion — Adversarial Auditor (Manual Role)
+
+Second Opinion is a manual role loaded outside the normal 01→07 pipeline. It provides an adversarial review of the current loop's work — plans, designs, decisions — looking for issues the original LLM may have missed due to confirmation bias.
+
+**Trigger:** Start a session with "Load second opinion" in your initial message (case-insensitive).
+
+**Optional focus targeting:** Add a focus phrase after the trigger, e.g., "Load second opinion, focus on planning" or "Load second opinion, review testing."
+
+**What it reviews:** Design/architecture, implementation quality, testing coverage, documentation gaps, security concerns, and performance issues.
+
+**Severity tiers:**
+- **Critical** — Bugs, vulnerabilities, or design flaws that will cause failures.
+- **Important** — Significant quality issues or missing functionality creating technical debt.
+- **Cosmetic** — Style inconsistencies and minor improvements.
+
+**How it works:** Second Opinion presents findings to you organized by severity. You choose which items to log (only approved items are saved). It can trigger a single send-back to the earliest affected role, but only with your approval.
+
 ## File Structure
 
 ```
@@ -131,7 +148,8 @@ ai_workspace/
 │   ├── 04_tester.md                   ← Testing (unit + e2e)
 │   ├── 05_documenter.md              ← Documentation
 │   ├── 06_reviewer.md                ← Quality gate review
-│   └── 07_finalizer.md               ← Squash commits, reset for next loop
+│   ├── 07_finalizer.md               ← Squash commits, reset for next loop
+│   └── manual_second_opinion.md      ← Adversarial auditor (manual trigger)
 ├── skill_helpers/                     ← Shared workflow guides
 │   ├── cancel_guide.md                ← Mid-loop cancellation flow
 │   ├── external_changes_guide.md      ← Detecting human-made changes
@@ -158,6 +176,13 @@ ai_workspace/
 - **Mid-loop cancellation** supported via two-step confirmation (Roles 01–06)
 
 ## Changelog
+
+### 2026-07-XX — Second Opinion Adversarial Auditor Role
+
+- **Added** `ai_workspace/roles/manual_second_opinion.md` — new manual role for adversarial review of pipeline work. Triggered by "Load second opinion" at session start (case-insensitive), sits outside the normal 01→07 pipeline.
+- **Added** optional focus targeting — e.g., "Load second opinion, focus on planning" to emphasize specific dimensions while still reviewing everything.
+- **Modified** `AGENTS.md` Session Startup — inserted Step 0 for trigger phrase detection before normal role loading (steps 1–10 skipped when triggered).
+- **Updated** this README with Second Opinion documentation in Deeper Dive section and file structure table.
 
 ### 2026-07-27 — Context Usage Display for Pipeline-Auto Extension
 

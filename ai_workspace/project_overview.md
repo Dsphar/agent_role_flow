@@ -15,7 +15,8 @@ ai_workspace/├── roles/
 │   ├── 04_tester.md                   ← Testing (unit + e2e)
 │   ├── 05_documenter.md              ← Documentation
 │   ├── 06_reviewer.md                ← Quality gate review
-│   └── 07_finalizer.md               ← Squash commits, reset for next loop
+│   ├── 07_finalizer.md               ← Squash commits, reset for next loop
+│   └── manual_second_opinion.md      ← Adversarial auditor (manual trigger role)
 ├── skill_helpers/
 │   ├── cancel_guide.md                ← Mid-loop cancellation two-step flow (Roles 01–06)
 │   ├── external_changes_guide.md      ← Detecting human-made changes before TODO scanning
@@ -92,6 +93,7 @@ ai_workspace/├── roles/
 - Planner Phase 1 pre-plan questioning: The Planner (`02_planner.md`) now has a mandatory Phase 1 where it asks clarifying questions *before* drafting or printing any implementation plan. This is separate from existing Phase 2 (iterative feedback after printing). Auto-skip if no helpful questions arise — no filler message. Q&A pairs recorded as `### Pre-Plan Questions` in the Planner's loop_state summary and `### Clarification Log` in the Interviewer summary.
 - can_loop write-order constraint: The Planner updates `can_loop=true` on line 3 of `loop_state.md` after updating the handoff line (line 2) but before its git commit. Ordering enforced via explicit constraint in `02_planner.md` to prevent partial state corruption if transition fails mid-write.
 - Planner Phase 1 section ordering fix: "Phase 1: Ask Clarifying Questions Before Planning" moved from after "Break Down into Ordered Steps" to immediately after "Analyze the Problem Statement". This ensures LLMs reading top-to-bottom execute clarifying questions before drafting plans, matching the section's stated intent.
+- Second Opinion manual role: New adversarial auditor role (`manual_second_opinion.md`) triggered by "Load second opinion" at session start (Step 0 in AGENTS.md, before normal role loading). Reviews loop_state.md and git diffs across six dimensions (design/implementation/testing/docs/security/performance), presents severity-tiered findings (Critical/Important/Cosmetic), logs only user-approved items, and can send-back to earliest affected role. No number prefix on filename to avoid pipeline ordering confusion. Self-contained — no separate helper guide.
 
 ## User-Preferred Patterns
 _(No user-preferred patterns recorded yet. Add here when identified.)_
