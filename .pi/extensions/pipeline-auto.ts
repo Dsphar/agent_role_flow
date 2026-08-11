@@ -60,6 +60,25 @@ function getCurrentRole(cwd: string): string | undefined {
 }
 
 /**
+ * Parse line 1 of loop_state.md to extract the goal summary.
+ * Expected format: **Goal Summary:** <text>
+ */
+function getGoalSummary(cwd: string): string | undefined {
+    try {
+        const content = fs.readFileSync(path.join(cwd, LOOP_STATE_FILE), "utf-8");
+        const lines = content.split("\n");
+        if (lines.length < 1) return undefined;
+
+        // Strip trailing <br> for parsing
+        let line1 = lines[0].replace(/<br>\s*$/, "");
+        const match = line1.match(/\*\*Goal Summary:\*\*\s*(.+?)/i);
+        return match ? match[1].trim() : undefined;
+    } catch {
+        return undefined;
+    }
+}
+
+/**
  * Parse line 3 of loop_state.md to extract the can_loop flag.
  * Expected format: test_level=... | do_docs=... | can_loop={true|false}
  * Returns false if file missing, key absent, or value unrecognized.
@@ -211,11 +230,11 @@ function runSubAgent(cwd: string): Promise<void> {
                 return "";
             }
             const raw = `${(contextUsageTokens / 1000).toFixed(1)}k /${(contextUsageWindow / 1000).toFixed(1)}k (${contextUsagePercent.toFixed(1)}%) `;
-            // ANSI color based on usage percentage
+            // ANSI color based on usage percentage (green < 70%, yellow 70-90%, red > 90%)
             let color: string;
-            if (contextUsagePercent < 60) {
+            if (contextUsagePercent < 70) {
                 color = "\x1b[32m"; // green
-            } else if (contextUsagePercent < 85) {
+            } else if (contextUsagePercent < 90) {
                 color = "\x1b[33m"; // yellow
             } else {
                 color = "\x1b[31m"; // red
@@ -539,14 +558,28 @@ export default function (pi: ExtensionAPI) {
         handler,
     });
 
-    // Proactive monitoring: check can_loop and show footer status
+    // Proactive monitoring: show role + goal summary in footer, plus auto-work availability
     const updateStatus = (ctx: unknown) => {
         const c = ctx as { hasUI?: boolean; cwd?: string; ui?: { setStatus: (key: string, text: string | undefined) => void } };
         if (!c?.hasUI || !c?.cwd || !c?.ui) return; // no-op in print mode (sub-agent sessions)
-        if (parseCanLoop(c.cwd)) {
-            c.ui.setStatus("pipeline-auto", "Auto-work is available. Run /pipeline-auto to start.");
+
+        const role = getCurrentRole(c.cwd);
+        const goal = getGoalSummary(c.cwd);
+        const canLoop = parseCanLoop(c.cwd);
+
+        // Build the always-visible status text: role + goal summary
+        let parts: string[] = [];
+        const displayRole = role ?? "Interviewer"; // default to Interviewer when no loop_state.md or role parsed
+        parts.push(`Role: ${displayRole}`);
+        if (goal) {
+            parts.push(goal);
+        }
+
+        const baseStatus = parts.join(" | ");
+        if (canLoop) {
+            c.ui.setStatus("pipeline-auto", `${baseStatus} — Auto-work available (/pipeline-auto)`);
         } else {
-            c.ui.setStatus("pipeline-auto", "");
+            c.ui.setStatus("pipeline-auto", baseStatus);
         }
     };
 
