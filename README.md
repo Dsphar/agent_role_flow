@@ -133,7 +133,7 @@ Second Opinion is a manual role loaded outside the normal 01→07 pipeline. It p
 - **Important** — Significant quality issues or missing functionality creating technical debt.
 - **Cosmetic** — Style inconsistencies and minor improvements.
 
-**How it works:** Second Opinion presents findings to you organized by severity. You choose which items to log (only approved items are saved). It can trigger a single send-back to the earliest affected role, but only with your approval.
+**How it works:** Second Opinion presents findings to you organized by severity. You choose which items to log (only approved items are saved) — logged findings become **directives for the affected roles**, each of which must acknowledge its assigned finding(s) in-session as fixed, deferred, or rejected (rejections require reasoning). It can trigger a single send-back to the earliest affected role, but only with your approval.
 
 ## File Structure
 
@@ -176,6 +176,14 @@ ai_workspace/
 - **Mid-loop cancellation** supported via two-step confirmation (Roles 01–06)
 
 ## Changelog
+
+### 2026-08-15 — Second Opinion Actionable Findings Mandate
+
+- **Modified** `ai_workspace/roles/manual_second_opinion.md` Step 5 template — logged findings are now directives, not optional context. Template is self-contained: downstream roles understand their obligation without loading the skill file.
+- **Added** mandatory `### Required Action — Affected Roles` block to every logged section — per-role callouts generated from the Target Role column (e.g., "Worker (Role 03): you must address Finding #1") plus acknowledgment rules: only directly-affected roles respond; each MUST state in-session whether it fixed, deferred, or rejected each assigned finding; rejections are invalid without reasoning.
+- **Updated** Deliverables section — item 2 now references the directive block; new item 3 tracks acknowledgment (in-session response, no persistent audit trail).
+- **Deleted** `ai_workspace/TODO/TODO_P2_second_opinion_forceful_summary.md` — this loop addressed that item.
+- **Updated** this README's Second Opinion section to document the actionable-findings behavior.
 
 ### 2026-07-XX — Second Opinion Adversarial Auditor Role
 

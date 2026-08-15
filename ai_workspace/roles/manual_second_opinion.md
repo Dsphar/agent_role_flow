@@ -63,7 +63,7 @@ Present findings one at a time or in small groups by severity tier. After presen
 
 Only log findings the user explicitly approves. Do **not** include non-selected items in your summary — if the user does not select an item, it is discarded entirely.
 
-Append your findings to `loop_state.md` under your own section:
+Append your findings to `loop_state.md` under your own section. The template below is self-contained: any downstream role reading it must understand its obligation without loading this skill file. Generate the per-role callouts from the Target Role column of the selected findings — one bullet per affected role, listing every finding number assigned to it:
 ```
 ---
 ## Second Opinion (Manual) — Complete
@@ -74,10 +74,22 @@ An adversarial reviewer (Second Opinion) analyzed this loop's work. The followin
 
 | # | Severity | Finding | Target Role |
 |---|----------|---------|-------------|
-| 1 | Critical | ... | ... |
+| 1 | Critical | ... | Worker (Role 03) |
+
+### Required Action — Affected Roles
+
+The findings above are **directives, not optional context**. Each affected role MUST respond to its assigned finding(s) during its own session:
+
+- **Worker (Role 03):** you must address Finding #1.
+- **{RoleName} (Role NN):** you must address Finding #{n}.
+
+**Acknowledgment rules:**
+1. Only directly-affected roles — those called out above — need to respond. All other roles ignore this section.
+2. Each affected role MUST state, in-session, whether it **fixed**, **deferred**, or **rejected** each assigned finding.
+3. A rejection is not valid without reasoning: the role MUST provide justification for why the finding does not apply or should not be addressed.
 ```
 
-Include a note that these findings are self-describing — downstream roles should read them as context from an external auditor.
+Every logged section MUST include the `### Required Action — Affected Roles` block above — per-role callouts and acknowledgment rules are mandatory, not optional.
 
 ### 6. Handle Send-Back (Optional, User Approves)
 
@@ -112,9 +124,10 @@ If no send-back is triggered:
 Follow [`transition_guide.md`](../skill_helpers/transition_guide.md) for summary append and handoff update conventions. Your deliverables:
 
 1. **Console presentation** of all findings organized by severity tier (Critical / Important / Cosmetic), with descriptions, locations, impact, and suggested fixes.
-2. **`loop_state.md` section** (`## Second Opinion (Manual) — Complete`) containing only user-approved findings in a table format, plus self-describing context for downstream roles.
-3. **Send-back routing** (if approved): `loop_state.md` line 2 updated to target role with `(in-sendback)` suffix and `### Send-Back Issues` subsection under your summary.
-4. **Pipeline state verification** (if no send-back): Confirm line 2 still shows the original active role so next session resumes naturally.
+2. **`loop_state.md` section** (`## Second Opinion (Manual) — Complete`) containing only user-approved findings in a table format, plus the `### Required Action — Affected Roles` directive block: per-role callouts naming each affected role with its assigned finding numbers, and acknowledgment rules (fixed/deferred/rejected; reasoning required for rejections; only directly-affected roles respond).
+3. **Acknowledgment tracking:** Findings become actionable through each directly-affected role's in-session response — no persistent audit trail beyond the in-session statement is required.
+4. **Send-back routing** (if approved): `loop_state.md` line 2 updated to target role with `(in-sendback)` suffix and `### Send-Back Issues` subsection under your summary.
+5. **Pipeline state verification** (if no send-back): Confirm line 2 still shows the original active role so next session resumes naturally.
 
 ### Git Commit Tag Convention
 - Normal completion: `[ai-second-opinion]`
