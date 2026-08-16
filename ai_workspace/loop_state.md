@@ -1,5 +1,5 @@
 **Goal Summary:** Pipeline-auto: blank-line condensation, live steering input, low-context auto-restart<br>
-**Current Role:** Worker (Role 03) | History: Interviewer → Planner<br>
+**Current Role:** Tester (Role 04) | History: Interviewer → Planner → Worker<br>
 **Pipeline Config:** test_level=deep | do_docs=true | can_loop=true<br>
 
 ---
@@ -143,3 +143,30 @@ Steps 1–3 are independent of each other (all in one file); Step 4 last since i
 
 ### Approval Status
 Approved on first print (user: "ok") — no iterative revisions required. Phase 1 pre-plan questioning auto-skipped per role file guidance (no helpful questions arose after review).
+
+---
+## Worker (Role 03) — Complete
+
+### Steps Completed
+All four ordered steps from the Planner's plan, executed in order:
+1. **Blank-line condensation** — closure-local `lastWasCondensedDash` flag + `emitLine(line)` helper inside `runSubAgent`: blank lines → `-` separator (no token prefix), runs of consecutive blanks collapse to exactly one dash; non-blank lines reset the collapse state and get the context-usage prefix. All streamed emissions route through it: complete lines in `flushBufferedLines`, the trailing remainder in `flushAllBufferedText`, and pending tool-result lines (which also correctly reset the collapse state).
+2. **Low-context wind-down** — per-session `windDownSent` flag + `sendWindDown(reason)`: prints a ⚠ orchestrator notice and sends an RPC prompt (id `wind-down`, `streamingBehavior: "steer"`) with the plan's proposed wording (save progress to loop_state.md, end stream, do not transition roles). Trigger A in the `get_session_stats` handler (`window - tokens < 10000`); Trigger B in the `compaction_start` handler (reasons `threshold`/`overflow` only — manual `/compact` excluded). Whichever fires first wins; at most one per session.
+3. **Live steering input** — module-level `_pipelineRunning`, `_activeSubAgent = { stdin, ended } | null`, and a `_steerSeq` counter (following the file's existing `_`-prefixed module-state convention). Handle assigned after spawn, marked `ended` on `agent_end`, cleared in `safeResolve` (covers both exit + error paths). Command handler sets the flag right after the can_loop guard passes; try/finally around the session loop guarantees reset on every exit path. `pi.on("input")` decision chain: inert when pipeline not running or source non-interactive → continue; whitespace-only, `/`-prefixed (TUI commands), `!`-prefixed (inline bash) → continue (pass through untouched); active sub-agent → RPC prompt with unique id `steer-N`, visible 🎯 echo, `{action: "handled"}` (no LLM turn starts in the orchestrator session); no active session (between-sessions window) → ⚠ notice + handled. `processLine` prints a ⚠ warning for rejected steer/wind-down prompt responses (e.g., typing just as the sub-agent ends).
+4. **Help text** — extended `printHelp()` with a condensation note under Streaming plus new "Steering (live input)" and "Low-context wind-down" sections.
+
+### Deviations from Plan
+- **Id-prefix convention instead of pending-id Set (Step 3 internals):** the plan called for "a small set of pending steer ids"; I used an id prefix (`steer-N`, `wind-down`) checked in `processLine` instead. Same observable behavior (⚠ warning on `success: false`), but no shared mutable state to leak across sessions and one less moving part.
+- No other deviations — all steps followed the plan's architecture, file map, and ordering.
+
+### Verification Performed
+No test infrastructure exists in this repo; per my lane I wrote no tests (Tester's job). As a Worker sanity check: loaded the extension via pi's own jiti loader against a mock ExtensionAPI — module loads cleanly, `pipeline-auto` command + all event handlers register (`input`, `session_start`, `turn_end`, `agent_end`, `session_shutdown`), and the input handler is correctly inert when the pipeline isn't running / source non-interactive / whitespace-only. Live-run verification (condensation in a real run, steering delivery at turn boundaries, wind-down triggers) deferred to Tester per the plan's testing strategy — including its prerequisite of restarting the orchestrator process first so the edited extension code loads.
+
+### Known Issues / Notes for Downstream Roles
+- **Effective wind-down threshold under default settings is ~16.4k remaining** (Trigger B fires at pi's auto-compaction reserve), not literally 10k — Planner architecture decision #4, documented in plan risks. Tester: exercising Trigger A requires a temporary `.pi/settings.json` with `compaction.reserveTokens = 8000`, then delete the file to restore state.
+- **Steering lands at turn boundaries** (after the current tool calls finish), not mid-tool-call — inherent to pi's steer queue, documented in help text.
+- Tool-result lines now route through `emitLine` and get a context-usage prefix when available (previously printed bare) — consistent with the single-emission-helper design; visual change only.
+- Kickoff prompt responses (`id: "kickoff"`) are now explicitly no-op handled in the new response branch — behavior unchanged from before (they fell through previously).
+
+### Files Created / Modified
+- **Modified:** `.pi/extensions/pipeline-auto.ts` (only code change — all three features + help text; 675 → 823 lines)
+- **Created:** none

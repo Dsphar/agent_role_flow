@@ -19,7 +19,7 @@ import { spawn, type ChildProcess } from "node:child_process";
 import { StringDecoder } from "node:string_decoder";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import type { ExtensionAPI, ExtensionCommandContext } from "@earendil-works/pi-coding-agent";
+import type { ExtensionAPI, ExtensionCommandContext, InputEvent } from "@earendil-works/pi-coding-agent";
 
 const MAX_SESSIONS = 50;
 const LOOP_STATE_FILE = "ai_workspace/loop_state.md";
@@ -38,6 +38,13 @@ let _lastKnownRole: string | undefined = undefined;
 
 // Cache goal summary at session start so it survives loop_state.md deletion by Finalizer.
 let _cachedGoalSummary: string | undefined = undefined;
+
+// Pipeline run state for live steering input — set by the /pipeline-auto command handler,
+// read by the `input` event handler in the default export. While a pipeline run is active,
+// plain TUI text is forwarded to the working sub-agent instead of starting an LLM turn here.
+let _pipelineRunning = false;
+let _activeSubAgent: { stdin: NodeJS.WritableStream; ended: boolean } | null = null;
+let _steerSeq = 0; // counter for unique steer prompt ids (steer-1, steer-2, …)
 
 /**
  * Resolve the path to the pi executable that should be used for spawning.
@@ -240,6 +247,11 @@ function runSubAgent(cwd: string): Promise<void> {
             maxBuffer: 50 * 1024 * 1024, // 50 MB — generous for long agent runs
         });
 
+        // Expose this sub-agent to the module-level steering input handler. Marked ended on
+        // agent_end (so steering typed in that window gets a notice, not a rejected steer) and
+        // cleared in safeResolve on every exit path.
+        _activeSubAgent = { stdin: child.stdin!, ended: false };
+
         const decoder = new StringDecoder("utf-8");
         let jsonBuffer = ""; // raw JSONL from stdout
         let textBuffer = ""; // accumulated text_delta content, flushed line-by-line
@@ -279,38 +291,86 @@ function runSubAgent(cwd: string): Promise<void> {
             return `${color}${raw}\x1b[0m`;
         }
 
+        // Blank-line condensation state: tracks whether the last emitted line was a
+        // condensed dash, so runs of consecutive blank lines collapse into exactly one.
+        let lastWasCondensedDash = false;
+
+        /**
+         * Emit a single streamed line — the only place the blank-line rule and
+         * token-prefix logic live. Blank (empty/whitespace-only) lines become a "-"
+         * separator with no prefix; consecutive blanks collapse into one dash.
+         * Non-blank lines reset the collapse state, get the context usage prefix,
+         * and are emitted as-is otherwise.
+         */
+        function emitLine(line: string): void {
+            if (line.trim().length === 0) {
+                if (lastWasCondensedDash) return; // collapse consecutive blanks into a single dash
+                lastWasCondensedDash = true;
+                console.log("-");
+                return;
+            }
+            lastWasCondensedDash = false;
+            const prefix = buildColoredPrefix();
+            console.log(prefix ? `${prefix} ${line}` : line);
+        }
+
         /** Flush buffered text line-by-line, keeping the last incomplete segment. */
         function flushBufferedLines(): void {
             // Trigger a stats poll on every flush (async — response updates prefix later)
             fetchContextStats(child.stdin!);
 
             const lines = textBuffer.split("\n");
-            const prefix = buildColoredPrefix();
             // Keep the last (possibly incomplete) segment in the buffer
             for (let i = 0; i < lines.length - 1; i++) {
-                let line = lines[i];
-                if (prefix && line.trim().length > 0) {
-                    line = `${prefix} ${line}`;
-                }
-                console.log(line);
+                emitLine(lines[i]);
             }
             textBuffer = lines[lines.length - 1];
         }
 
         /** Flush all buffered text including pending tool call results. */
         function flushAllBufferedText(): void {
-            // Print any pending tool call results inline (not as standalone lines)
+            // Print any pending tool call results inline (not as standalone lines).
+            // Routed through emitLine so they reset the blank-line collapse state.
             if (pendingTools.length > 0) {
                 for (const tool of pendingTools) {
                     const emoji = tool.status === "error" ? "\u274C" : "\u2705";
-                    console.log(`  \u{1F9F0} ${tool.name} ${emoji}`);
+                    emitLine(`  \u{1F9F0} ${tool.name} ${emoji}`);
                 }
                 pendingTools.length = 0;
             }
             if (textBuffer) {
-                console.log(textBuffer);
+                // Trailing remainder: apply the same condensation rule at stream end.
+                // (An empty remainder — text ended on a newline — emits nothing.)
+                emitLine(textBuffer);
                 textBuffer = "";
             }
+        }
+
+        // Low-context wind-down state (per session): the warning is sent at most once,
+        // whichever trigger fires first.
+        let windDownSent = false;
+
+        /**
+         * Send the low-context wind-down instruction (once per session).
+         * The sub-agent saves progress to loop_state.md and ends its stream; the
+         * orchestrator's existing loop then spawns a fresh session that resumes from
+         * inline progress tracking — no new restart machinery.
+         */
+        function sendWindDown(reason: string): void {
+            if (windDownSent) return;
+            windDownSent = true;
+            console.log("");
+            console.log(`  \u26A0 Low context detected (${reason}) — sending wind-down instruction…`);
+            const message =
+                "Context is nearly exhausted. Stop starting new work immediately. Update ai_workspace/loop_state.md now with your current progress — update the Current-Role Steps checkboxes in your role's summary section and add any inline notes a fresh session needs to resume. Then end your stream; do not transition to another role. A new session will pick up from loop_state.md.";
+            sendRpcCommand(child.stdin!, {
+                id: "wind-down",
+                type: "prompt",
+                message,
+                // Delivered after the current turn's tool calls finish (or right after
+                // compaction completes), before the next LLM call.
+                streamingBehavior: "steer",
+            });
         }
 
         // Parse JSONL from stdout (split on \n only per RPC protocol)
@@ -382,6 +442,27 @@ function runSubAgent(cwd: string): Promise<void> {
                 } else {
                     contextUsageTokens = contextUsageWindow = contextUsagePercent = null; // no model/window available
                 }
+                // Low-context wind-down trigger A: stats show fewer than 10k tokens remaining.
+                // Under default settings pi auto-compacts earlier (~16.4k reserve), so this
+                // path mainly covers custom settings with a smaller compaction.reserveTokens.
+                if (!windDownSent && contextUsageTokens !== null && contextUsageWindow !== null) {
+                    const remaining = contextUsageWindow - contextUsageTokens;
+                    if (remaining < 10000) {
+                        sendWindDown(`stats: ${remaining} tokens left`);
+                    }
+                }
+                return;
+            }
+
+            // Steering / wind-down prompt responses — warn if rejected before acceptance
+            // (e.g., steering typed just as the sub-agent ended). Failures after acceptance
+            // surface through the normal event stream, not here.
+            if (type === "response" && parsed.command === "prompt") {
+                const id = parsed.id as string | undefined;
+                if ((id?.startsWith("steer-") || id === "wind-down") && parsed.success !== true) {
+                    console.log("");
+                    console.log(`  \u26A0 Message not delivered (${id}) — sub-agent may have just ended.`);
+                }
                 return;
             }
 
@@ -389,6 +470,14 @@ function runSubAgent(cwd: string): Promise<void> {
                 flushAllBufferedText();
                 console.log("");
                 console.log("  \u{1F504} Compacting context...");
+                // Low-context wind-down trigger B: auto-compaction at threshold/overflow means
+                // the session is below pi's context reserve — instruct it to save state and end.
+                // (Manual /compact does not trigger wind-down.) The steer queue delivers the
+                // message before the next LLM call, i.e., right after compaction completes.
+                const reason = parsed.reason as string | undefined;
+                if ((reason === "threshold" || reason === "overflow") && !windDownSent) {
+                    sendWindDown(`compaction: ${reason}`);
+                }
                 // Reset stats — data is stale after compaction until fresh response arrives
                 contextUsageTokens = contextUsageWindow = contextUsagePercent = null;
                 return;
@@ -398,6 +487,10 @@ function runSubAgent(cwd: string): Promise<void> {
             if (type === "agent_end") {
                 flushAllBufferedText();
                 agentEnded = true;
+                // Mark the steering handle as ended so input typed in this window gets a notice.
+                if (_activeSubAgent?.stdin === child.stdin) {
+                    _activeSubAgent.ended = true;
+                }
                 // Close stdin so the RPC server sees EOF and exits.
                 // Without this, pi --mode rpc stays alive waiting for more commands,
                 // and the "exit" event never fires (hanging the pipeline loop).
@@ -443,6 +536,8 @@ function runSubAgent(cwd: string): Promise<void> {
         function safeResolve() {
             if (resolved) return;
             resolved = true;
+            // Clear the steering handle on every exit path so input falls through to normal behavior.
+            _activeSubAgent = null;
             resolve();
         }
 
@@ -485,7 +580,22 @@ Safety features:
 
 Streaming:
   Non-thinking text from sub-agents streams live via RPC events.
-  Tool calls are shown inline. Extension UI dialogs are auto-accepted.`);
+  Tool calls are shown inline. Extension UI dialogs are auto-accepted.
+  Blank lines in streamed output condense to "-" separator lines (runs of
+  consecutive blanks collapse into a single one).
+
+Steering (live input):
+  While a pipeline run is active, plain text typed into the TUI is forwarded to
+  the working sub-agent at its next turn boundary and echoed as "\u{1F3AF} Steering → …".
+  No flag or prefix needed. Commands ("/…") and inline bash ("!…") pass through
+  untouched. Text typed in the brief window between sessions is not forwarded —
+  a notice is shown instead.
+
+Low-context wind-down:
+  When a sub-agent session runs low on context (fewer than 10k tokens remaining,
+  or pi's auto-compaction triggers), the extension sends it a one-time instruction
+  to save progress to ai_workspace/loop_state.md and end its stream. The pipeline
+  then spawns a fresh session that resumes from loop_state.md — no work is lost.`);
 }
 
 async function handler(_args: string, ctx: ExtensionCommandContext): Promise<void> {
@@ -502,6 +612,10 @@ async function handler(_args: string, ctx: ExtensionCommandContext): Promise<voi
         console.log("Auto-looping is not yet enabled. The Planner has not yet enabled auto-looping.");
         return;
     }
+
+    // Live steering input becomes active for the duration of this run — plain TUI text typed
+    // while a sub-agent works is forwarded to it instead of starting an LLM turn in this session.
+    _pipelineRunning = true;
 
     const roleHistory: string[] = [];
 
@@ -523,63 +637,69 @@ async function handler(_args: string, ctx: ExtensionCommandContext): Promise<voi
     console.log(`  Working dir:  ${cwd}`);
     console.log("═".repeat(60));
 
-    for (let i = 1; i <= MAX_SESSIONS; i++) {
-        const role = getCurrentRole(cwd);
+    try {
+        for (let i = 1; i <= MAX_SESSIONS; i++) {
+            const role = getCurrentRole(cwd);
 
-        // Print session header with current role info
-        console.log("");
-        console.log(`── Session ${i}/${MAX_SESSIONS}`);
-        console.log("═".repeat(60));
-        console.log("");
+            // Print session header with current role info
+            console.log("");
+            console.log(`── Session ${i}/${MAX_SESSIONS}`);
+            console.log("═".repeat(60));
+            console.log("");
 
-        if (role) {
-            console.log(`   Role: ${role}`);
-        } else if (i === 1) {
-            console.log("   Role: (first run — Interviewer will create loop_state.md)");
-        } else {
-            console.log("   Role: (unknown — loop_state.md may be stale)");
-        }
+            if (role) {
+                console.log(`   Role: ${role}`);
+            } else if (i === 1) {
+                console.log("   Role: (first run — Interviewer will create loop_state.md)");
+            } else {
+                console.log("   Role: (unknown — loop_state.md may be stale)");
+            }
 
-        // Infinite-loop detection: same role repeated STUCK_THRESHOLD+ times
-        if (role && roleHistory.length >= STUCK_THRESHOLD - 1) {
-            const recent = [...roleHistory.slice(-(STUCK_THRESHOLD - 1)), role];
-            if (recent.every((r) => r === role)) {
+            // Infinite-loop detection: same role repeated STUCK_THRESHOLD+ times
+            if (role && roleHistory.length >= STUCK_THRESHOLD - 1) {
+                const recent = [...roleHistory.slice(-(STUCK_THRESHOLD - 1)), role];
+                if (recent.every((r) => r === role)) {
+                    console.log("");
+                    console.log("\u26A0 WARNING: Possible infinite loop detected!");
+                    console.log(`  "${role}" has run ${STUCK_THRESHOLD}+ times consecutively.`);
+                    console.log("  Stopping pipeline. Check your role files and transition_guide.");
+                    return;
+                }
+            }
+
+            if (role) {
+                roleHistory.push(role);
+                // Keep history bounded to avoid unbounded memory growth at 50 sessions
+                if (roleHistory.length > STUCK_THRESHOLD * 2) {
+                    roleHistory.splice(0, roleHistory.length - STUCK_THRESHOLD);
+                }
+            }
+
+            // Run the sub-agent session (async — streams live via RPC events)
+            try {
+                await runSubAgent(cwd);
+            } catch (err) {
                 console.log("");
-                console.log("\u26A0 WARNING: Possible infinite loop detected!");
-                console.log(`  "${role}" has run ${STUCK_THRESHOLD}+ times consecutively.`);
-                console.log("  Stopping pipeline. Check your role files and transition_guide.");
+                console.log(`  \u274C Sub-agent error: ${err instanceof Error ? err.message : String(err)}`);
+            }
+
+            // Brief pause to let filesystem flush loop_state.md writes
+            // (Finalizer may delete it; we need to see that on next check)
+            await new Promise((resolve) => setTimeout(resolve, 1500));
+
+            // Check if pipeline is complete (loop_state.md deleted by Finalizer)
+            if (!loopStateExists(cwd)) {
+                console.log("");
+                console.log("\u2713 Pipeline complete — loop_state.md removed by Finalizer.");
+                console.log(`  Finished in ${i} session${i > 1 ? "s" : ""}. Type /new to continue to a new session.`);
+                _pipelineCompleted = true;
                 return;
             }
         }
-
-        if (role) {
-            roleHistory.push(role);
-            // Keep history bounded to avoid unbounded memory growth at 50 sessions
-            if (roleHistory.length > STUCK_THRESHOLD * 2) {
-                roleHistory.splice(0, roleHistory.length - STUCK_THRESHOLD);
-            }
-        }
-
-        // Run the sub-agent session (async — streams live via RPC events)
-        try {
-            await runSubAgent(cwd);
-        } catch (err) {
-            console.log("");
-            console.log(`  \u274C Sub-agent error: ${err instanceof Error ? err.message : String(err)}`);
-        }
-
-        // Brief pause to let filesystem flush loop_state.md writes
-        // (Finalizer may delete it; we need to see that on next check)
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-
-        // Check if pipeline is complete (loop_state.md deleted by Finalizer)
-        if (!loopStateExists(cwd)) {
-            console.log("");
-            console.log("\u2713 Pipeline complete — loop_state.md removed by Finalizer.");
-            console.log(`  Finished in ${i} session${i > 1 ? "s" : ""}. Type /new to continue to a new session.`);
-            _pipelineCompleted = true;
-            return;
-        }
+    } finally {
+        // Always reset the running flag so steering input returns to normal TUI behavior,
+        // regardless of which exit path was taken (loop detection, completion, max sessions).
+        _pipelineRunning = false;
     }
 
     // Safety cutoff reached
@@ -593,6 +713,34 @@ export default function (pi: ExtensionAPI) {
     pi.registerCommand("pipeline-auto", {
         description: "Run the role pipeline autonomously via sequential sub-agent sessions",
         handler,
+    });
+
+    // Live steering input: while a pipeline run is active, plain TUI text typed by the user is
+    // forwarded to the working sub-agent (delivered at its next turn boundary) instead of starting
+    // an LLM turn in this session. Commands ("/…") and inline bash ("!…") pass through untouched —
+    // forwarding command syntax into a sub-agent could be harmful (e.g., nested /pipeline-auto).
+    pi.on("input", (event: InputEvent) => {
+        if (!_pipelineRunning || event.source !== "interactive") return; // feature inert — normal behavior
+        const text = event.text;
+        if (!text.trim()) return; // whitespace-only input — let normal processing handle it
+        if (text.startsWith("/") || text.startsWith("!")) return; // TUI commands / inline bash pass through
+
+        if (_activeSubAgent && !_activeSubAgent.ended) {
+            const id = `steer-${++_steerSeq}`;
+            sendRpcCommand(_activeSubAgent.stdin, {
+                id,
+                type: "prompt",
+                message: text,
+                // Delivered after the current turn's tool calls finish, before the next LLM call.
+                streamingBehavior: "steer",
+            });
+            console.log(`\u{1F3AF} Steering → ${text}`);
+            return { action: "handled" }; // consume — no LLM turn starts in this session
+        }
+
+        // Brief between-sessions window (or sub-agent just ended) — text can't be forwarded.
+        console.log(`  \u26A0 No active sub-agent session — "${text}" was not forwarded.`);
+        return { action: "handled" };
     });
 
     // Proactive monitoring: show role + goal summary in footer, plus auto-work availability
