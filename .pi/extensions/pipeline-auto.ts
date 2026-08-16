@@ -292,24 +292,30 @@ function runSubAgent(cwd: string): Promise<void> {
         }
 
         // Blank-line condensation state: tracks whether the last emitted line was a
-        // condensed dash, so runs of consecutive blank lines collapse into exactly one.
-        let lastWasCondensedDash = false;
+        // Number of consecutive blank lines encountered so far.
+        // We emit them as a single string of N dashes before the next non-blank line.
+        let pendingDashes = 0;
+
+        function flushDashes(): void {
+            if (pendingDashes > 0) {
+                console.log("-".repeat(pendingDashes));
+                pendingDashes = 0;
+            }
+        }
 
         /**
          * Emit a single streamed line — the only place the blank-line rule and
-         * token-prefix logic live. Blank (empty/whitespace-only) lines become a "-"
-         * separator with no prefix; consecutive blanks collapse into one dash.
-         * Non-blank lines reset the collapse state, get the context usage prefix,
-         * and are emitted as-is otherwise.
+         * token-prefix logic live. Blank (empty/whitespace-only) lines accumulate
+         * and are emitted as a string of N dashes (e.g. "------") right before
+         * the next non-blank line. Non-blank lines flush pending dashes, get the
+         * context usage prefix, and are emitted as-is.
          */
         function emitLine(line: string): void {
             if (line.trim().length === 0) {
-                if (lastWasCondensedDash) return; // collapse consecutive blanks into a single dash
-                lastWasCondensedDash = true;
-                console.log("-");
+                pendingDashes++;
                 return;
             }
-            lastWasCondensedDash = false;
+            flushDashes();
             const prefix = buildColoredPrefix();
             console.log(prefix ? `${prefix} ${line}` : line);
         }
@@ -344,6 +350,7 @@ function runSubAgent(cwd: string): Promise<void> {
                 emitLine(textBuffer);
                 textBuffer = "";
             }
+            flushDashes();
         }
 
         // Low-context wind-down state (per session): the warning is sent at most once,
@@ -442,12 +449,10 @@ function runSubAgent(cwd: string): Promise<void> {
                 } else {
                     contextUsageTokens = contextUsageWindow = contextUsagePercent = null; // no model/window available
                 }
-                // Low-context wind-down trigger A: stats show fewer than 10k tokens remaining.
-                // Under default settings pi auto-compacts earlier (~16.4k reserve), so this
-                // path mainly covers custom settings with a smaller compaction.reserveTokens.
+                // Low-context wind-down trigger A: stats show fewer than 15k tokens remaining.
                 if (!windDownSent && contextUsageTokens !== null && contextUsageWindow !== null) {
                     const remaining = contextUsageWindow - contextUsageTokens;
-                    if (remaining < 10000) {
+                    if (remaining < 15000) {
                         sendWindDown(`stats: ${remaining} tokens left`);
                     }
                 }

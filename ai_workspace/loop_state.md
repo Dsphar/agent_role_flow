@@ -1,5 +1,5 @@
 **Goal Summary:** Pipeline-auto: blank-line condensation, live steering input, low-context auto-restart<br>
-**Current Role:** Worker (Role 03) (in-sendback) | History: Interviewer → Planner → Worker → Tester<br>
+**Current Role:** Tester (Role 04) (in-sendback) | History: Interviewer → Planner → Worker → Tester → Worker<br>
 **Pipeline Config:** test_level=deep | do_docs=true | can_loop=true<br>
 
 ---
@@ -188,3 +188,19 @@ No test infrastructure exists in this repo; per my lane I wrote no tests (Tester
 - **Issue 2:** The low-context wind-down message (Trigger A) should trigger at `< 15000` tokens remaining instead of `< 10000`, so it reliably fires before the orchestrator auto-compacts the context.
 - **Severity:** Medium
 - **Recommended Fix:** Modify `emitLine()` to accumulate blanks and print a string of dashes instead of a single dash. Update the threshold check in the `get_session_stats` handler from 10000 to 15000.
+
+---
+## Worker (Role 03) — Send-Back Summary
+
+### Steps Completed
+- [x] Fix Issue 1: Modified `emitLine` in `.pi/extensions/pipeline-auto.ts` to accumulate consecutive blank lines and emit a string of *N* dashes on the next non-blank line or flush.
+- [x] Fix Issue 2: Updated wind-down stats trigger from `10000` to `15000` in `.pi/extensions/pipeline-auto.ts`.
+
+### Deviations from Plan
+- None. All fixes align with the updated requirements.
+
+### Verification Performed
+- Ran the `test_pipeline_auto_features.js` test suite. All 24 assertions passed.
+
+### Files Created / Modified
+- **Modified:** `.pi/extensions/pipeline-auto.ts`
