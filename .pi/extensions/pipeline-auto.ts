@@ -288,7 +288,7 @@ function runSubAgent(cwd: string): Promise<void> {
             if (contextUsageTokens === null || contextUsageWindow === null || contextUsagePercent === null) {
                 return "";
             }
-            const raw = `${(contextUsageTokens / 1000).toFixed(1)}k /${(contextUsageWindow / 1000).toFixed(1)}k (${contextUsagePercent.toFixed(1)}%) `;
+            const raw = `(${contextUsagePercent.toFixed(1)}%) /${(contextUsageWindow / 1000).toFixed(1)}k `;
             // ANSI color based on usage percentage (green < 70%, yellow 70-90%, red > 90%)
             let color: string;
             if (contextUsagePercent < 70) {
