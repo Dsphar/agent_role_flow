@@ -1,6 +1,6 @@
 **Goal Summary:** Pipeline-auto: blank-line condensation, live steering input, low-context auto-restart<br>
-**Current Role:** Planner (Role 02) | History: Interviewer<br>
-**Pipeline Config:** test_level=deep | do_docs=true | can_loop=false<br>
+**Current Role:** Worker (Role 03) | History: Interviewer → Planner<br>
+**Pipeline Config:** test_level=deep | do_docs=true | can_loop=true<br>
 
 ---
 ## Interviewer (Role 01) — Complete
@@ -69,3 +69,77 @@ Edits to the `pipeline-auto` extension (`.pi/extensions/pipeline-auto.ts`) acros
 - `test_level=deep` — substantial changes to interactive TUI input handling and context-monitoring logic warrant a full test pass.
 - `do_docs=true` — steering input is a new user-facing interaction pattern worth documenting (README/help text).
 - `can_loop=false` — initialized by Interviewer; Planner sets it to true before transitioning.
+
+---
+## Planner (Role 02) — Complete
+
+### Pre-Plan Questions
+No clarifying questions were needed before planning — the Interviewer summary was thorough, and its open design questions (compaction reachability, TUI input semantics) were resolved by direct investigation of pi's RPC protocol docs (`docs/rpc.md`), compaction docs (`docs/compaction.md`), and the extension API type definitions (`dist/core/extensions/types.d.ts`). Key findings:
+- **Compaction reachability:** pi auto-compacts when `contextTokens > contextWindow - reserveTokens`; default `reserveTokens = 16384`. Under default settings, remaining tokens never reach 10k before compaction preempts — a stats-only "<10k" trigger would be dead code. A `compaction_start`-based trigger (reasons `threshold`/`overflow`) is the signal that actually fires; dual-trigger design covers both paths.
+- **TUI input semantics:** pi's extension API exposes an `input` event fired on every user prompt before agent processing; handlers may return `{action: "handled"}` to consume it entirely (no LLM turn starts). This is the clean hook for flag-free steering. RPC's native `streamingBehavior: "steer"` delivers mid-run messages after the current turn's tool calls finish, before the next LLM call — a safe reaction boundary.
+
+### Architecture Overview
+All work lands in the single existing file `.pi/extensions/pipeline-auto.ts` (~675 lines). No new files, no new dependencies (Node builtins only). Six decisions drive the design:
+
+1. **Single-file implementation.** The extension is already a self-contained unit with clear internal layers (module state → helpers → `runSubAgent` closure → command handler → export). Adding ~100 lines keeps cohesion; splitting into modules would be premature for this size.
+2. **Event-interception pattern for steering.** pi fires an `input` event on every user prompt before agent processing, and a handler may return `{action: "handled"}` to consume it entirely (no LLM turn starts). This is the only clean hook that satisfies the "plain TUI text, no flag or prefix" requirement. Alternatives rejected: a `/steer <text>` command (violates "no special syntax"); polling editor contents via `ctx.ui.getEditorText()` (hacky, degraded in RPC mode).
+3. **`streamingBehavior: "steer"` for both steering and wind-down messages.** pi's native mid-run message queue — delivered after the current assistant turn finishes executing its tool calls, before the next LLM call. Alternatives rejected: `"followUp"` (delivered only when the agent fully stops — too late for wind-down, since stdin closes on `agent_end`); plain prompt with no behavior (RPC returns an error while streaming).
+4. **Dual-trigger wind-down, once per session.** Trigger A: stats poll shows `contextWindow - tokens < 10,000`. Trigger B: `compaction_start` event arrives with reason `"threshold"` or `"overflow"`. Whichever fires first sends the warning; a per-session flag prevents repeats. Under default settings (`reserveTokens = 16384`) pi auto-compacts at ~16.4k remaining, so Trigger A alone would never fire under defaults; Trigger B guarantees activation and Trigger A covers custom settings where `reserveTokens < 10k`. Consequence: effective wind-down point is ~16.4k remaining under default settings (earlier than the literal 10k spec) — the only configuration-independent way to make the feature fire. Rejected alternative: disabling auto-compaction for sub-agents (`set_auto_compaction {enabled:false}`) to hit exactly 10k — removes pi's overflow-recovery safety net.
+5. **Single emission helper for condensation.** One `emitLine()` used by both existing flush paths and also for pending tool-result lines (so they correctly reset the collapse state). The blank-line rule and token-prefix logic live in exactly one place.
+6. **Guarded module-level handle for cross-closure access.** The `input` handler lives outside `runSubAgent`'s closure, so a small module-level `_activeSubAgent = { stdin, ended } | null` handle is the minimal shared surface — following the file's existing convention of `_`-prefixed module state with explanatory comments.
+
+### File/Module Map
+| File | Action | Contents |
+|------|--------|----------|
+| `.pi/extensions/pipeline-auto.ts` | **Modified** (only code change) | All three features: emission helper + condensation flag; wind-down triggers + message; `_pipelineRunning` / `_activeSubAgent` / pending-steer-id state; `input` event handler; steer-response handling in `processLine`; updated `printHelp()` text |
+| `README.md` | *Not touched by Worker* | Documented by the Documenter (Role 05) per routing matrix (`do_docs=true`) — new user-facing interaction pattern needs README/help coverage there |
+
+### Ordered Implementation Steps
+**Step 1 — Blank-line condensation (sub-goal 1)**
+Inside `runSubAgent`'s closure: add a `lastWasCondensedDash` boolean and an `emitLine(line)` helper implementing the rule — blank line (empty or whitespace-only): if the previous emitted line was already a condensed dash, skip; otherwise emit `-` (no token prefix) and set the flag. Non-blank line: reset the flag, apply existing prefix logic, emit. Route all streamed emissions through it: complete lines in `flushBufferedLines`, the trailing remainder in `flushAllBufferedText`, and pending tool-result lines.
+*Expected outcome:* in a live run, every blank line in sub-agent text appears as exactly one `-` line; runs of N consecutive blanks collapse to one `-`; no real blank lines anywhere in streamed sections; session headers, compaction messages, and other console output are untouched (they use separate `console.log` calls).
+
+**Step 2 — Low-context wind-down (sub-goal 3)**
+Inside `runSubAgent`: add a per-session `windDownSent` flag and a `sendWindDown(reason)` function that prints an orchestrator notice (e.g. `⚠ Low context detected (…) — sending wind-down instruction…`) and sends an RPC prompt with `streamingBehavior: "steer"` carrying the wind-down message, using a unique id. Proposed message wording (flexible): *"Context is nearly exhausted. Stop starting new work immediately. Update ai_workspace/loop_state.md now with your current progress — update the Current-Role Steps checkboxes in your role's summary section and add any inline notes a fresh session needs to resume. Then end your stream; do not transition to another role. A new session will pick up from loop_state.md."*
+Trigger A: in the `get_session_stats` response handler, after state updates — if `!windDownSent` and tokens/window are non-null and `(window - tokens) < 10000`, call `sendWindDown`. Trigger B: in the existing `compaction_start` handler — read `parsed.reason`; if `!windDownSent` and reason is `"threshold"` or `"overflow"`, call `sendWindDown`.
+*Expected outcome:* exactly one wind-down prompt per session, on first trigger; the sub-agent saves progress to `loop_state.md` and ends its stream; the orchestrator's *existing* loop then spawns a fresh session that resumes the same role from inline progress tracking — no new restart machinery.
+
+**Step 3 — Live steering input (sub-goal 2)**
+Module-level: `_pipelineRunning` boolean, `_activeSubAgent = { stdin, ended } | null`, and a small set of pending steer ids. In `runSubAgent`: assign the handle after spawn; mark `ended` on `agent_end`; clear to null on all resolve/exit paths (guaranteed via finally). In the command handler: set `_pipelineRunning = true` right after the `can_loop` guard passes; wrap the session loop in try/finally so the flag always resets. Register a `pi.on("input", …)` handler in the default export with this decision chain:
+- not `_pipelineRunning`, or input source not `"interactive"` → return `{action: "continue"}` (normal behavior — feature inert when pipeline isn't running);
+- text starts with `/` or `!` → return `{action: "continue"}` (TUI commands and inline-bash pass through untouched — forwarding command syntax into a sub-agent could be harmful, e.g. nested `/pipeline-auto`);
+- active sub-agent exists and not ended → send RPC prompt (`streamingBehavior: "steer"`, tracked id), echo visibly in the orchestrator console (e.g. `🎯 Steering → <text>`, visually distinct from token-prefixed sub-agent lines), return `{action: "handled"}`;
+- no active session (brief between-sessions window) → print a notice that text wasn't forwarded, return `{action: "handled"}`.
+In `processLine`: handle `response` events for command `"prompt"` whose id is in the pending set — remove it; on `success: false`, print a ⚠ warning line (covers e.g. typing just as the sub-agent ends).
+*Expected outcome:* during a live run, plain TUI text reaches the active sub-agent at its next turn boundary and is echoed visibly; it never starts an LLM turn in the orchestrator session; slash/`!` input behaves exactly as before; with the pipeline not running, TUI behavior is unchanged.
+
+**Step 4 — Help text update**
+Extend `printHelp()` with sections describing the two new user-facing behaviors: plain-text steering during a run (echo, delivery timing at turn boundaries, `/` and `!` pass-through) and low-context wind-down (auto-instruction to save state + end, fresh-session continuation).
+*Expected outcome:* `/pipeline-auto --help` documents the new behaviors.
+
+### Testing Strategy Overview
+No test infrastructure exists in this repo, so deep testing = structured live runs against a checklist:
+1. **Reload prerequisite:** restart the orchestrator pi process first — extension code loads at startup, so edits don't take effect mid-session.
+2. **Condensation:** run `/pipeline-auto`; verify blanks → single `-` lines, no real blanks in streamed sections, headers/compaction output unaffected.
+3. **Steering:** during a live sub-agent turn, type plain text (e.g. "reply with the word BANANA and continue") — verify 🎯 echo + visible compliance at next turn boundary. Edge cases: `/`-command pass-through; `!`-bash pass-through; text typed in the between-sessions window (notice); normal TUI use with pipeline not running (unchanged).
+4. **Wind-down:** under default settings, run a context-heavy role until the wind-down notice appears (exercises Trigger B — compaction path, since defaults compact at ~16.4k remaining). Verify: one warning only; sub-agent updates `loop_state.md` progress and ends; next session resumes the same role from inline tracking. To exercise Trigger A (stats <10k), temporarily create `.pi/settings.json` with `compaction.reserveTokens = 8000`, repeat, then delete the file to restore state.
+5. **Regression:** features not exercised → behavior identical to before this loop.
+
+### Dependencies & Rollback
+Steps 1–3 are independent of each other (all in one file); Step 4 last since it documents final behavior. Rollback is trivial — a single-file change with no state or schema migration; reverting the Worker commit restores prior extension behavior exactly.
+
+### Project Conventions to Respect
+- Single-file extension, Node builtins only, no new dependencies.
+- Existing patterns: `_`-prefixed module state with explanatory comments; closure-local state inside `runSubAgent`; all RPC writes through `sendRpcCommand(stdin, cmd)`; emoji marker style already in use (🛠 ✅ ❌ 🔄 ⚠ ✓).
+- Worker lane constraints: no test files, no project documentation (README is the Documenter's), no version control beyond the mandatory transition commit.
+
+### Risks and Open Questions
+1. **Effective wind-down threshold is ~16.4k remaining under default settings**, not the literal 10k spec (architecture decision #4). If exactly-10k matters, the alternative is disabling auto-compaction for sub-agents — Planner recommends against it (loses overflow recovery).
+2. **Small-window local model** (user's default is a 27B via LM Studio): wind-down may fire frequently — each firing costs one extra session spawn + state save, consuming the `MAX_SESSIONS = 50` budget faster. Self-limiting and arguably desirable (local models degrade with long context), but worth watching in practice; tunable later via settings if too chatty.
+3. **Steering lands at turn boundaries**, not mid-tool-call — inherent to pi's steer queue, documented behavior rather than a bug.
+4. **Assumption to verify first:** the `input` event fires for prompts typed while the long-running `/pipeline-auto` handler is active (pi's lifecycle diagram supports this; the TUI stays responsive during command execution). If it doesn't, steering won't work and Worker should escalate — but the first test step catches this immediately.
+5. **Steer sent just as a sub-agent ends** may be rejected (`success: false`) → console warning only, no crash (handled by design in Step 3).
+6. **Cosmetic:** a literal `-` content line (markdown list) followed by a blank can render two consecutive dashes — inherent to the dash-as-separator convention; not worth special-casing.
+
+### Approval Status
+Approved on first print (user: "ok") — no iterative revisions required. Phase 1 pre-plan questioning auto-skipped per role file guidance (no helpful questions arose after review).
