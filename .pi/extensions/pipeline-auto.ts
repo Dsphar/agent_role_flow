@@ -43,7 +43,7 @@ let _cachedGoalSummary: string | undefined = undefined;
 // read by the `input` event handler in the default export. While a pipeline run is active,
 // plain TUI text is forwarded to the working sub-agent instead of starting an LLM turn here.
 let _pipelineRunning = false;
-let _activeSubAgent: { stdin: NodeJS.WritableStream; ended: boolean } | null = null;
+let _activeSubAgent: { stdin: NodeJS.WritableStream; ended: boolean; terminateActiveDashes: () => void } | null = null;
 let _steerSeq = 0; // counter for unique steer prompt ids (steer-1, steer-2, …)
 
 /**
@@ -250,7 +250,15 @@ function runSubAgent(cwd: string): Promise<void> {
         // Expose this sub-agent to the module-level steering input handler. Marked ended on
         // agent_end (so steering typed in that window gets a notice, not a rejected steer) and
         // cleared in safeResolve on every exit path.
-        _activeSubAgent = { stdin: child.stdin!, ended: false };
+        let dashesEmitted = false;
+        function terminateActiveDashes(): void {
+            if (dashesEmitted) {
+                process.stdout.write("\n");
+                dashesEmitted = false;
+            }
+        }
+        
+        _activeSubAgent = { stdin: child.stdin!, ended: false, terminateActiveDashes };
 
         const decoder = new StringDecoder("utf-8");
         let jsonBuffer = ""; // raw JSONL from stdout
@@ -291,31 +299,19 @@ function runSubAgent(cwd: string): Promise<void> {
             return `${color}${raw}\x1b[0m`;
         }
 
-        // Blank-line condensation state: tracks whether the last emitted line was a
-        // Number of consecutive blank lines encountered so far.
-        // We emit them as a single string of N dashes before the next non-blank line.
-        let pendingDashes = 0;
-
-        function flushDashes(): void {
-            if (pendingDashes > 0) {
-                console.log("-".repeat(pendingDashes));
-                pendingDashes = 0;
-            }
-        }
-
         /**
          * Emit a single streamed line — the only place the blank-line rule and
          * token-prefix logic live. Blank (empty/whitespace-only) lines accumulate
-         * and are emitted as a string of N dashes (e.g. "------") right before
-         * the next non-blank line. Non-blank lines flush pending dashes, get the
-         * context usage prefix, and are emitted as-is.
+         * and are emitted as a string of dashes in real-time. Non-blank lines 
+         * terminate the dash line, get the context usage prefix, and are emitted as-is.
          */
         function emitLine(line: string): void {
             if (line.trim().length === 0) {
-                pendingDashes++;
+                process.stdout.write("-");
+                dashesEmitted = true;
                 return;
             }
-            flushDashes();
+            terminateActiveDashes();
             const prefix = buildColoredPrefix();
             console.log(prefix ? `${prefix} ${line}` : line);
         }
@@ -335,12 +331,13 @@ function runSubAgent(cwd: string): Promise<void> {
 
         /** Flush all buffered text including pending tool call results. */
         function flushAllBufferedText(): void {
-            // Print any pending tool call results inline (not as standalone lines).
-            // Routed through emitLine so they reset the blank-line collapse state.
+            // Print any pending tool call results inline if they errored.
+            // Since we now print the tool immediately at start, we only need to report failures at the end.
             if (pendingTools.length > 0) {
                 for (const tool of pendingTools) {
-                    const emoji = tool.status === "error" ? "\u274C" : "\u2705";
-                    emitLine(`  \u{1F9F0} ${tool.name} ${emoji}`);
+                    if (tool.status === "error") {
+                        emitLine(`  \u274C ${tool.name} failed`);
+                    }
                 }
                 pendingTools.length = 0;
             }
@@ -350,7 +347,7 @@ function runSubAgent(cwd: string): Promise<void> {
                 emitLine(textBuffer);
                 textBuffer = "";
             }
-            flushDashes();
+            terminateActiveDashes();
         }
 
         // Low-context wind-down state (per session): the warning is sent at most once,
@@ -366,6 +363,7 @@ function runSubAgent(cwd: string): Promise<void> {
         function sendWindDown(reason: string): void {
             if (windDownSent) return;
             windDownSent = true;
+            terminateActiveDashes();
             console.log("");
             console.log(`  \u26A0 Low context detected (${reason}) — sending wind-down instruction…`);
             const message =
@@ -415,7 +413,30 @@ function runSubAgent(cwd: string): Promise<void> {
                         flushAllBufferedText();
                         const name = event.toolName as string | undefined;
                         if (name) {
-                            pendingTools.push({ name, status: "pending" });
+                            let argNote = "";
+                            let argsObj: Record<string, unknown> = {};
+                            const rawArgs = event.toolArgs ?? event.toolInput ?? event.arguments;
+                            if (typeof rawArgs === "string") {
+                                try { argsObj = JSON.parse(rawArgs); } catch {}
+                            } else if (rawArgs && typeof rawArgs === "object") {
+                                argsObj = rawArgs as Record<string, unknown>;
+                            }
+                            
+                            for (const [k, v] of Object.entries(argsObj)) {
+                                if (typeof v === "string" && v.trim().length > 0) {
+                                    if (v.includes("/") || v.includes("\\") || v.includes(".")) {
+                                        argNote = ` (${path.basename(v)})`;
+                                        break;
+                                    } else if (k.toLowerCase().includes("command") || k.toLowerCase() === "cmd") {
+                                        argNote = ` (${v.length > 20 ? v.substring(0, 20) + "..." : v})`;
+                                        break;
+                                    }
+                                }
+                            }
+                            const toolStr = `${name}${argNote}`;
+                            // Print immediately so user doesn't stare at a blank line while tool runs
+                            emitLine(`  \u{1F9F0} Tool: ${toolStr}`);
+                            pendingTools.push({ name: toolStr, status: "pending" });
                         }
                         break;
                     case "toolcall_end":
@@ -465,6 +486,7 @@ function runSubAgent(cwd: string): Promise<void> {
             if (type === "response" && parsed.command === "prompt") {
                 const id = parsed.id as string | undefined;
                 if ((id?.startsWith("steer-") || id === "wind-down") && parsed.success !== true) {
+                    terminateActiveDashes();
                     console.log("");
                     console.log(`  \u26A0 Message not delivered (${id}) — sub-agent may have just ended.`);
                 }
@@ -549,6 +571,7 @@ function runSubAgent(cwd: string): Promise<void> {
         // Resolve when process exits (triggered by stdin.end after agent_end)
         child.on("exit", (code, signal) => {
             if (!agentEnded && code !== 0) {
+                terminateActiveDashes();
                 console.log("");
                 console.log(`  \u26A0 Sub-agent exited with code ${code}${signal ? ` / ${signal}` : ""}.`);
             }
@@ -556,6 +579,7 @@ function runSubAgent(cwd: string): Promise<void> {
         });
 
         child.on("error", (err) => {
+            terminateActiveDashes();
             console.log("");
             console.log(`  \u274C Failed to spawn sub-agent: ${err.message}`);
             safeResolve();
@@ -731,6 +755,7 @@ export default function (pi: ExtensionAPI) {
         if (text.startsWith("/") || text.startsWith("!")) return; // TUI commands / inline bash pass through
 
         if (_activeSubAgent && !_activeSubAgent.ended) {
+            _activeSubAgent.terminateActiveDashes();
             const id = `steer-${++_steerSeq}`;
             sendRpcCommand(_activeSubAgent.stdin, {
                 id,
