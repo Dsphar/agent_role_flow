@@ -251,6 +251,8 @@ function runSubAgent(cwd: string): Promise<void> {
         // agent_end (so steering typed in that window gets a notice, not a rejected steer) and
         // cleared in safeResolve on every exit path.
         let dashesEmitted = false;
+        let currentToolArgs = "";
+
         function terminateActiveDashes(): void {
             if (dashesEmitted) {
                 process.stdout.write("\n");
@@ -332,7 +334,7 @@ function runSubAgent(cwd: string): Promise<void> {
         /** Flush all buffered text including pending tool call results. */
         function flushAllBufferedText(): void {
             // Print any pending tool call results inline if they errored.
-            // Since we now print the tool immediately at start, we only need to report failures at the end.
+            // Since we now print the tool immediately at start, we only need to report failures at the end if not already reported.
             if (pendingTools.length > 0) {
                 for (const tool of pendingTools) {
                     if (tool.status === "error") {
@@ -411,39 +413,47 @@ function runSubAgent(cwd: string): Promise<void> {
                     case "toolcall_start":
                         // Flush any pending text (including queued tool results)
                         flushAllBufferedText();
+                        currentToolArgs = "";
                         const name = event.toolName as string | undefined;
                         if (name) {
-                            let argNote = "";
-                            let argsObj: Record<string, unknown> = {};
-                            const rawArgs = event.toolArgs ?? event.toolInput ?? event.arguments;
-                            if (typeof rawArgs === "string") {
-                                try { argsObj = JSON.parse(rawArgs); } catch {}
-                            } else if (rawArgs && typeof rawArgs === "object") {
-                                argsObj = rawArgs as Record<string, unknown>;
-                            }
-                            
-                            for (const [k, v] of Object.entries(argsObj)) {
-                                if (typeof v === "string" && v.trim().length > 0) {
-                                    if (v.includes("/") || v.includes("\\") || v.includes(".")) {
-                                        argNote = ` (${path.basename(v)})`;
-                                        break;
-                                    } else if (k.toLowerCase().includes("command") || k.toLowerCase() === "cmd") {
-                                        argNote = ` (${v.length > 20 ? v.substring(0, 20) + "..." : v})`;
-                                        break;
-                                    }
-                                }
-                            }
-                            const toolStr = `${name}${argNote}`;
+                            pendingTools.push({ name, status: "pending" });
                             // Print immediately so user doesn't stare at a blank line while tool runs
-                            emitLine(`  \u{1F9F0} Tool: ${toolStr}`);
-                            pendingTools.push({ name: toolStr, status: "pending" });
+                            emitLine(`  \u{1F9F0} Tool: ${name}`);
+                        }
+                        break;
+                    case "toolcall_delta":
+                        const delta = event.delta as string | undefined;
+                        if (delta) {
+                            currentToolArgs += delta;
                         }
                         break;
                     case "toolcall_end":
                         // Mark the last pending tool with its result status
                         const isError = event.isError as boolean | undefined;
                         if (pendingTools.length > 0) {
-                            pendingTools[pendingTools.length - 1].status = isError ? "error" : "success";
+                            const lastTool = pendingTools[pendingTools.length - 1];
+                            lastTool.status = isError ? "error" : "success";
+                            
+                            let argNote = "";
+                            if (currentToolArgs) {
+                                try {
+                                    const argsObj = JSON.parse(currentToolArgs) as Record<string, unknown>;
+                                    for (const [k, v] of Object.entries(argsObj)) {
+                                        if (typeof v === "string" && v.trim().length > 0) {
+                                            if (v.includes("/") || v.includes("\\") || v.includes(".")) {
+                                                argNote = ` (${path.basename(v)})`;
+                                                break;
+                                            } else if (k.toLowerCase().includes("command") || k.toLowerCase() === "cmd") {
+                                                argNote = ` (${v.length > 20 ? v.substring(0, 20) + "..." : v})`;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                } catch {}
+                            }
+                            
+                            const emoji = lastTool.status === "error" ? "\u274C" : "\u2705";
+                            emitLine(`  ${emoji} ${lastTool.name}${argNote}`);
                         }
                         break;
                     // thinking_delta, text_start, text_end, etc. — silently handled

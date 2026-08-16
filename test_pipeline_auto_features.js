@@ -117,16 +117,40 @@ function assert(condition, testName) {
 
 const capturedLogs = [];
 const originalConsoleLog = console.log;
+const originalStdoutWrite = process.stdout.write;
+let stdoutBuffer = "";
+
 function overrideConsoleLog() {
     console.log = function(...args) {
+        if (stdoutBuffer) {
+            capturedLogs.push(stdoutBuffer);
+            stdoutBuffer = "";
+        }
         capturedLogs.push(args.join(" "));
+    };
+    process.stdout.write = function(chunk) {
+        const str = chunk.toString();
+        if (str === "\n") {
+            if (stdoutBuffer) {
+                capturedLogs.push(stdoutBuffer);
+                stdoutBuffer = "";
+            }
+        } else {
+            stdoutBuffer += str;
+        }
     };
 }
 function restoreConsoleLog() {
+    if (stdoutBuffer) {
+        capturedLogs.push(stdoutBuffer);
+        stdoutBuffer = "";
+    }
     console.log = originalConsoleLog;
+    process.stdout.write = originalStdoutWrite;
 }
 function clearLogs() {
     capturedLogs.length = 0;
+    stdoutBuffer = "";
 }
 
 const mockCtx = {
