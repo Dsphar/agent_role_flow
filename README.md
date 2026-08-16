@@ -75,9 +75,11 @@ Some files in this repo are **project-specific state** or **runtime artifacts**.
 The `.pi/extensions/pipeline-auto.ts` file is a pi extension that runs the role pipeline autonomously via sequential sub-agent sessions:
 
 - **RPC mode** — Spawns `pi --mode rpc` subprocesses with JSONL communication on stdout/stdin
-- **Live streaming** — Non-thinking text streams live via `message_update/text_delta` events, tool calls shown inline (🛠 name, ✅/❌ results)
+- **Live streaming** — Non-thinking text streams live via `message_update/text_delta` events, tool calls shown inline (🛠 name, ✅/❌ results). Consecutive blank lines in streamed output condense into a single `-` separator.
 - **Auto-response** — Extension UI dialogs (`confirm`, `select`, `input`, `editor`) are auto-responded with recommended/default values
 - **Context usage display:** Every streamed line shows a colored prefix like `[12.3k/128.0k (9.6%)]` with real-time token consumption per sub-agent session. Green (< 60%), yellow (60–85%), red (> 85%). Silently hidden when stats are unavailable.
+- **Live steering input:** During a run, type plain text into the TUI to forward it directly to the active sub-agent (echoed as `🎯 Steering → <text>`).
+- **Low-context wind-down:** Sessions near their context limit (e.g., < 15k tokens remaining) automatically receive an instruction to save their progress to `loop_state.md` and exit, allowing a fresh session to seamlessly pick up the work.
 - **Safety features:** Max 50 sessions, infinite-loop detection (warns after 3+ consecutive same-role runs), `can_loop` guard (exits if Planner hasn't enabled it)
 
 **Usage:** `/pipeline-auto` — start the pipeline | `/pipeline-auto --help` — show help text
@@ -176,6 +178,12 @@ ai_workspace/
 - **Mid-loop cancellation** supported via two-step confirmation (Roles 01–06)
 
 ## Changelog
+
+### 2026-08-16 — Pipeline-Auto: Blank-Line Condensation, Live Steering, Low-Context Wind-Down
+
+- **Added** live steering input: users can type plain text into the TUI during a run to steer the active sub-agent session without interrupting it.
+- **Added** low-context wind-down: active sessions near their context limit automatically save their state and exit, allowing a fresh session to continue the work.
+- **Added** blank-line condensation: consecutive blank lines in streamed sub-agent text now collapse into a single `-` separator line to reduce vertical clutter.
 
 ### 2026-08-15 — Second Opinion Actionable Findings Mandate
 

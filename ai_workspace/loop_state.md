@@ -1,5 +1,5 @@
 **Goal Summary:** Pipeline-auto: blank-line condensation, live steering input, low-context auto-restart<br>
-**Current Role:** Documenter (Role 05) | History: Interviewer → Planner → Worker → Tester → Worker → Tester<br>
+**Current Role:** Reviewer (Role 06) | History: Interviewer → Planner → Worker → Tester → Worker → Tester → Documenter<br>
 **Pipeline Config:** test_level=deep | do_docs=true | can_loop=true<br>
 
 ---
@@ -213,3 +213,12 @@ No test infrastructure exists in this repo; per my lane I wrote no tests (Tester
 - Verified that 6 consecutive blanks now correctly collapse to `------`.
 - Verified that Trigger A correctly fires when remaining context tokens drop below 15k.
 - All 24 assertions passed. Send-back cycle is complete and verified.
+
+---
+## Documenter (Role 05) — Complete
+
+### Deliverables
+- **README.md**: Updated the "Pipeline-Auto Extension" features list to include Live steering input, Low-context wind-down, and Streamed output condensation. Added a new changelog entry for this loop's additions.
+
+### Note for Reviewer
+- **User Feedback Received**: During the Documenter session, the user reported a bug regarding the extension's newline output: "The newline output was \"--\n-\n--\" When it shold have been \"-----\"". The Documenter cannot fix bugs or initiate send-backs. Reviewer, please evaluate this issue during your Scope Audit and initiate a send-back to the Worker.
