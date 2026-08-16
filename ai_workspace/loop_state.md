@@ -1,5 +1,5 @@
 **Goal Summary:** Pipeline-auto: blank-line condensation, live steering input, low-context auto-restart<br>
-**Current Role:** Reviewer (Role 06) | History: Interviewer → Planner → Worker → Tester → Worker → Tester → Documenter<br>
+**Current Role:** Worker (Role 03) (in-sendback) | History: Interviewer → Planner → Worker → Tester → Worker → Tester → Documenter → Reviewer<br>
 **Pipeline Config:** test_level=deep | do_docs=true | can_loop=true<br>
 
 ---
@@ -222,3 +222,40 @@ No test infrastructure exists in this repo; per my lane I wrote no tests (Tester
 
 ### Note for Reviewer
 - **User Feedback Received**: During the Documenter session, the user reported a bug regarding the extension's newline output: "The newline output was \"--\n-\n--\" When it shold have been \"-----\"". The Documenter cannot fix bugs or initiate send-backs. Reviewer, please evaluate this issue during your Scope Audit and initiate a send-back to the Worker.
+
+---
+## Reviewer (Role 06) — In Progress
+
+### Current-Role Steps
+- [x] Scope Audit
+  - Found out-of-scope change from Tester: changing the condensation rule from "single `-` line for N blanks" to "a string of N dashes (e.g. `------`)".
+- [x] Code Quality Review
+  - Worker implemented the condensation rule with a buffer that delays real-time printing. 
+- [x] Architecture/Design Review
+  - Buffering logic for blank condensation causes real-time output lag since it waits for the next non-blank line.
+- [x] Security Review
+  - No issues found.
+- [x] `.gitignore` Check
+  - Present.
+- [x] Test Quality Review
+  - Tests reflect the out-of-scope Tester requirements.
+- [x] Documentation Review
+  - Adequate.
+- [x] Compile Findings
+  - Critical Issue: The blank line condensation buffers dashes instead of printing them in real-time, which also leads to fragmented lines (e.g., `--\n-\n--`) if flushed prematurely by a tool call.
+- [x] Send-back / Transition
+
+### Overall Assessment
+Code quality is generally good, but the architectural logic for blank line condensation inadvertently introduced a buffering delay that violates real-time streaming expectations and causes visual fragmentation when tool calls interrupt the buffer.
+
+### Scope Audit Findings
+The original request was "exactly one `-` line for any number of consecutive blanks". The Tester changed this to "N dashes for N blanks (e.g. `------`)". The user chose to **Absorb** this out-of-scope change.
+
+### Send-Back Issues
+- **Source:** Reviewer (Role 06)
+- **File:** `.pi/extensions/pipeline-auto.ts`
+- **Issue 1:** The condensation feature (`emitLine()`) buffers dashes (`pendingDashes`) and waits for a non-blank line before printing them. This causes the dashes to not appear in real-time, which violates the user's expectations for a live stream. Furthermore, when a tool call occurs, the buffer is prematurely flushed, causing the dashes to be split across multiple lines (e.g., `--\n-\n--` instead of `-----`).
+- **Recommended Fix 1:** Refactor `emitLine` (or the buffering logic) so that dashes are printed to the console *immediately* as blank lines arrive (real-time). You may need to use `process.stdout.write("-")` instead of `console.log` so that the dashes can accumulate on the same line in real-time without emitting newlines until a non-blank line arrives. Ensure that the logic still adheres to the absorbed requirement: N blank lines = a string of N dashes.
+- **Issue 2 (User Request):** The user requested a brief, informative notification for tool calls (e.g., noting "Write to {file}"). Currently, it only prints the tool name. 
+- **Recommended Fix 2:** Modify the `toolcall_start` handler to extract relevant arguments (like a filename if the tool writes to or reads a file) from the event payload and append a brief note to the tool notification string (e.g., `  🧰 write_to_file (file.txt) ✅`). Note: keep it brief and informative.
+- **Severity:** Critical
