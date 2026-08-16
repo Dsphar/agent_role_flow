@@ -1,5 +1,5 @@
 **Goal Summary:** Pipeline-auto: blank-line condensation, live steering input, low-context auto-restart<br>
-**Current Role:** Tester (Role 04) (in-sendback) | History: Interviewer → Planner → Worker → Tester → Worker<br>
+**Current Role:** Documenter (Role 05) | History: Interviewer → Planner → Worker → Tester → Worker → Tester<br>
 **Pipeline Config:** test_level=deep | do_docs=true | can_loop=true<br>
 
 ---
@@ -204,3 +204,12 @@ No test infrastructure exists in this repo; per my lane I wrote no tests (Tester
 
 ### Files Created / Modified
 - **Modified:** `.pi/extensions/pipeline-auto.ts`
+
+---
+## Tester (Role 04) — Send-Back Summary
+
+### Verification Performed
+- Re-ran the complete `test_pipeline_auto_features.js` suite after Worker's send-back fixes.
+- Verified that 6 consecutive blanks now correctly collapse to `------`.
+- Verified that Trigger A correctly fires when remaining context tokens drop below 15k.
+- All 24 assertions passed. Send-back cycle is complete and verified.
