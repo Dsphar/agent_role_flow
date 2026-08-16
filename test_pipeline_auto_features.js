@@ -60,8 +60,8 @@ if (process.argv.includes("--mode") && process.argv.includes("rpc")) {
         if (sc === "S2") {
             // Send text with 6 consecutive newlines
             sendJson({ type: "message_update", assistantMessageEvent: { type: "text_delta", delta: "Line 1\n\n\n\n\n\n\nLine 2" } });
-            sendJson({ type: "message_update", assistantMessageEvent: { type: "toolcall_start", toolName: "my_tool" } });
-            sendJson({ type: "message_update", assistantMessageEvent: { type: "toolcall_end", isError: false } });
+            sendJson({ type: "message_update", assistantMessageEvent: { type: "toolcall_start" } });
+            sendJson({ type: "message_update", assistantMessageEvent: { type: "toolcall_end", toolCall: { name: "my_tool", arguments: {} }, isError: false } });
             setTimeout(endSession, 50);
         } else if (sc === "S3") {
             sendJson({ type: "message_update", assistantMessageEvent: { type: "text_delta", delta: "Triggering flush\n" } });

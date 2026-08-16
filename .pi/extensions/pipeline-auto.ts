@@ -414,24 +414,25 @@ function runSubAgent(cwd: string): Promise<void> {
                         // Flush any pending text (including queued tool results)
                         flushAllBufferedText();
                         currentToolArgs = "";
-                        const name = event.toolName as string | undefined;
-                        if (name) {
-                            pendingTools.push({ name, status: "pending" });
-                            // Print immediately so user doesn't stare at a blank line while tool runs
-                            emitLine(`  \u{1F9F0} Tool: ${name}`);
-                        }
+                        pendingTools.push({ name: "tool", status: "pending" });
+                        // We can't print the specific tool name yet because it's not in the start event for some providers
+                        emitLine(`  \u{1F9F0} Tool running...`);
                         break;
                     case "toolcall_delta":
-                        const delta = event.delta as string | undefined;
-                        if (delta) {
-                            currentToolArgs += delta;
+                        if (event.delta) {
+                            currentToolArgs += event.delta;
                         }
                         break;
                     case "toolcall_end":
+                        // The toolcall_end event contains the full toolCall object which has the name
+                        const toolCallObj = (event as any).toolCall;
+                        const actualName = toolCallObj ? toolCallObj.name : "tool";
+                        
                         // Mark the last pending tool with its result status
                         const isError = event.isError as boolean | undefined;
                         if (pendingTools.length > 0) {
                             const lastTool = pendingTools[pendingTools.length - 1];
+                            lastTool.name = actualName;
                             lastTool.status = isError ? "error" : "success";
                             
                             let argNote = "";
