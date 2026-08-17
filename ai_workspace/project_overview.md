@@ -6,6 +6,7 @@ An AI agent sequential-pipeline system — 7 roles flowing through a structured 
 ## File Structure
 ```
 .gitignore                             ← Git ignore rules (Node.js, TypeScript, env files, IDE, OS noise)
+API_DOCS.md                            ← Comprehensive API documentation for pipeline-auto extension
 README.md                              ← GitHub-ready project overview (casual tone, disclaimers, getting started)
 AGENTS.md                              ← Master workflow orchestrator
 ai_workspace/├── roles/
@@ -26,6 +27,11 @@ ai_workspace/├── roles/
 │   ├── todo_guide.md                  ← Out-of-scope item capture workflow + template
 │   └── transition_guide.md            ← Role completion & git commit rules
 └── TODO/                              ← Pending items (one .md file per item)
+test_pipeline_auto_features.js         ← Feature-level tests for pipeline-auto extension
+test_pipeline_push.js                  ← Helper function and command tests (32 tests)
+test_sendback.js                       ← Send-back mode regression tests (38 tests)
+test_toolcall_streaming.js             ← Tool call streaming assertion tests (15 tests)
+test_unit_deep.js                      ← Deep unit test suite — parseLoopState, autoRespondUiRequest, infinite loop detection, event listeners, static analysis (59 tests)
 ```
 
 ## Architecture Overview
@@ -97,6 +103,7 @@ ai_workspace/├── roles/
 - Send-back suffix display in TUI footer: `isInSendBack(cwd)` helper reads line 2 of `loop_state.md` for `(in-sendback)` suffix and appends it to the role label in the status bar (e.g., `Role: Tester (in-sendback)`). Gives users visibility into send-back recovery vs. normal pipeline flow.
 - Post-Finalizer ready message in TUI footer: `_cachedGoalSummary` module-level variable caches goal summary at `session_start`, surviving file deletion by Finalizer. When `_sessionStartRole === "Finalizer"` AND `loop_state.md` no longer exists, status shows `Pipeline complete | <goal summary> | Ready for new loop`. Distinguishes pipeline completion from clean boot.
 - Second Opinion actionable findings mandate: Logged Second Opinion findings are now **directives, not optional context**. The Step 5 template in `manual_second_opinion.md` is self-contained — any downstream role reading it understands its obligation without loading the skill file. Every logged section MUST include a `### Required Action — Affected Roles` block after the findings table: per-role callouts generated from the Target Role column (e.g., "Worker (Role 03): you must address Finding #1") plus three acknowledgment rules — only directly-affected roles respond; each MUST state in-session whether it **fixed**, **deferred**, or **rejected** each assigned finding; a rejection is invalid without reasoning. Closes the gap where a Worker previously deferred a Second Opinion finding without explicitly correcting for it.
+- Deep testing strategy: Test suite uses custom lightweight assertion harness (no external test framework dependency). `test_unit_deep.js` provides 59 unit tests across 7 categories covering parseLoopState, autoRespondUiRequest, loopStateExists, infinite loop detection, event listener registration, source code static analysis, and `<br>` tag variations. Total suite: 144 tests across 4 suites with temp-dir isolation for streaming tests to prevent real file touches.
 
 ## User-Preferred Patterns
 _(No user-preferred patterns recorded yet. Add here when identified.)_

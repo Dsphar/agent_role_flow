@@ -45,8 +45,14 @@ if (process.argv.includes("--mode") && process.argv.includes("rpc")) {
         } else if (req.type === "get_session_stats") {
             let tokens = 1000;
             let window = 32000;
+            // S3: low remaining triggers wind-down via stats
             if (scenario === "S3") {
-                tokens = 25000;
+                tokens = 25000; // only 7k remaining → triggers wind-down (<15k)
+                window = 32000;
+            }
+            // S9 first session: low remaining triggers wind-down via stats
+            if (scenario === "S9" && fs.existsSync(counterFile) && fs.readFileSync(counterFile, 'utf8') === "1") {
+                tokens = 27000; // only 5k remaining → triggers wind-down (<15k)
                 window = 32000;
             }
             sendJson({
@@ -225,7 +231,7 @@ async function runTests() {
     const warns3 = capturedLogs.filter(l => l.includes("Low context detected") && l.includes("stats: 7000"));
     assert(warns3.length === 1, "Wind-down Trigger A fires exactly once when remaining <15k");
 
-    console.log("\n--- S4 — Wind-down Trigger B (compaction threshold/overflow) ---");
+    console.log("\n--- S4 — Wind-down Trigger B (compaction threshold/overflow) NO LONGER TRIGGERS ---");
     clearLogs();
     writeLoopState(true);
     process.env.TEST_SCENARIO = "S4";
@@ -233,7 +239,7 @@ async function runTests() {
     await commands["pipeline-auto"].handler("", mockCtx);
     restoreConsoleLog();
     const warns4 = capturedLogs.filter(l => l.includes("Low context detected") && l.includes("compaction: threshold"));
-    assert(warns4.length === 1, "Wind-down Trigger B fires exactly once");
+    assert(warns4.length === 0, "Wind-down Trigger B is removed and should not fire");
 
     console.log("\n--- S5 — Manual compaction reason does NOT trigger wind-down ---");
     clearLogs();

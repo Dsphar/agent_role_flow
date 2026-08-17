@@ -43,7 +43,7 @@ let _cachedGoalSummary: string | undefined = undefined;
 // read by the `input` event handler in the default export. While a pipeline run is active,
 // plain TUI text is forwarded to the working sub-agent instead of starting an LLM turn here.
 let _pipelineRunning = false;
-let _activeSubAgent: { stdin: NodeJS.WritableStream; ended: boolean; terminateActiveDashes: () => void } | null = null;
+let _activeSubAgent: { stdin: NodeJS.WritableStream; child: any; ended: boolean; terminateActiveDashes: () => void } | null = null;
 let _steerSeq = 0; // counter for unique steer prompt ids (steer-1, steer-2, …)
 
 /**
@@ -121,34 +121,16 @@ function parseLoopState(cwd: string): LoopStateParsed {
 
 /**
  * Parse line 2 of loop_state.md to extract the current role name.
- * Kept for callers outside updateStatus (pipeline-auto handler, session_start).
  */
 function getCurrentRole(cwd: string): string | undefined {
     return parseLoopState(cwd).currentRole;
 }
 
 /**
- * Parse line 1 of loop_state.md to extract the goal summary.
- * Kept for callers outside updateStatus (session_start caching).
- */
-function getGoalSummary(cwd: string): string | undefined {
-    return parseLoopState(cwd).goalSummary;
-}
-
-/**
  * Parse line 3 of loop_state.md to extract the can_loop flag.
- * Kept for callers outside updateStatus (pipeline-auto handler guard).
  */
 function parseCanLoop(cwd: string): boolean {
     return parseLoopState(cwd).canLoop;
-}
-
-/**
- * Check whether the current role is in send-back mode.
- * Reads line 2 of loop_state.md for `(in-sendback)` suffix.
- */
-function isInSendBack(cwd: string): boolean {
-    return parseLoopState(cwd).isSendBack;
 }
 
 /**
@@ -260,7 +242,7 @@ function runSubAgent(cwd: string): Promise<void> {
             }
         }
         
-        _activeSubAgent = { stdin: child.stdin!, ended: false, terminateActiveDashes };
+        _activeSubAgent = { stdin: child.stdin!, child, ended: false, terminateActiveDashes };
 
         const decoder = new StringDecoder("utf-8");
         let jsonBuffer = ""; // raw JSONL from stdout
@@ -333,16 +315,9 @@ function runSubAgent(cwd: string): Promise<void> {
 
         /** Flush all buffered text including pending tool call results. */
         function flushAllBufferedText(): void {
-            // Print any pending tool call results inline if they errored.
-            // Since we now print the tool immediately at start, we only need to report failures at the end if not already reported.
-            if (pendingTools.length > 0) {
-                for (const tool of pendingTools) {
-                    if (tool.status === "error") {
-                        emitLine(`  \u274C ${tool.name} failed`);
-                    }
-                }
-                pendingTools.length = 0;
-            }
+            // Tool results (success/error) are now printed immediately at toolcall_end,
+            // so no fallback reporting needed here. Just clear the bookkeeping array.
+            pendingTools.length = 0;
             if (textBuffer) {
                 // Trailing remainder: apply the same condensation rule at stream end.
                 // (An empty remainder — text ended on a newline — emits nothing.)
@@ -457,7 +432,16 @@ function runSubAgent(cwd: string): Promise<void> {
                             emitLine(`  ${emoji} ${lastTool.name}${argNote}`);
                         }
                         break;
-                    // thinking_delta, text_start, text_end, etc. — silently handled
+                    case "thinking_delta":
+                        if (typeof event.delta === 'string') {
+                            const newlinesCount = (event.delta.match(/\n/g) || []).length;
+                            for (let i = 0; i < newlinesCount; i++) {
+                                process.stdout.write("-");
+                            }
+                            if (newlinesCount > 0) dashesEmitted = true;
+                        }
+                        break;
+                    // text_start, text_end, etc. — silently handled
                 }
                 return;
             }
@@ -508,14 +492,6 @@ function runSubAgent(cwd: string): Promise<void> {
                 flushAllBufferedText();
                 console.log("");
                 console.log("  \u{1F504} Compacting context...");
-                // Low-context wind-down trigger B: auto-compaction at threshold/overflow means
-                // the session is below pi's context reserve — instruct it to save state and end.
-                // (Manual /compact does not trigger wind-down.) The steer queue delivers the
-                // message before the next LLM call, i.e., right after compaction completes.
-                const reason = parsed.reason as string | undefined;
-                if ((reason === "threshold" || reason === "overflow") && !windDownSent) {
-                    sendWindDown(`compaction: ${reason}`);
-                }
                 // Reset stats — data is stale after compaction until fresh response arrives
                 contextUsageTokens = contextUsageWindow = contextUsagePercent = null;
                 return;
@@ -638,6 +614,15 @@ Low-context wind-down:
   then spawns a fresh session that resumes from loop_state.md — no work is lost.`);
 }
 
+/**
+ * Main command handler for `/pipeline-auto`.
+ *
+ * Validates can_loop guard, clears terminal, then enters the session loop:
+ * reads current role from loop_state.md, spawns a sub-agent via runSubAgent(),
+ * checks for infinite loops (STUCK_THRESHOLD), and exits when Finalizer
+ * deletes loop_state.md or MAX_SESSIONS is reached. Live steering input is
+ * active during the entire run (_pipelineRunning flag).
+ */
 async function handler(_args: string, ctx: ExtensionCommandContext): Promise<void> {
     if (_args.trim() === "--help" || _args.trim() === "-h") {
         printHelp();
@@ -723,6 +708,9 @@ async function handler(_args: string, ctx: ExtensionCommandContext): Promise<voi
                 console.log(`  \u274C Sub-agent error: ${err instanceof Error ? err.message : String(err)}`);
             }
 
+            // Check if user terminated via command word
+            if (!_pipelineRunning) return;
+
             // Brief pause to let filesystem flush loop_state.md writes
             // (Finalizer may delete it; we need to see that on next check)
             await new Promise((resolve) => setTimeout(resolve, 1500));
@@ -749,20 +737,29 @@ async function handler(_args: string, ctx: ExtensionCommandContext): Promise<voi
     console.log("  If the pipeline should still be running, check for infinite loops.");
 }
 
+/**
+ * Extension registration — the default export that pi calls to load this extension.
+ *
+ * Registers the `/pipeline-auto` command and sets up event listeners:
+ * - `input`: forwards plain TUI text to active sub-agent for live steering
+ * - `session_start`: captures initial role/goal summary, clears screen on /new after completion
+ * - `turn_end`: updates footer status with current role + goal summary
+ * - `agent_end`: final checkpoint — catches post-Finalizer loop_state.md deletion
+ * - `session_shutdown`: clears footer status on session replacement (/new, /resume, /fork)
+ */
 export default function (pi: ExtensionAPI) {
     pi.registerCommand("pipeline-auto", {
         description: "Run the role pipeline autonomously via sequential sub-agent sessions",
         handler,
     });
 
-    // Live steering input: while a pipeline run is active, plain TUI text typed by the user is
-    // forwarded to the working sub-agent (delivered at its next turn boundary) instead of starting
-    // an LLM turn in this session. Commands ("/…") and inline bash ("!…") pass through untouched —
-    // forwarding command syntax into a sub-agent could be harmful (e.g., nested /pipeline-auto).
+
+
     pi.on("input", (event: InputEvent) => {
         if (!_pipelineRunning || event.source !== "interactive") return; // feature inert — normal behavior
         const text = event.text;
         if (!text.trim()) return; // whitespace-only input — let normal processing handle it
+
         if (text.startsWith("/") || text.startsWith("!")) return; // TUI commands / inline bash pass through
 
         if (_activeSubAgent && !_activeSubAgent.ended) {

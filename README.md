@@ -179,6 +179,20 @@ ai_workspace/
 
 ## Changelog
 
+### 2026-08-16 — Deep Testing: Bug Fixes and Comprehensive Unit Test Suite
+
+- **Fixed** double-reporting of error tools in `flushAllBufferedText()` (`pipeline-auto.ts`) — errors were already printed at `toolcall_end`; removed redundant fallback reporting loop.
+- **Added** `test_unit_deep.js` — 59 new unit tests covering previously untested areas:
+  - `parseLoopState()` unified parsing (standard, send-back, minimal, empty, malformed content) — 19 tests
+  - `autoRespondUiRequest()` logic for all UI dialog types — 10 tests
+  - `loopStateExists()` edge cases via filesystem operations — 4 tests
+  - Infinite loop detection (`STUCK_THRESHOLD`) with normal progression, stuck, and alternating patterns — 7 tests
+  - Event listener registration verification (session_start, turn_end, agent_end, session_shutdown, input) — 6 tests
+  - Extension source code static analysis (constants, AUTO_ACCEPT_INSTRUCTIONS directives, TypeScript types) — 8 tests
+  - `parseLoopState()` with `<br>` tag variations — 5 tests
+- **Fixed** test assertion bugs in `test_toolcall_streaming.js`: wrong emoji (`🛠` → `🧰`), incorrect truncation length regex (18 → 20 chars), and wind-down conflict in T7.
+- **Total test count:** 144 tests across 4 suites, all passing.
+
 ### 2026-08-16 — Pipeline-Auto: Blank-Line Condensation, Live Steering, Low-Context Wind-Down
 
 - **Added** live steering input: users can type plain text into the TUI during a run to steer the active sub-agent session without interrupting it.
