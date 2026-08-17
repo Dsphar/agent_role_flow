@@ -24,6 +24,9 @@ import type { ExtensionAPI, ExtensionCommandContext, InputEvent } from "@earendi
 const MAX_SESSIONS = 50;
 const LOOP_STATE_FILE = "ai_workspace/loop_state.md";
 const STUCK_THRESHOLD = 3; // warn after this many consecutive same-role runs
+const FS_FLUSH_DELAY_MS = 1500; // filesystem flush delay after sub-agent session ends
+const WIND_DOWN_TOKEN_THRESHOLD = 15000; // low-context wind-down trigger (tokens remaining)
+const ARG_TRUNCATION_LIMIT = 20; // tool argument truncation limit in display
 
 // Track whether pipeline-auto has completed a run in this extension lifecycle.
 // Used to clear previous output when user types /new after the pipeline finishes.
@@ -43,7 +46,7 @@ let _cachedGoalSummary: string | undefined = undefined;
 // read by the `input` event handler in the default export. While a pipeline run is active,
 // plain TUI text is forwarded to the working sub-agent instead of starting an LLM turn here.
 let _pipelineRunning = false;
-let _activeSubAgent: { stdin: NodeJS.WritableStream; child: any; ended: boolean; terminateActiveDashes: () => void } | null = null;
+let _activeSubAgent: { stdin: NodeJS.WritableStream; child: ChildProcess; ended: boolean; terminateActiveDashes: () => void } | null = null;
 let _steerSeq = 0; // counter for unique steer prompt ids (steer-1, steer-2, …)
 
 /**
@@ -270,7 +273,7 @@ function runSubAgent(cwd: string): Promise<void> {
             if (contextUsageTokens === null || contextUsageWindow === null || contextUsagePercent === null) {
                 return "";
             }
-            const raw = `(${contextUsagePercent.toFixed(1)}%) /${(contextUsageWindow / 1000).toFixed(1)}k `;
+            const raw = `${contextUsagePercent.toFixed(1)}%${(contextUsageWindow / 1000).toFixed(1)}k`;
             // ANSI color based on usage percentage (green < 70%, yellow 70-90%, red > 90%)
             let color: string;
             if (contextUsagePercent < 70) {
@@ -344,7 +347,7 @@ function runSubAgent(cwd: string): Promise<void> {
             console.log("");
             console.log(`  \u26A0 Low context detected (${reason}) — sending wind-down instruction…`);
             const message =
-                "Context is nearly exhausted. Stop starting new work immediately. Update ai_workspace/loop_state.md now with your current progress — update the Current-Role Steps checkboxes in your role's summary section and add any inline notes a fresh session needs to resume. Then end your stream; do not transition to another role. A new session will pick up from loop_state.md.";
+                "Context is nearly exhausted. Stop starting new work immediately. Update ai_workspace/loop_state.md now with your current progress — update the Current-Role Steps checkboxes in your role's summary section and add any inline notes a fresh session needs to resume. Then end your stream; do not transition to another role. A new session will pick up from loop_state.md where you leave off.";
             sendRpcCommand(child.stdin!, {
                 id: "wind-down",
                 type: "prompt",
@@ -420,7 +423,7 @@ function runSubAgent(cwd: string): Promise<void> {
                                                 argNote = ` (${path.basename(v)})`;
                                                 break;
                                             } else if (k.toLowerCase().includes("command") || k.toLowerCase() === "cmd") {
-                                                argNote = ` (${v.length > 20 ? v.substring(0, 20) + "..." : v})`;
+                                                argNote = ` (${v.length > ARG_TRUNCATION_LIMIT ? v.substring(0, ARG_TRUNCATION_LIMIT) + "..." : v})`;
                                                 break;
                                             }
                                         }
@@ -436,9 +439,8 @@ function runSubAgent(cwd: string): Promise<void> {
                         if (typeof event.delta === 'string') {
                             const newlinesCount = (event.delta.match(/\n/g) || []).length;
                             for (let i = 0; i < newlinesCount; i++) {
-                                process.stdout.write("-");
+                                emitLine("");
                             }
-                            if (newlinesCount > 0) dashesEmitted = true;
                         }
                         break;
                     // text_start, text_end, etc. — silently handled
@@ -468,7 +470,7 @@ function runSubAgent(cwd: string): Promise<void> {
                 // Low-context wind-down trigger A: stats show fewer than 15k tokens remaining.
                 if (!windDownSent && contextUsageTokens !== null && contextUsageWindow !== null) {
                     const remaining = contextUsageWindow - contextUsageTokens;
-                    if (remaining < 15000) {
+                    if (remaining < WIND_DOWN_TOKEN_THRESHOLD) {
                         sendWindDown(`stats: ${remaining} tokens left`);
                     }
                 }
@@ -608,7 +610,7 @@ Steering (live input):
   a notice is shown instead.
 
 Low-context wind-down:
-  When a sub-agent session runs low on context (fewer than 10k tokens remaining,
+  When a sub-agent session runs low on context (fewer than 15k tokens remaining,
   or pi's auto-compaction triggers), the extension sends it a one-time instruction
   to save progress to ai_workspace/loop_state.md and end its stream. The pipeline
   then spawns a fresh session that resumes from loop_state.md — no work is lost.`);
@@ -713,7 +715,7 @@ async function handler(_args: string, ctx: ExtensionCommandContext): Promise<voi
 
             // Brief pause to let filesystem flush loop_state.md writes
             // (Finalizer may delete it; we need to see that on next check)
-            await new Promise((resolve) => setTimeout(resolve, 1500));
+            await new Promise((resolve) => setTimeout(resolve, FS_FLUSH_DELAY_MS));
 
             // Check if pipeline is complete (loop_state.md deleted by Finalizer)
             if (!loopStateExists(cwd)) {
