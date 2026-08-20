@@ -27,11 +27,13 @@ ai_workspace/├── roles/
 │   ├── todo_guide.md                  ← Out-of-scope item capture workflow + template
 │   └── transition_guide.md            ← Role completion & git commit rules
 └── TODO/                              ← Pending items (one .md file per item)
-test_pipeline_auto_features.js         ← Feature-level tests for pipeline-auto extension
-test_pipeline_push.js                  ← Helper function and command tests (32 tests)
-test_sendback.js                       ← Send-back mode regression tests (38 tests)
-test_toolcall_streaming.js             ← Tool call streaming assertion tests (15 tests)
-test_unit_deep.js                      ← Deep unit test suite — parseLoopState, autoRespondUiRequest, infinite loop detection, event listeners, static analysis (59 tests)
+tests/
+    ├── scratch_test.js                ← Scratch/experimental test
+    ├── test_pipeline_auto_features.js ← Feature-level tests for pipeline-auto extension
+    ├── test_pipeline_push.js          ← Helper function and command tests (32 tests)
+    ├── test_sendback.js               ← Send-back mode regression tests (38 tests)
+    ├── test_toolcall_streaming.js     ← Tool call streaming assertion tests (15 tests)
+    └── test_unit_deep.js              ← Deep unit test suite — parseLoopState, autoRespondUiRequest, infinite loop detection, event listeners, static analysis (59 tests)
 ```
 
 ## Architecture Overview
@@ -107,6 +109,7 @@ test_unit_deep.js                      ← Deep unit test suite — parseLoopSta
 - Deep testing strategy: Test suite uses custom lightweight assertion harness (no external test framework dependency). `test_unit_deep.js` provides 59 unit tests across 7 categories covering parseLoopState, autoRespondUiRequest, loopStateExists, infinite loop detection, event listener registration, source code static analysis, and `<br>` tag variations. Total suite: 144 tests across 4 suites with temp-dir isolation for streaming tests to prevent real file touches.
 
 ## Recent Changes
+- 2025-08-21: Move test files into tests/ folder — six .js test files reorganized from root into dedicated tests/ directory
 - 2025-08-20: Harden TODO file deletion — Planner now actively mandates deletion; Worker has independent safety-net cleanup task
 - 2026-08-20: Add housekeeping rules for project overview and changelog maintenance
 
