@@ -34,7 +34,7 @@ Before drafting any implementation plan, review the Interviewer summary, project
 - Numbered list of implementation steps in execution order — specific enough for independent Worker completion.
 - Group related tasks logically (e.g., scaffolding → core logic → integration).
 - Note dependencies between steps.
-- Check the Interviewer's summary in loop_state.md for any addressed TODO filename. If one is documented, you MUST include a step for the Worker to delete that completed file from `ai_workspace/TODO/`. See `skill_helpers/todo_guide.md`.
+- **Mandatory TODO deletion check.** Always verify whether this loop addresses an existing TODO item by reviewing the Interviewer's summary in `loop_state.md`. If a TODO filename is referenced, you MUST include an explicit step for the Worker to delete that completed file from `ai_workspace/TODO/`. Do not rely on the Interviewer having noted it — actively check and mandate deletion yourself. See `skill_helpers/todo_guide.md`.
 
 ### Identify Risks and Open Questions
 - Flag technical risks, unknowns, or decisions needing user input before coding.

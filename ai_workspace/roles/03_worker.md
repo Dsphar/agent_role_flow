@@ -32,6 +32,9 @@ For every completed step:
 2. Add brief notes: which files were created or modified, any deviations from plan, and blockers encountered.
 3. Save `loop_state.md` so progress is persisted on disk before continuing.
 
+### Post-Implementation TODO Cleanup
+After completing all plan steps, independently check `loop_state.md` for any addressed TODO filename (from the Interviewer's summary). If found, silently delete that file from `ai_workspace/TODO/`. This is a safety net — it runs regardless of whether the Planner included a deletion step.
+
 ### Receiving a Send-Back
 When `(in-sendback)` suffix is present on your role in `loop_state.md` line 2, you are in send-back mode. See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full instructions. In brief:
 1. Read the `### Send-Back Issues` subsection from the relevant Tester or Reviewer summary section in `loop_state.md`.
