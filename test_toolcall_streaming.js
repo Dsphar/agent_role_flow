@@ -244,16 +244,16 @@ async function runTests() {
 
     console.log("\n--- T5 — Prefix format + green zone (<70%) ---");
     logs = await runScenario("T5");
-    assert(logs.some(l => /\x1b\[32m\(40\.0%\) \/200\.0k \x1b\[0m Green line/.test(l)), "Green prefix '(40.0%) /200.0k' on non-blank line");
+    assert(logs.some(l => /\x1b\[32m40\.0%\/200k\x1b\[0m Green line/.test(l)), "Green prefix '40.0%/200k' on non-blank line");
     assert(!logs.some(l => l.includes("80.0k /")), "Old 'N.Nk/T.Tk' token format no longer present");
 
     console.log("\n--- T6 — Prefix yellow zone (70–90%) ---");
     logs = await runScenario("T6");
-    assert(logs.some(l => /\x1b\[33m\(80\.0%\) \/200\.0k \x1b\[0m Yellow line/.test(l)), "Yellow prefix '(80.0%) /200.0k' on non-blank line");
+    assert(logs.some(l => /\x1b\[33m80\.0%\/200k\x1b\[0m Yellow line/.test(l)), "Yellow prefix '80.0%/200k' on non-blank line");
 
     console.log("\n--- T7 — Prefix red zone (≥90%) ---");
     logs = await runScenario("T7");
-    assert(logs.some(l => /\x1b\[31m\(90\.0%\) \/200\.0k \x1b\[0m Red line/.test(l)), "Red prefix '(90.0%) /200.0k' on non-blank line");
+    assert(logs.some(l => /\x1b\[31m90\.0%\/200k\x1b\[0m Red line/.test(l)), "Red prefix '90.0%/200k' on non-blank line");
 
     console.log("\n--- T8 — Null stats (post-compaction) → no prefix ---");
     logs = await runScenario("T8");

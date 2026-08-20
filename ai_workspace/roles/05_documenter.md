@@ -48,6 +48,10 @@ For existing projects (`project_overview.md` exists):
 - Match tone, structure, and formatting of prior documentation.
 - Keep changelog entries chronological and consistent.
 
+### Changelog Housekeeping
+- **Max 10 entries total.** When appending a new entry to `CHANGELOG.md` (or equivalent), count existing entries. If adding the new one exceeds 10, remove the oldest entry(s) from the bottom.
+- Detailed history is preserved in git commits (`[ai-pipeline]` tags) — the changelog file is a quick-reference summary, not an archive.
+
 ### Final Step — Update `loop_state.md` and Transition
 **This step is mandatory. Do not finish your session without completing it.** After all documentation tasks are done:
 1. **Append your summary section** to `loop_state.md` (below existing content):

@@ -105,5 +105,8 @@ test_unit_deep.js                      ← Deep unit test suite — parseLoopSta
 - Second Opinion actionable findings mandate: Logged Second Opinion findings are now **directives, not optional context**. The Step 5 template in `manual_second_opinion.md` is self-contained — any downstream role reading it understands its obligation without loading the skill file. Every logged section MUST include a `### Required Action — Affected Roles` block after the findings table: per-role callouts generated from the Target Role column (e.g., "Worker (Role 03): you must address Finding #1") plus three acknowledgment rules — only directly-affected roles respond; each MUST state in-session whether it **fixed**, **deferred**, or **rejected** each assigned finding; a rejection is invalid without reasoning. Closes the gap where a Worker previously deferred a Second Opinion finding without explicitly correcting for it.
 - Deep testing strategy: Test suite uses custom lightweight assertion harness (no external test framework dependency). `test_unit_deep.js` provides 59 unit tests across 7 categories covering parseLoopState, autoRespondUiRequest, loopStateExists, infinite loop detection, event listener registration, source code static analysis, and `<br>` tag variations. Total suite: 144 tests across 4 suites with temp-dir isolation for streaming tests to prevent real file touches.
 
+## Recent Changes
+- 2026-08-20: Add housekeeping rules for project overview and changelog maintenance
+
 ## User-Preferred Patterns
 _(No user-preferred patterns recorded yet. Add here when identified.)_

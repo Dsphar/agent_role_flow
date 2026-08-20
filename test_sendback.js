@@ -51,8 +51,8 @@ if (autoAcceptBlock) {
 console.log("\n=== Section 2: Busy-wait replacement (Reviewer send-back #2) ===");
 
 assert(!extContent.includes("while (Date.now()"), "No busy-wait while(Date.now()) loop present");
-assert(extContent.includes('await new Promise((resolve) => setTimeout(resolve, 1500))'),
-    "Async sleep with setTimeout/Promise is used instead");
+assert(/await\s+new\s+Promise.*setTimeout.*FS_FLUSH_DELAY_MS/.test(extContent),
+    "Async sleep with setTimeout/Promise and named constant is used instead");
 assert(extContent.match(/async\s+function\s+handler/), "Handler function is declared async (needed for await)");
 
 // ──────────────────────────────────────────────

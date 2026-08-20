@@ -15,7 +15,8 @@ Finalize the pipeline loop: squash all per-role commits from current iteration i
 ### Update Project Overview
 Follow [`skill_helpers/project_overview_guide.md`](../skill_helpers/project_overview_guide.md) for creating and updating `project_overview.md`. In brief:
 - If file does **not** exist: create using "Creating from Scratch" section of guide.
-- If it **does** exist: update to reflect current structural state only, following "Updating Across Loops" section. Do NOT append iteration history, changelog entries, or known issues — that data belongs in git via this role's squashed `[ai-pipeline]` commit. Keep concise but complete.
+- If it **does** exist: update to reflect current structural state only, following "Updating Across Loops" section. Do NOT append iteration history or known issues — that data belongs in git via this role's squashed `[ai-pipeline]` commit. The `Recent Changes` section is the exception — prepend a one-line summary and enforce the 10-entry limit.
+- **Enforce housekeeping rules** from the guide: keep file under 200 lines total, max 10 entries in Recent Changes. If adding content would exceed limits, trim older entries first.
 
 ### Loop Reset and Handoff
 Git is expected. If not initialized, ask user before proceeding.
