@@ -18,6 +18,11 @@ Follow [`skill_helpers/project_overview_guide.md`](../skill_helpers/project_over
 - If it **does** exist: update to reflect current structural state only, following "Updating Across Loops" section. Do NOT append iteration history or known issues — that data belongs in git via this role's squashed `[ai-pipeline]` commit. The `Recent Changes` section is the exception — prepend a one-line summary and enforce the 10-entry limit.
 - **Enforce housekeeping rules** from the guide: keep file under 200 lines total, max 10 entries in Recent Changes. If adding content would exceed limits, trim older entries first.
 
+### Line Ending Guardrails (CRLF/LF Prevention)
+- Check if `.gitattributes` exists in the project root.
+- If it does not exist, create it with the single line `* text=auto eol=lf`.
+- This ensures future agents and cross-platform tools do not fail strict string-matching due to mixed CRLF/LF line endings.
+
 ### Loop Reset and Handoff
 Git is expected. If not initialized, ask user before proceeding.
 

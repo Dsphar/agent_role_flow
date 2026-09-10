@@ -7,6 +7,9 @@
 const fs = require("fs");
 const path = require("path");
 
+// Tests live in tests/ — project root is one level up (paths broke when files moved into tests/).
+const ROOT = path.join(__dirname, "..");
+
 let passed = 0;
 let failed = 0;
 let skipped = 0;
@@ -91,7 +94,7 @@ assert(getCurrentRole(shortContent) === undefined,
 // Test against actual loop_state.md in the repo
 console.log("\n--- Testing against actual loop_state.md ---");
 try {
-    const actual = fs.readFileSync(path.join(__dirname, "ai_workspace", "loop_state.md"), "utf-8");
+    const actual = fs.readFileSync(path.join(ROOT, "ai_workspace", "loop_state.md"), "utf-8");
     const role = getCurrentRole(actual);
     assert(role === "Tester", `Extracts 'Tester' from actual file (got: '${role}')`);
 } catch (e) {
@@ -142,7 +145,7 @@ assert(parseCanLoop(makeContent3("can_loop=TRUE")) === false,
 // ============================================================
 console.log("\n=== Test Suite: Command rename verification ===\n");
 
-const extSource = fs.readFileSync(path.join(__dirname, ".pi", "extensions", "pipeline-auto.ts"), "utf-8");
+const extSource = fs.readFileSync(path.join(ROOT, ".pi", "extensions", "pipeline-auto.ts"), "utf-8");
 
 assert(!extSource.includes("/autoloop"),
     "No '/autoloop' references remain in extension source");
@@ -177,7 +180,7 @@ assert(extSource.includes('setStatus("pipeline-auto"'),
 // ============================================================
 console.log("\n=== Test Suite: AGENTS.md updates ===\n");
 
-const agentsMd = fs.readFileSync(path.join(__dirname, "AGENTS.md"), "utf-8");
+const agentsMd = fs.readFileSync(path.join(ROOT, "AGENTS.md"), "utf-8");
 
 assert(agentsMd.includes("can_loop={true|false}"),
     "Format spec includes can_loop={true|false}");
@@ -188,7 +191,7 @@ assert(agentsMd.match(/can_loop.*must be `true` or `false`/),
 // ============================================================
 console.log("\n=== Test Suite: Interviewer role updates ===\n");
 
-const interviewer = fs.readFileSync(path.join(__dirname, "ai_workspace", "roles", "01_interviewer.md"), "utf-8");
+const interviewer = fs.readFileSync(path.join(ROOT, "ai_workspace", "roles", "01_interviewer.md"), "utf-8");
 
 assert(interviewer.includes("can_loop=false"),
     "Interviewer init template includes can_loop=false");
@@ -199,7 +202,7 @@ assert(interviewer.match(/Always set `?can_loop=false/),
 // ============================================================
 console.log("\n=== Test Suite: Planner role updates ===\n");
 
-const planner = fs.readFileSync(path.join(__dirname, "ai_workspace", "roles", "02_planner.md"), "utf-8");
+const planner = fs.readFileSync(path.join(ROOT, "ai_workspace", "roles", "02_planner.md"), "utf-8");
 
 assert(planner.includes("can_loop=true"),
     "Planner instructed to set can_loop=true before transitioning");

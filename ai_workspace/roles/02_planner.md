@@ -36,6 +36,10 @@ Before drafting any implementation plan, review the Interviewer summary, project
 - Note dependencies between steps.
 - **Mandatory TODO deletion check.** Always verify whether this loop addresses an existing TODO item by reviewing the Interviewer's summary in `loop_state.md`. If a TODO filename is referenced, you MUST include an explicit step for the Worker to delete that completed file from `ai_workspace/TODO/`. Do not rely on the Interviewer having noted it — actively check and mandate deletion yourself. See `skill_helpers/todo_guide.md`.
 
+**Mandatory test-creation deferral.** Plans MUST defer all test creation to the Tester (Role 04) — Worker steps must not include authoring or updating tests after code changes. Describe what should be tested in your testing strategy overview; schedule no test-writing work for the Worker.
+- ❌ A Worker step that says "write unit tests for the new parser."
+- ✅ A plan whose Worker steps cover implementation only, with test creation left to the Tester (Role 04).
+
 ### Identify Risks and Open Questions
 - Flag technical risks, unknowns, or decisions needing user input before coding.
 - Document unresolved items clearly so Worker can escalate.
@@ -80,7 +84,7 @@ If the user says "cancel" during your session, follow [`cancel_guide.md`](../ski
 
 - **Bug-fix:** ❌ Read file, find bug, edit to fix it. ✅ Describe bug and proposed fix in prose; assign actual edit as Worker step.
 - **New file creation:** ❌ Create file with full implementation code. ✅ List file in module map with description of contents; Worker creates it.
-- **Test writing:** ❌ Write test files to validate design assumptions. ✅ Describe needed tests, include as ordered Worker steps.
+- **Test writing:** ❌ Write test files to validate design assumptions. ✅ Describe needed tests in your testing strategy; test creation itself is deferred to the Tester (Role 04), not scheduled as Worker steps.
 - **Config setup:** ❌ Create `package.json`, `.gitignore`, etc. with real content. ✅ Specify required config files, purpose, and key settings in plan; Worker creates them.
 - **Quick verification:** ❌ Run `npm install` or `pip install` to check library. ✅ Note dependency in plan; Worker handles installation and verification.
 

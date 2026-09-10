@@ -209,7 +209,8 @@ async function runTests() {
     };
 
     console.log("\n=== test_toolcall_streaming.js ===");
-    const ext = await import('./.pi/extensions/pipeline-auto.ts');
+    // Tests live in tests/ — extension is one level up (path broke when files moved into tests/).
+    const ext = await import('../.pi/extensions/pipeline-auto.ts');
     ext.default(mockPi);
 
     async function runScenario(scenario) {

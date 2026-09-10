@@ -5,6 +5,7 @@ An AI agent sequential-pipeline system — 7 roles flowing through a structured 
 
 ## File Structure
 ```
+.gitattributes                         ← Enforce LF line endings (`* text=auto eol=lf`); Finalizer self-heals if missing
 .gitignore                             ← Git ignore rules (Node.js, TypeScript, env files, IDE, OS noise)
 API_DOCS.md                            ← Comprehensive API documentation for pipeline-auto extension
 README.md                              ← GitHub-ready project overview (casual tone, disclaimers, getting started)
@@ -107,8 +108,11 @@ tests/
 - Post-Finalizer ready message in TUI footer: `_cachedGoalSummary` module-level variable caches goal summary at `session_start`, surviving file deletion by Finalizer. When `_sessionStartRole === "Finalizer"` AND `loop_state.md` no longer exists, status shows `Pipeline complete | <goal summary> | Ready for new loop`. Distinguishes pipeline completion from clean boot.
 - Second Opinion actionable findings mandate: Logged Second Opinion findings are now **directives, not optional context**. The Step 5 template in `manual_second_opinion.md` is self-contained — any downstream role reading it understands its obligation without loading the skill file. Every logged section MUST include a `### Required Action — Affected Roles` block after the findings table: per-role callouts generated from the Target Role column (e.g., "Worker (Role 03): you must address Finding #1") plus three acknowledgment rules — only directly-affected roles respond; each MUST state in-session whether it **fixed**, **deferred**, or **rejected** each assigned finding; a rejection is invalid without reasoning. Closes the gap where a Worker previously deferred a Second Opinion finding without explicitly correcting for it.
 - Deep testing strategy: Test suite uses custom lightweight assertion harness (no external test framework dependency). `test_unit_deep.js` provides 59 unit tests across 7 categories covering parseLoopState, autoRespondUiRequest, loopStateExists, infinite loop detection, event listener registration, source code static analysis, and `<br>` tag variations. Total suite: 144 tests across 4 suites with temp-dir isolation for streaming tests to prevent real file touches.
+- Line-ending enforcement (defense-in-depth): `.gitattributes` at project root (`* text=auto eol=lf`) normalizes all tracked text files to LF on commit; the Finalizer additionally checks for its existence each loop and recreates it if missing. Protects the pipeline's strict string-matching parsers (`loop_state.md` lines 1–3, extension regexes) from silent CRLF breakage on Windows.
+- Planner test-creation deferral: Implementation plans MUST defer all test creation to the Tester (Role 04) — Worker steps never include authoring or updating tests after code changes. The Planner describes what should be tested in its testing strategy overview instead. Enforced via a bolded mandatory-check paragraph with one ❌/✅ example pair inside "Break Down into Ordered Steps"; standalone wording, no cross-reference to the AGENTS.md shared constraint.
 
 ## Recent Changes
+- 2026-09-10: Add Planner test-creation deferral directive (test authoring belongs to Tester); absorb line-ending guardrails (.gitattributes + Finalizer self-heal check); repair stale test paths from the tests/ move
 - 2025-08-21: Move test files into tests/ folder — six .js test files reorganized from root into dedicated tests/ directory
 - 2025-08-20: Harden TODO file deletion — Planner now actively mandates deletion; Worker has independent safety-net cleanup task
 - 2026-08-20: Add housekeeping rules for project overview and changelog maintenance

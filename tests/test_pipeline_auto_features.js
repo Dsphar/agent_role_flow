@@ -1,11 +1,16 @@
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 
 // -----------------------------------------------------------------------------
 // FAKE RPC CHILD PROCESS (when spawned by the extension)
 // -----------------------------------------------------------------------------
 if (process.argv.includes("--mode") && process.argv.includes("rpc")) {
     const scenario = process.env.TEST_SCENARIO;
+
+    // Temp-dir isolation — mirrors test_toolcall_streaming.js so the real ai_workspace/loop_state.md is never touched.
+    const tmpdir = process.env.TEST_TMPDIR || __dirname;
+    const counterFile = path.join(tmpdir, 'session_counter.txt');
 
     function sendJson(obj) {
         process.stdout.write(JSON.stringify(obj) + "\n");
@@ -20,7 +25,7 @@ if (process.argv.includes("--mode") && process.argv.includes("rpc")) {
 
     function endSession() {
         if (scenario !== "S9") {
-            try { fs.unlinkSync(path.join(__dirname, 'ai_workspace', 'loop_state.md')); } catch(e) {}
+            try { fs.unlinkSync(path.join(tmpdir, 'ai_workspace', 'loop_state.md')); } catch(e) {}
         }
         sendJson({ type: "agent_end" });
     }
@@ -50,8 +55,9 @@ if (process.argv.includes("--mode") && process.argv.includes("rpc")) {
                 tokens = 25000; // only 7k remaining → triggers wind-down (<15k)
                 window = 32000;
             }
-            // S9 first session: low remaining triggers wind-down via stats
-            if (scenario === "S9" && fs.existsSync(counterFile) && fs.readFileSync(counterFile, 'utf8') === "1") {
+            // S9: low remaining triggers wind-down via stats. Only session 1 ever polls
+            // (it's the only one that emits text), so no counter check is needed here.
+            if (scenario === "S9") {
                 tokens = 27000; // only 5k remaining → triggers wind-down (<15k)
                 window = 32000;
             }
@@ -87,13 +93,18 @@ if (process.argv.includes("--mode") && process.argv.includes("rpc")) {
         } else if (sc === "S7") {
             endSession();
         } else if (sc === "S9") {
-            const counterFile = path.join(__dirname, 'session_counter.txt');
             const c = fs.readFileSync(counterFile, 'utf8');
             if (c === "1") {
+                // Session 1: wind-down now comes from Trigger A (stats remaining <15k), which
+                // requires a stats poll — and polls only fire on text flushes. Emit a text line
+                // to trigger the poll; the low-remaining S9 stats response then drives wind-down.
+                // (Original scenario relied on compaction_start triggering wind-down — Trigger B,
+                // removed in cf25558 — which deadlocked this scenario.)
                 fs.writeFileSync(counterFile, "2");
-                sendJson({ type: "compaction_start", reason: "threshold" }); 
+                sendJson({ type: "message_update", assistantMessageEvent: { type: "text_delta", delta: "Saving progress...\n" } });
             } else {
-                fs.unlinkSync(path.join(__dirname, 'ai_workspace', 'loop_state.md'));
+                // Session 2 (post wind-down resume): Finalizer-equivalent — remove loop_state to signal completion.
+                fs.unlinkSync(path.join(tmpdir, 'ai_workspace', 'loop_state.md'));
                 sendJson({ type: "agent_end" });
             }
         } else {
@@ -159,8 +170,14 @@ function clearLogs() {
     stdoutBuffer = "";
 }
 
+// Temp-dir isolation — mirrors test_toolcall_streaming.js so the real ai_workspace/loop_state.md is never touched.
+// (When this suite lived at project root, mockCtx.cwd = __dirname meant scenarios wrote/deleted the REAL loop state.)
+const tmpdir = fs.mkdtempSync(path.join(os.tmpdir(), 'pipeline_features_test_'));
+fs.mkdirSync(path.join(tmpdir, 'ai_workspace'), { recursive: true });
+process.env.TEST_TMPDIR = tmpdir; // child mode (spawned with --mode rpc) reads this for its file ops
+
 const mockCtx = {
-    cwd: __dirname,
+    cwd: tmpdir,
     hasUI: true,
     ui: { setStatus: () => {} }
 };
@@ -174,10 +191,11 @@ const mockPi = {
 
 async function runTests() {
     console.log("\n=== test_pipeline_auto_features.js ===");
-    const ext = await import('./.pi/extensions/pipeline-auto.ts');
+    // Tests live in tests/ — extension is one level up (path broke when files moved into tests/).
+    const ext = await import('../.pi/extensions/pipeline-auto.ts');
     ext.default(mockPi);
 
-    const loopStatePath = path.join(__dirname, 'ai_workspace', 'loop_state.md');
+    const loopStatePath = path.join(tmpdir, 'ai_workspace', 'loop_state.md');
     fs.mkdirSync(path.dirname(loopStatePath), { recursive: true });
 
     function writeLoopState(canLoop) {
@@ -318,7 +336,7 @@ async function runTests() {
     clearLogs();
     writeLoopState(true);
     process.env.TEST_SCENARIO = "S9";
-    fs.writeFileSync(path.join(__dirname, 'session_counter.txt'), "1");
+    fs.writeFileSync(path.join(tmpdir, 'session_counter.txt'), "1");
     overrideConsoleLog();
     await commands["pipeline-auto"].handler("", mockCtx);
     restoreConsoleLog();
@@ -330,8 +348,9 @@ async function runTests() {
     console.log(`Results: ${passed} passed, ${failed} failed, 0 skipped`);
     console.log("=".repeat(50) + "\n");
     
-    // Restore loop_state for the pipeline
-    writeLoopState(true);
+    // Cleanup temp dir — nothing to restore; real ai_workspace/loop_state.md was never touched.
+    try { fs.rmSync(tmpdir, { recursive: true, force: true }); } catch (e) {}
+
     process.exit(failed > 0 ? 1 : 0);
 }
 
