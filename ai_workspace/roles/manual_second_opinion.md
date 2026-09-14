@@ -61,9 +61,17 @@ Present findings one at a time or in small groups by severity tier. After presen
 
 ### 5. Log User-Selected Findings
 
-Only log findings the user explicitly approves. Do **not** include non-selected items in your summary — if the user does not select an item, it is discarded entirely.
+Only log findings the user explicitly approves. Do **not** include non-selected items in your summary — if the user does not select an item, it is discarded entirely. If no findings are approved (0 items selected) or no issues were found, leave `loop_state.md` completely untouched (do not append a section and do not modify line 2).
 
-Append your findings to `loop_state.md` under your own section. The template below is self-contained: any downstream role reading it must understand its obligation without loading this skill file. Generate the per-role callouts from the Target Role column of the selected findings — one bullet per affected role, listing every finding number assigned to it:
+When logging approved findings:
+1. Append your findings to `loop_state.md` under your own section (`## Second Opinion (Manual) — Complete`).
+2. Update line 2 of `loop_state.md` to append `→ Second Opinion` to the `History:` chain while preserving the active role:
+   ```
+   **Current Role:** {CurrentRole} (Role NN) | History: {PrevRoles} → Second Opinion<br>
+   ```
+   Every distinct Second Opinion invocation that logs findings appends an entry to the history list.
+
+The template below is self-contained: any downstream role reading it must understand its obligation without loading this skill file. Generate the per-role callouts from the Target Role column of the selected findings — one bullet per affected role, listing every finding number assigned to it:
 ```
 ---
 ## Second Opinion (Manual) — Complete
@@ -97,14 +105,22 @@ If the user wants to act on findings via send-back:
 - **One send-back maximum**, even if multiple roles are affected. Target the **earliest affected role** in pipeline order (01 = Interviewer through 07 = Finalizer).
 - Present your recommendation to the user: which role to send back to and why.
 - **User must approve** before executing the send-back. Use binary-choice prompt convention: "Send back to {RoleName} (recommended) or defer?"
-- On approval, update `loop_state.md` line 2 to route to the target role with `(in-sendback)` suffix. Include `### Send-Back Issues` subsection under your summary listing the specific issues for that role to address.
+- On approval, update `loop_state.md` line 2 to route to the target role with `(in-sendback)` suffix and append `→ Second Opinion` to the `History:` chain:
+  ```
+  **Current Role:** {TargetRole} (Role NN) (in-sendback) | History: {PrevRoles} → Second Opinion<br>
+  ```
+  Include `### Send-Back Issues` subsection under your summary listing the specific issues for that role to address.
 - If user declines send-back, do not force it. The findings remain logged in your section for reference.
 
 ### 7. Verify Pipeline State After Completion (No Send-Back)
 
 If no send-back is triggered:
-- Line 2 of `loop_state.md` was never changed — AGENTS.md Step 0 skips normal startup (steps 1–10), so the original role remains intact. No restoration needed.
-- Simply confirm that line 2 still shows the original active role so the next session resumes naturally.
+- **Findings logged:** Confirm that line 2 retains the original active role and has `→ Second Opinion` appended to the `History:` chain:
+  ```
+  **Current Role:** {CurrentRole} (Role NN) | History: {PrevRoles} → Second Opinion<br>
+  ```
+- **No findings logged (0 approved or no issues found):** Confirm that line 2 remains completely untouched so the next session resumes naturally.
+- **Missing `loop_state.md` (fallback mode):** If `loop_state.md` does not exist, do not create or write line 2.
 
 ---
 
@@ -124,10 +140,10 @@ If no send-back is triggered:
 Follow [`transition_guide.md`](../skill_helpers/transition_guide.md) for summary append and handoff update conventions. Your deliverables:
 
 1. **Console presentation** of all findings organized by severity tier (Critical / Important / Cosmetic), with descriptions, locations, impact, and suggested fixes.
-2. **`loop_state.md` section** (`## Second Opinion (Manual) — Complete`) containing only user-approved findings in a table format, plus the `### Required Action — Affected Roles` directive block: per-role callouts naming each affected role with its assigned finding numbers, and acknowledgment rules (fixed/deferred/rejected; reasoning required for rejections; only directly-affected roles respond).
+2. **`loop_state.md` section** (`## Second Opinion (Manual) — Complete`) containing only user-approved findings in a table format, plus the `### Required Action — Affected Roles` directive block: per-role callouts naming each affected role with its assigned finding numbers, and acknowledgment rules (fixed/deferred/rejected; reasoning required for rejections; only directly-affected roles respond). When findings are logged, line 2 `History:` is updated by appending `→ Second Opinion`.
 3. **Acknowledgment tracking:** Findings become actionable through each directly-affected role's in-session response — no persistent audit trail beyond the in-session statement is required.
-4. **Send-back routing** (if approved): `loop_state.md` line 2 updated to target role with `(in-sendback)` suffix and `### Send-Back Issues` subsection under your summary.
-5. **Pipeline state verification** (if no send-back): Confirm line 2 still shows the original active role so next session resumes naturally.
+4. **Send-back routing** (if approved): `loop_state.md` line 2 updated to target role with `(in-sendback)` suffix and `→ Second Opinion` appended to `History:`, plus `### Send-Back Issues` subsection under your summary.
+5. **Pipeline state verification** (if no send-back): Confirm line 2 retains the original active role (with `→ Second Opinion` appended to `History:` if findings were logged, or left completely untouched if 0 findings logged).
 
 ### Git Commit Tag Convention
 - Normal completion: `[ai-second-opinion]`

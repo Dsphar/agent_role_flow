@@ -319,8 +319,41 @@ result = parseLoopState(mixedContent);
 assert(result.currentRole === "Worker", "Parses role with mixed <br> usage");
 
 // ============================================================
+console.log("\n=== U8 — Second Opinion history tracking & static analysis ===\n");
+
+// Test parseLoopState() with Second Opinion in history
+const secondOpinionNormal = [
+    "**Goal Summary:** Test feature<br>",
+    "**Current Role:** Worker (Role 03) | History: Interviewer → Planner → Worker → Second Opinion<br>",
+    "test_level=quick | do_docs=false | can_loop=true<br>"
+].join("\n");
+result = parseLoopState(secondOpinionNormal);
+assert(result.goalSummary === "Test feature", "Parses goal with Second Opinion in history");
+assert(result.currentRole === "Worker", "Parses active role when Second Opinion is in history");
+assert(result.isSendBack === false, "isSendBack is false for non-sendback Second Opinion");
+
+const secondOpinionSendback = [
+    "**Goal Summary:** Test feature<br>",
+    "**Current Role:** Worker (Role 03) (in-sendback) | History: Interviewer → Planner → Worker → Second Opinion<br>",
+    "test_level=quick | do_docs=false | can_loop=true<br>"
+].join("\n");
+result = parseLoopState(secondOpinionSendback);
+assert(result.currentRole === "Worker", "Parses active role with sendback and Second Opinion");
+assert(result.isSendBack === true, "isSendBack is true for sendback Second Opinion");
+
+// Static analysis of manual_second_opinion.md
+const secondOpinionPath = path.join("ai_workspace", "roles", "manual_second_opinion.md");
+const secondOpinionContent = fs.readFileSync(secondOpinionPath, "utf-8");
+
+assert(secondOpinionContent.includes("→ Second Opinion"), "Contains '→ Second Opinion' history update syntax");
+assert(secondOpinionContent.includes("untouched"), "Contains untouched directive for 0 findings / no issues");
+assert(secondOpinionContent.includes("(in-sendback) | History: {PrevRoles} → Second Opinion"), "Contains send-back line 2 update format with Second Opinion in history");
+assert(secondOpinionContent.includes("retains the original active role and has `→ Second Opinion` appended"), "Task 7 verifies line 2 retains role and appends Second Opinion");
+
+// ============================================================
 console.log("\n" + "=".repeat(50));
 console.log(`Results: ${passed} passed, ${failed} failed, 0 skipped`);
 console.log("=".repeat(50) + "\n");
 
 process.exit(failed > 0 ? 1 : 0);
+

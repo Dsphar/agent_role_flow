@@ -110,8 +110,10 @@ tests/
 - Deep testing strategy: Test suite uses custom lightweight assertion harness (no external test framework dependency). `test_unit_deep.js` provides 59 unit tests across 7 categories covering parseLoopState, autoRespondUiRequest, loopStateExists, infinite loop detection, event listener registration, source code static analysis, and `<br>` tag variations. Total suite: 144 tests across 4 suites with temp-dir isolation for streaming tests to prevent real file touches.
 - Line-ending enforcement (defense-in-depth): `.gitattributes` at project root (`* text=auto eol=lf`) normalizes all tracked text files to LF on commit; the Finalizer additionally checks for its existence each loop and recreates it if missing. Protects the pipeline's strict string-matching parsers (`loop_state.md` lines 1–3, extension regexes) from silent CRLF breakage on Windows.
 - Planner test-creation deferral: Implementation plans MUST defer all test creation to the Tester (Role 04) — Worker steps never include authoring or updating tests after code changes. The Planner describes what should be tested in its testing strategy overview instead. Enforced via a bolded mandatory-check paragraph with one ❌/✅ example pair inside "Break Down into Ordered Steps"; standalone wording, no cross-reference to the AGENTS.md shared constraint.
+- Second Opinion history tracking: When Second Opinion logs approved findings in `loop_state.md`, it appends `→ Second Opinion` to the `History:` chain on line 2 (for both standard and send-back flows), leaving line 2 untouched if 0 findings are approved or no issues found. Ensures ledger parity between line 2 and summary sections while keeping dynamic git depth calculations accurate.
 
 ## Recent Changes
+- 2026-09-13: Update Second Opinion role to append to loop_state.md line 2 History: chain when logging approved findings
 - 2026-09-10: Add Planner test-creation deferral directive (test authoring belongs to Tester); absorb line-ending guardrails (.gitattributes + Finalizer self-heal check); repair stale test paths from the tests/ move
 - 2025-08-21: Move test files into tests/ folder — six .js test files reorganized from root into dedicated tests/ directory
 - 2025-08-20: Harden TODO file deletion — Planner now actively mandates deletion; Worker has independent safety-net cleanup task
@@ -119,3 +121,4 @@ tests/
 
 ## User-Preferred Patterns
 _(No user-preferred patterns recorded yet. Add here when identified.)_
+
