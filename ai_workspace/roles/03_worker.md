@@ -38,7 +38,7 @@ After completing all plan steps, independently check `loop_state.md` for any add
 ### Receiving a Send-Back
 When `(in-sendback)` suffix is present on your role in `loop_state.md` line 2, you are in send-back mode. See [`sendback_guide.md`](../skill_helpers/sendback_guide.md) for full instructions. In brief:
 1. Read the `### Send-Back Issues` subsection from the relevant Tester or Reviewer summary section in `loop_state.md`.
-2. Fix each listed item — you already have full loop context, so ask the user directly if any issue needs clarification.
+2. Fix each listed item — you already have full loop context, so ask the user directly if any issue needs clarification. When sent back a Warning-level doc-inaccuracy finding, you may make minimal factual corrections to existing documentation or inline comments — corrections only, no new content or restructuring (per the AGENTS.md shared-constraint carve-out).
 3. After completing fixes: update handoff to `Tester (Role 04) (in-sendback)`.
 
 ### Handling Mid-Loop Cancellation

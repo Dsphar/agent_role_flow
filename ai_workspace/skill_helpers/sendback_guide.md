@@ -36,14 +36,17 @@ Only Tester and Reviewer can initiate send-backs.
 #### Tester (Role 04) — Bugs
 Present findings to user: list each bug with file references, descriptions, severity. Ask how to proceed (send back or defer as TODO). Then follow Common Steps below.
 
-#### Reviewer (Role 06) — Critical Issues
-Present findings: list each issue with file references, descriptions, recommended fixes. Ask how to proceed (send back or defer as TODO). Then follow Common Steps below.
+#### Reviewer (Role 06) — Critical and Warning Issues
+Present findings: list each issue with file references, descriptions, severity tier, recommended fixes. Ask how to proceed:
+- **Critical** — send back or defer as individual TODO (deferral only for issues clearly unrelated to this loop's scope).
+- **Warning** — send back is the recommendation. If the user declines, follow up per warning with "ignore or todo?": ignore = discard and record the decision in your summary section; todo = item goes into the loop's consolidated manual-review file tagged Warning (see [`todo_guide.md`](./todo_guide.md)).
+Then follow Common Steps below.
 
 ### Common Steps (All Sending Roles)
 
 1. **Ask how to proceed** — send-back is the default recommendation for issues related to this loop's work; defer only for issues clearly unrelated to current scope:
    - **(a) Send back (recommended)** — append `### Send-Back Issues` subsection to your `loop_state.md` summary section, update handoff line (below).
-   - **(b) Defer as TODO file** — capture per [`todo_guide.md`](./todo_guide.md). Continue without interruption. Use only for issues clearly unrelated to this loop's scope.
+   - **(b) Defer** — capture per [`todo_guide.md`](./todo_guide.md); deferral target depends on tier: Reviewer Warning/Suggestion findings go into the loop's consolidated manual-review file, individual TODO files remain valid for out-of-scope Criticals and Tester bug deferrals. Continue without interruption.
 
 2. If user chooses send-back:
    - Append a `### Send-Back Issues` subsection to your existing summary section in `loop_state.md`. List each issue with source role, file references, description, severity, and recommended fix. If the subsection already exists, append new items — do not overwrite.
@@ -66,7 +69,7 @@ When `(in-sendback)` points to your role in `loop_state.md` line 2, you are in s
 - After fixes complete, update handoff line in `loop_state.md` to next role (see routing above). Keep `(in-sendback)` suffix if cycle continues.
 
 > **⚠ Guardrails Still Apply**
-> Send-back changes *what* you work on, not *how*. Each role's "What You Must Not Do" rules remain fully in effect. Worker still doesn't write tests, docs, or perform code reviews. Trust the pipeline.
+> Send-back changes *what* you work on, not *how*. Each role's "What You Must Not Do" rules remain fully in effect. Worker still doesn't write tests or perform code reviews; documentation edits are limited to the AGENTS.md minimal-factual-corrections carve-out (Warning-level doc-inaccuracy send-backs). Trust the pipeline.
 
 ### Per-Role Behavior
 

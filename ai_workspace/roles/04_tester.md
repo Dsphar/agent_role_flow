@@ -86,14 +86,14 @@ Note areas difficult/impossible to test and why. Flag critical paths lacking ade
 ### Generate and Present Suggestions
 After testing, generate suggestions **only if** something genuinely worth noting surfaced — do not manufacture a list. Quality over quantity. Draw from: bugs found (even resolved ones revealing deeper concerns), coverage gaps, infrastructure observations (missing mocks, slow tests, flaky patterns), or other actionable insights.
 
-Present as a **numbered list** so user can reference items when creating TODOs via [`todo_guide.md`](../skill_helpers/todo_guide.md). Each suggestion: one-line description. If none arise, skip gracefully — no empty list. Wait for user acknowledgment before proceeding to Docs-Inclusion prompt.
+Present as a **numbered list**. Each suggestion: one-line description. If none arise, skip gracefully — no empty list. Wait for user acknowledgment before proceeding to Docs-Inclusion prompt. Do not offer per-item TODOs from this list — the Reviewer bundles all Suggestion-tier findings (including yours) into the loop's consolidated manual-review file at end of review.
 
-**Auto-mode (user away):** Generate suggestions if warranted and note them in your summary section. Do not wait for acknowledgment — proceed directly to the Docs-Inclusion step.
+**Record every presented suggestion in your summary section in both interactive and auto modes** — that is the harvest channel the Reviewer reads. In auto mode, do not wait for acknowledgment — proceed directly to the Docs-Inclusion step.
 
 ### Docs-Inclusion Prompt (Tests Passed Only)
 **First, check line 3 of `loop_state.md` for a pre-set `do_docs`.** See [Pipeline Configuration](AGENTS.md#pipeline-configuration-line-3-of-loop_statemd) in AGENTS.md.
 - If `do_docs=false`, skip this prompt entirely. Transition to Reviewer (Role 06).
-- If `do_docs=true`, proceed below — user can still change their mind.
+- If `do_docs=true`, skip this prompt — the decision was already recorded at interview. Inform user of the recorded choice, then proceed normally to Documenter (Role 05). User can still change their mind mid-pipeline by updating line 3 (see below).
 - If unset, this is your fallback mid-pipeline prompt. Proceed below.
 
 **Auto-mode (user away):** Evaluate criteria and silently apply your recommendation. Record the choice on line 3 if not already set.

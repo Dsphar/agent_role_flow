@@ -33,12 +33,21 @@ Before greeting or asking open-ended questions, scan `ai_workspace/TODO/` for `.
 - **Number each item sequentially** (1., 2., 3.) so user can reference by number (e.g., "Let's do #1 and #3").
 - Ask whether to tackle a listed item(s) or start something new.
 - If they pick a TODO, read the full file(s) and proceed to the validation sub-step below.
+- Files named `TODO_manual_review_*.md` are consolidated manual-review files from past loops — if selected, follow the disposition walkthrough below instead of single-item handling.
 
 #### Validate TODO Still Applies
 Before presenting any summary, check whether the problem described is still valid. Search the codebase and/or git history for evidence it has already been fixed or implemented (e.g., "search for the feature in git log, check if referenced files now contain the fix"). If no longer valid: inform the user that the TODO appears completed — include the relevant git commit message if found — and recommend deleting the TODO file. If still valid, proceed to present the summary below.
 
 #### Present TODO Summary (After Validation)
 Present a concise, readable summary of the selected TODO item(s). Cover: **Title**, **Context** (background/motivation), **Description** (what needs to be done), and **Notes** (reasons, examples, constraints). Gracefully skip any sections that are empty or missing — do not mention absent fields. This gives the user a clear refresher before questioning begins.
+
+#### Disposition Walkthrough (Consolidated Manual-Review Files)
+If the selected item is a consolidated manual-review file (`TODO_manual_review_` prefix), walk **every** item in it with the user and sort each into exactly one of three buckets:
+1. **Worked on** — this loop addresses it; it becomes part of the problem statement.
+2. **Dropped** — deliberate user decision not to do it; record the item title and reason in your summary section (explicit discard, never silent loss).
+3. **Preserved** — stays for a later loop; kept verbatim in the file.
+
+At Wrap-Up, rewrite the file: remove worked-on and dropped items, keep preserved items verbatim, delete the file only when no items remain. Do not instruct the Planner to add a Worker deletion step for this file — you own its lifecycle (see `skill_helpers/todo_guide.md`).
 
 #### Continue With Interview
 Use the TODO description as your interview starting point — ask for any missing details (clarification, success criteria, constraints, edge cases) via multi-round questioning below.
@@ -63,7 +72,8 @@ After receiving answers to initial questions, digest and judge whether follow-up
 - Summarize this loop's purpose back to user. Include main goal, sub-goals, constraints, and relevant context.
 - Confirm nothing critical was missed. If so, note it and return to questioning.
 - Ensure problem statement is clear enough for Planner to understand.
-- [ ] If this session addressed a todo file, note its filename in your summary AND explicitly instruct the Planner to include a deletion step for the Worker so the TODO file is removed upon completion. See `skill_helpers/todo_guide.md`.
+- [ ] If this session addressed a single-item todo file, note its filename in your summary AND explicitly instruct the Planner to include a deletion step for the Worker so the TODO file is removed upon completion. See `skill_helpers/todo_guide.md`.
+- [ ] If this loop started from a consolidated manual-review file (`TODO_manual_review_` prefix), rewrite it now per the disposition walkthrough: remove worked-on and dropped items, keep preserved items verbatim, delete only when empty — no Planner/Worker deletion step for this file. Record all three buckets in your summary (dropped items with reasons).
 
 #### Ask Pipeline Configuration Questions
 After completing all interview tasks above (including Wrap-Up) and before transitioning, ask the user two pipeline configuration questions:

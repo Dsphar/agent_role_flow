@@ -4,7 +4,7 @@ How all roles capture, present, and manage out-of-scope items as individual TODO
 
 ## Overview
 
-Out-of-scope requests are captured as **todos** — one `.md` file per item in `ai_workspace/TODO/`.
+Out-of-scope requests are captured as **todos** — one `.md` file per item in `ai_workspace/TODO/`. Consolidated manual-review files (`TODO_manual_review_` prefix) are the single sanctioned multi-item exception (see [Consolidated Manual-Review Files](#consolidated-manual-review-files)).
 
 ---
 
@@ -43,20 +43,60 @@ Copy this into each new todo file:
 
 **Only the Interviewer (Role 01)** scans and presents pending TODOs at session start. All other roles can *capture* new items, but do **not** proactively scan or present existing TODOs at startup.
 
-**Deletion responsibility:** When a loop starts from an existing TODO item, only the Worker (Role 03) deletes that TODO file — and only as part of a planned step included by the Planner. Mid-loop captures (items created during a session for later work) can be deleted by any role whose work satisfies them.
+**Deletion responsibility:** When a loop starts from an existing TODO item, only the Worker (Role 03) deletes that TODO file — and only as part of a planned step included by the Planner. Mid-loop captures (items created during a session for later work) can be deleted by any role whose work satisfies them. Consolidated manual-review files are exempt: the Interviewer rewrites or deletes them at disposition wrap-up; the Worker never deletes them.
+
+---
+
+## Consolidated Manual-Review Files
+
+One per loop, created **only if at least one item exists**. Bundles all Suggestion-tier findings from the loop — Reviewer's own plus Tester suggestions harvested from the Tester's summary section in `loop_state.md` — plus any Warning items routed here (user chose "todo" interactively, or out-of-scope under auto routing). Replaces per-item TODO files for these tiers.
+
+**Single writer:** only the Reviewer (Role 06) creates/updates this file during a loop. It is the last quality gate on every routing path and already compiles findings across severities; a single writer keeps send-back re-runs idempotent. The one exception is the Interviewer's disposition rewrite at the start of a future loop (below).
+
+### Naming
+`TODO_manual_review_{slug}.md` in `ai_workspace/TODO/`. `{slug}` = first up to 4 words of the Goal Summary (`loop_state.md` line 1), non-alphanumerics stripped, lowercased, underscore-joined — e.g., goal "Reduce TODO spam: Warnings send-back..." → `TODO_manual_review_reduce_todo_spam_warnings.md`. No `P{N}` prefix (mixed severity; the class is the signal). The rule is deterministic so every role computes the same name. If a file with that name already exists from an unrelated older loop, append `_{YYYY-MM-DD}`.
+
+**Idempotent refresh:** if the file already exists from an earlier pass of this same loop (send-back re-run), refresh it to reflect currently open findings — dedupe items rather than appending duplicates.
+
+### Template
+```markdown
+## Manual Review — {Goal Summary}
+
+- **Created by:** Reviewer (Role 06)
+- **Date:** {YYYY-MM-DD}
+- **Loop goal:** {Goal Summary text from line 1 of loop_state.md at creation}
+
+## Items
+
+### 1. {Item title}
+- **Source:** {Reviewer (Role 06) | Tester (Role 04)}
+- **Severity:** {Warning | Suggestion}
+- **Description:** {what was found, why it matters, file references if any}
+```
+
+One `### N.` block per item; renumber sequentially on rewrite.
+
+### Disposition — Next Loop's Interviewer
+When a future loop starts from this file, the Interviewer walks **every** item with the user into three explicit buckets:
+1. **Worked on** — this loop addresses it (becomes part of the problem statement).
+2. **Dropped** — deliberate user decision; recorded in the Interviewer summary section with reason (explicit discard, never silent loss).
+3. **Preserved** — stays for a later loop; kept verbatim.
+
+At wrap-up the Interviewer rewrites the file: worked-on and dropped items removed, preserved items kept verbatim, file deleted only when no items remain. The Worker does not delete this file (carve-out from the single-item rules below).
 
 ---
 
 ## Tracking Completion
 
 - **Loop-start TODOs (addressed from an existing item):** Only the Worker deletes these, as a planned step from the Planner's implementation plan. Other roles must not delete loop-start TODOs.
+- **Loop-start consolidated manual-review files:** Exempt from the Worker-deletion rule — the Interviewer rewrites them at disposition wrap-up (worked-on/dropped removed, preserved kept verbatim; deleted only when empty).
 - **Mid-loop captures (created during a session for later work):** Any role whose work satisfies such a capture may delete it immediately.
 
 ---
 
 ## TODO Restoration and Archival During Cancellation
 
-When a loop is cancelled per [`cancel_guide.md`](./cancel_guide.md), the TODO item that started the loop (if any) must be handled according to the user's chosen cancellation path.
+When a loop is cancelled per [`cancel_guide.md`](./cancel_guide.md), the TODO item that started the loop (if any) must be handled according to the user's chosen cancellation path. Consolidated manual-review files follow the same git-reset restoration: items dropped during this loop's disposition come back with the file (conservative by design — no silent loss).
 
 ### Restore — "Cancel Loop" Path
 The user wants to revisit this goal later. The TODO file should be restored as a pending item:
@@ -78,6 +118,6 @@ If the loop started from a fresh goal (not from an existing TODO item), skip res
 
 ## Rules
 
-- **One file per item.** Do not combine unrelated requests.
+- **One file per item.** Do not combine unrelated requests — except consolidated manual-review files (`TODO_manual_review_` prefix), which bundle one loop's Suggestion-tier findings by design.
 - **Descriptive filenames** at creation — no numbering scheme needed.
 - **Stay in your lane.** Capturing a todo is administrative — it does not expand scope or delay current tasks.

@@ -191,7 +191,7 @@ ai_workspace/
   - Extension source code static analysis (constants, AUTO_ACCEPT_INSTRUCTIONS directives, TypeScript types) — 8 tests
   - `parseLoopState()` with `<br>` tag variations — 5 tests
 - **Fixed** test assertion bugs in `test_toolcall_streaming.js`: wrong emoji (`🛠` → `🧰`), incorrect truncation length regex (18 → 20 chars), and wind-down conflict in T7.
-- **Total test count:** 144 tests across 4 suites, all passing.
+- **Total test count:** 219 tests across 6 runnable suites, all passing.
 
 ### 2026-08-16 — Pipeline-Auto: Blank-Line Condensation, Live Steering, Low-Context Wind-Down
 

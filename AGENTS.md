@@ -92,7 +92,7 @@ Any role can update line 3 if user changes their mind mid-pipeline. Updating rol
 
 ### Dynamic Git Log Depth (Reviewer & Finalizer)
 
-Compute bounded `-N` for `git log --format="%H %s" -N <depth>`: parse line 2 of `loop_state.md` for history string after `History:`, compute `(count × 2) + 5` = your `-N`. If parsing fails or file missing, use `-15`. Run `git log --format="%H %s" -N <computed-depth>`. Find commits whose subject starts with goal summary (line 1). Parent hash of oldest match = pre-loop state.
+Compute bounded `-n` for `git log --format="%H %s" -n <depth>`: parse line 2 of `loop_state.md` for history string after `History:`, compute `(count × 2) + 5` = your `-n`. If parsing fails or file missing, use `-15`. Run `git log --format="%H %s" -n <computed-depth>`. Find commits whose subject starts with goal summary (line 1). Parent hash of oldest match = pre-loop state.
 
 ---
 
@@ -105,7 +105,7 @@ Constraints shared across multiple roles. Role skill files reference this sectio
 | Do not write tests | Worker, Tester (Tester's own lane) |
 | Do not fix bugs in implementation code — document for send-back/TODO instead | Tester |
 | Do not perform code reviews or architectural quality reviews | Worker, Tester |
-| Do not write project documentation (READMEs, API docs, usage guides) | Worker, Tester |
+| Do not write project documentation (READMEs, API docs, usage guides) — exception: minimal factual corrections to existing docs/inline comments only when sent back a Warning-level doc-inaccuracy finding | Worker, Tester |
 | Do not handle version control beyond mandatory per-role transition commit | Worker, Documenter |
 
 ---
