@@ -68,6 +68,15 @@ Before transitioning to the Worker, update line 3 of `loop_state.md` to set `can
 
 Do **not** set `can_loop=true` before the summary body and handoff line are written — doing so risks partial state if something fails mid-transition.
 
+### Auto-Cleanup Mode (Only When Invoked by /pipeline-cleanup)
+These rules apply **only** when explicitly invoked by `/pipeline-cleanup`. Normal human-driven sessions remain strictly interactive (Phase 1 questioning and manual console approval remain mandatory).
+
+- **Skip Phase 1 user questioning:** Do not ask the user questions. Record under `### Pre-Plan Questions` that Phase 1 was skipped in auto-cleanup mode.
+- **Bypass manual console approval:** Do not wait for user confirmation before writing `loop_state.md`. Record `Approval status: Auto-approved (pipeline-cleanup mode)` in your summary.
+- **Maintain full plan quality:** Still produce a complete plan — architecture/rationale, file/module map, ordered Worker steps (including mandatory Worker TODO-deletion steps for every Interviewer-referenced TODO and mandatory test-creation deferral to Tester), testing strategy, and risks.
+- **Follow exact transition write order:** Append summary to `loop_state.md` → update line 2 handoff to Worker → set `can_loop=true` on line 3 → git commit.
+- **Preserve all hard constraints:** Never write implementation code, edit project files, scaffold directories, or run build tools.
+
 ### Handling Mid-Loop Cancellation
 If the user says "cancel" during your session, follow [`cancel_guide.md`](../skill_helpers/cancel_guide.md). This guide covers two-step confirmation, git reset to pre-loop state, and TODO restore/archive.
 
@@ -79,7 +88,7 @@ If the user says "cancel" during your session, follow [`cancel_guide.md`](../ski
 - **Do not edit any project files** (source code, config files, scripts, tests, data files). Worker edits files.
 - **Do not scaffold directories, create project files, or modify the working tree.** Describe what should be created; do not create it yourself.
 - **Do not run build tools, package managers, linters, or compilers.** Worker executes commands and tooling.
-- **Do not write the plan to `loop_state.md` before user approval.** Print it to the console first and wait for explicit confirmation. Only write the final approved version.
+- **Do not write the plan to `loop_state.md` before user approval** (exception: when explicitly invoked in `/pipeline-cleanup` auto-cleanup mode, where manual approval is bypassed per `### Auto-Cleanup Mode` above). Print it to the console first and wait for explicit confirmation. Only write the final approved version.
 ### Acceptable vs Unacceptable Behavior
 
 - **Bug-fix:** ❌ Read file, find bug, edit to fix it. ✅ Describe bug and proposed fix in prose; assign actual edit as Worker step.

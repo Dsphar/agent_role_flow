@@ -1,18 +1,26 @@
 /**
- * Pipeline-Auto Extension — Sequential sub-agent pipeline runner with live streaming
+ * Pipeline-Auto Extension — Sequential sub-agent pipeline & TODO cleanup runners with live streaming
  *
  * Spawns pi subprocesses in RPC mode. Each subprocess follows the project's AGENTS.md
- * workflow (roles, loop_state.md, transition_guide). The extension is completely generic —
- * it never references role names or counts. It only:
- *   1. Reads loop_state.md to display current status and detect infinite loops.
- *   2. Checks whether loop_state.md still exists after each run (Finalizer deletes it).
- *   3. Monitors can_loop flag on turn_end events and shows proactive footer status.
+ * workflow (roles, loop_state.md, transition_guide).
+ *
+ * Commands:
+ *   - `/pipeline-auto`    — Role-agnostic single-loop runner (requires `can_loop=true` set by
+ *                           Planner); reads loop_state.md for status/stuck detection and stops
+ *                           when Finalizer deletes loop_state.md.
+ *   - `/pipeline-cleanup` — Multi-loop TODO cleanup runner starting from Interviewer (Role 01)
+ *                           when no loop is active; scans `ai_workspace/TODO/` (excluding
+ *                           `TODO_manual_review_*.md`), drains eligible self-contained TODOs
+ *                           across up to MAX_CLEANUP_LOOPS loops, and stops cleanly or on
+ *                           mid-work warnings, errors, stuck detection, or zero progress.
  *
  * Non-thinking text from sub-agents streams live via RPC message_update/text_delta events.
  * Extension UI dialogs are auto-responded with recommended/default values.
  *
- * Usage: /pipeline-auto          — start the pipeline
- *        /pipeline-auto --help   — show help text
+ * Usage: /pipeline-auto             — start the autonomous pipeline for the active loop
+ *        /pipeline-auto --help      — show /pipeline-auto help text
+ *        /pipeline-cleanup          — drain eligible TODOs across sequential cleanup loops
+ *        /pipeline-cleanup --help   — show /pipeline-cleanup help text
  */
 
 import { spawn, type ChildProcess } from "node:child_process";
@@ -27,9 +35,14 @@ const STUCK_THRESHOLD = 3; // warn after this many consecutive same-role runs
 const FS_FLUSH_DELAY_MS = 1500; // filesystem flush delay after sub-agent session ends
 const WIND_DOWN_TOKEN_THRESHOLD = 15000; // low-context wind-down trigger (tokens remaining)
 const ARG_TRUNCATION_LIMIT = 20; // tool argument truncation limit in display
+export const MAX_CLEANUP_LOOPS = 20; // hard cap on completed cleanup loops per /pipeline-cleanup invocation
+const TODO_DIR = "ai_workspace/TODO";
+const MANUAL_REVIEW_TODO_PREFIX = "TODO_manual_review_";
+export const CLEANUP_STOP_MID_WORK = "[CLEANUP_STOP: MID_WORK_CHANGES]";
+export const CLEANUP_STOP_NO_TODOS = "[CLEANUP_STOP: NO_ELIGIBLE_TODOS]";
 
-// Track whether pipeline-auto has completed a run in this extension lifecycle.
-// Used to clear previous output when user types /new after the pipeline finishes.
+// Track whether a pipeline command (/pipeline-auto or /pipeline-cleanup) has completed a run
+// in this extension lifecycle. Used to clear previous output when user types /new after completion.
 let _pipelineCompleted = false;
 
 // Track role at session start to detect handoffs mid-session.
@@ -42,8 +55,8 @@ let _lastKnownRole: string | undefined = undefined;
 // Cache goal summary at session start so it survives loop_state.md deletion by Finalizer.
 let _cachedGoalSummary: string | undefined = undefined;
 
-// Pipeline run state for live steering input — set by the /pipeline-auto command handler,
-// read by the `input` event handler in the default export. While a pipeline run is active,
+// Pipeline run state for live steering input — set by the /pipeline-auto and /pipeline-cleanup
+// command handlers, read by the `input` event handler in the default export. While a run is active,
 // plain TUI text is forwarded to the working sub-agent instead of starting an LLM turn here.
 let _pipelineRunning = false;
 let _activeSubAgent: { stdin: NodeJS.WritableStream; child: ChildProcess; ended: boolean; terminateActiveDashes: () => void } | null = null;
@@ -207,14 +220,56 @@ function autoRespondUiRequest(
 }
 
 /**
+ * List regular `.md` TODO files in `ai_workspace/TODO/`, strictly excluding
+ * consolidated manual-review files (`TODO_manual_review_*.md`, case-insensitive).
+ * Returns a deterministically sorted array of filenames, or `[]` if missing/unreadable.
+ */
+export function listEligibleTodoFiles(cwd: string): string[] {
+    const todoDir = path.join(cwd, TODO_DIR);
+    try {
+        const entries = fs.readdirSync(todoDir, { withFileTypes: true });
+        const excludedPrefix = MANUAL_REVIEW_TODO_PREFIX.toLowerCase();
+        return entries
+            .filter((entry) => {
+                if (!entry.isFile()) return false;
+                const lower = entry.name.toLowerCase();
+                return lower.endsWith(".md") && !lower.startsWith(excludedPrefix);
+            })
+            .map((entry) => entry.name)
+            .sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
+    } catch {
+        return [];
+    }
+}
+
+/**
+ * Optional strategy overrides for `runSubAgent()` so `/pipeline-auto` and
+ * `/pipeline-cleanup` share identical RPC streaming, steering, and wind-down logic.
+ */
+interface SubAgentOptions {
+    systemPromptAppend?: string;
+    kickoffMessage?: string;
+}
+
+/**
+ * Structured outcome returned by `runSubAgent()`.
+ */
+interface SubAgentResult {
+    ok: boolean;
+    error?: string;
+    stopSignal?: "mid_work" | "no_eligible_todos";
+}
+
+/**
  * Run a single sub-agent session via RPC mode.
  * Streams non-thinking text_deltas live to stdout.
  * Auto-responds to extension UI dialogs with recommended defaults.
- * Resolves when agent_end is received or the process exits.
+ * Resolves with a structured SubAgentResult when agent_end is received or the process exits.
  */
-function runSubAgent(cwd: string): Promise<void> {
+function runSubAgent(cwd: string, options?: SubAgentOptions): Promise<SubAgentResult> {
     return new Promise((resolve) => {
         const { command, args: baseArgs } = getPiCommand();
+        const systemPrompt = (options?.systemPromptAppend ?? AUTO_ACCEPT_INSTRUCTIONS).trim();
 
         // RPC mode (--mode rpc), no session file (each sub-agent gets ephemeral context).
         // --append-system-prompt injects auto-accept rules so roles never block on user input.
@@ -222,7 +277,7 @@ function runSubAgent(cwd: string): Promise<void> {
             ...baseArgs,
             "--mode", "rpc",
             "--no-session",
-            "--append-system-prompt", AUTO_ACCEPT_INSTRUCTIONS.trim(),
+            "--append-system-prompt", systemPrompt,
         ];
 
         const child: ChildProcess = spawn(command, childArgs, {
@@ -231,6 +286,9 @@ function runSubAgent(cwd: string): Promise<void> {
             shell: false,
             maxBuffer: 50 * 1024 * 1024, // 50 MB — generous for long agent runs
         });
+
+        // Prevent unhandled EPIPE errors if the child fails to spawn or closes stdin early.
+        child.stdin?.on("error", () => {});
 
         // Expose this sub-agent to the module-level steering input handler. Marked ended on
         // agent_end (so steering typed in that window gets a notice, not a rejected steer) and
@@ -252,6 +310,8 @@ function runSubAgent(cwd: string): Promise<void> {
         let textBuffer = ""; // accumulated text_delta content, flushed line-by-line
         let agentEnded = false;
         let resolved = false; // guard against double-resolution
+        let kickoffError: string | undefined = undefined;
+        let stopSignal: "mid_work" | "no_eligible_todos" | undefined = undefined;
 
         const pendingTools: Array<{ name: string; status: "pending" | "success" | "error" }> = [];
 
@@ -287,6 +347,26 @@ function runSubAgent(cwd: string): Promise<void> {
         }
 
         /**
+         * Inspect a streamed assistant text line for structured `/pipeline-cleanup` stop sentinels.
+         * `mid_work` always takes precedence over `no_eligible_todos`.
+         *
+         * Matching requires the sentinel to occupy the entire line (optional surrounding
+         * markdown emphasis/backticks are stripped first), so prose that merely mentions a
+         * sentinel does not trigger a stop.
+         */
+        function inspectTextForStopSignal(line: string): void {
+            const trimmed = line.trim();
+            // Strip optional surrounding markdown emphasis/backticks so a sentinel wrapped in
+            // formatting (e.g. `[CLEANUP_STOP: MID_WORK_CHANGES]`) still matches.
+            const normalized = trimmed.replace(/^[`*]+|[`*]+$/g, "").trim();
+            if (normalized === CLEANUP_STOP_MID_WORK) {
+                stopSignal = "mid_work";
+            } else if (stopSignal !== "mid_work" && normalized === CLEANUP_STOP_NO_TODOS) {
+                stopSignal = "no_eligible_todos";
+            }
+        }
+
+        /**
          * Emit a single streamed line — the only place the blank-line rule and
          * token-prefix logic live. Blank (empty/whitespace-only) lines accumulate
          * and are emitted as a string of dashes in real-time. Non-blank lines 
@@ -311,6 +391,7 @@ function runSubAgent(cwd: string): Promise<void> {
             const lines = textBuffer.split("\n");
             // Keep the last (possibly incomplete) segment in the buffer
             for (let i = 0; i < lines.length - 1; i++) {
+                inspectTextForStopSignal(lines[i]);
                 emitLine(lines[i]);
             }
             textBuffer = lines[lines.length - 1];
@@ -324,6 +405,7 @@ function runSubAgent(cwd: string): Promise<void> {
             if (textBuffer) {
                 // Trailing remainder: apply the same condensation rule at stream end.
                 // (An empty remainder — text ended on a newline — emits nothing.)
+                inspectTextForStopSignal(textBuffer);
                 emitLine(textBuffer);
                 textBuffer = "";
             }
@@ -477,11 +559,22 @@ function runSubAgent(cwd: string): Promise<void> {
                 return;
             }
 
-            // Steering / wind-down prompt responses — warn if rejected before acceptance
+            // Prompt responses — handle rejected kickoff fatally, and warn on rejected steer/wind-down
             // (e.g., steering typed just as the sub-agent ended). Failures after acceptance
             // surface through the normal event stream, not here.
             if (type === "response" && parsed.command === "prompt") {
                 const id = parsed.id as string | undefined;
+                if (id === "kickoff" && parsed.success !== true) {
+                    const errMsg = typeof parsed.error === "string" && parsed.error.trim().length > 0
+                        ? parsed.error.trim()
+                        : "Kickoff prompt rejected by sub-agent";
+                    kickoffError = errMsg;
+                    terminateActiveDashes();
+                    console.log("");
+                    console.log(`  \u274C Sub-agent rejected kickoff prompt: ${errMsg}`);
+                    try { child.stdin?.end(); } catch {}
+                    return;
+                }
                 if ((id?.startsWith("steer-") || id === "wind-down") && parsed.success !== true) {
                     terminateActiveDashes();
                     console.log("");
@@ -537,10 +630,11 @@ function runSubAgent(cwd: string): Promise<void> {
                 const line = jsonBuffer.endsWith("\r") ? jsonBuffer.slice(0, -1) : jsonBuffer;
                 processLine(line);
             }
+            flushAllBufferedText();
         });
 
         // Send the initial prompt to start the sub-agent working
-        const kickoffMessage =
+        const kickoffMessage = options?.kickoffMessage ??
             "Hello. I will be stepping away from the computer. Please load the loop_state.md file and perform your tasks without me. Please automatically select your recommendations (do not prompt me for decisions) and continue working without me.";
 
         sendRpcCommand(child.stdin!, {
@@ -549,29 +643,39 @@ function runSubAgent(cwd: string): Promise<void> {
             message: kickoffMessage,
         });
 
-        function safeResolve() {
+        function safeResolve(result: SubAgentResult): void {
             if (resolved) return;
             resolved = true;
             // Clear the steering handle on every exit path so input falls through to normal behavior.
             _activeSubAgent = null;
-            resolve();
+            resolve(result);
         }
 
         // Resolve when process exits (triggered by stdin.end after agent_end)
         child.on("exit", (code, signal) => {
-            if (!agentEnded && code !== 0) {
+            flushAllBufferedText();
+            if (kickoffError) {
+                safeResolve({ ok: false, error: kickoffError, stopSignal });
+                return;
+            }
+            // Any exit before agent_end is an error — including a silent exit code 0. A healthy
+            // sub-agent always emits agent_end (which ends stdin and triggers this handler).
+            if (!agentEnded) {
+                const detail = `Sub-agent exited with code ${code}${signal ? ` / ${signal}` : ""} before agent_end`;
                 terminateActiveDashes();
                 console.log("");
-                console.log(`  \u26A0 Sub-agent exited with code ${code}${signal ? ` / ${signal}` : ""}.`);
+                console.log(`  \u26A0 ${detail}.`);
+                safeResolve({ ok: false, error: detail, stopSignal });
+                return;
             }
-            safeResolve();
+            safeResolve({ ok: true, stopSignal });
         });
 
         child.on("error", (err) => {
             terminateActiveDashes();
             console.log("");
             console.log(`  \u274C Failed to spawn sub-agent: ${err.message}`);
-            safeResolve();
+            safeResolve({ ok: false, error: `Failed to spawn sub-agent: ${err.message}`, stopSignal });
         });
 
 
@@ -740,9 +844,353 @@ async function handler(_args: string, ctx: ExtensionCommandContext): Promise<voi
 }
 
 /**
+ * System prompt appended to every sub-agent spawned by `/pipeline-cleanup`.
+ * Covers autonomous cleanup behavior for Interviewer, Planner, and Worker → Finalizer.
+ */
+const CLEANUP_AUTO_INSTRUCTIONS = `
+
+### Auto-Cleanup Mode (/pipeline-cleanup — No User Interaction)
+You are running inside an automated \`/pipeline-cleanup\` run with no human at the keyboard. Follow these rules for your active role:
+
+**General Auto-Run Rules (All Roles):**
+1. **Never ask the user a question.** Do not wait for input, confirmation, or feedback.
+2. **Always pick recommended/default options** when presented with choices, or pick deterministically (first listed) when options are equally valid.
+3. **Complete your full role workflow** including summary/transition steps and git commits. Do not stop early waiting for user feedback.
+
+**If You Are Interviewer (Role 01):**
+1. **Check uncommitted / external git changes (\`git status\` and \`git diff\`):**
+   - Absorb minor or settled changes into the loop's commits.
+   - If changes look unfinished or mid-work (merge conflict markers, broken/partial syntax, \`WIP\`/\`FIXME\` placeholders, half-implemented edits): do **not** create \`ai_workspace/loop_state.md\`, print a clear warning listing the affected files, emit the exact line \`${CLEANUP_STOP_MID_WORK}\`, and stop immediately.
+2. **Scan \`ai_workspace/TODO/\` and select eligible TODOs:**
+   - **Strictly ignore all \`TODO_manual_review_*.md\` files** — never read, modify, or delete them.
+   - Validate candidate TODOs against the codebase/git history and judge eligibility purely from their contents: select only self-contained items requiring no user feedback, unanswered questions, or ambiguous design decisions. Batching multiple eligible TODOs into a single loop is allowed when it makes sense.
+   - If no eligible TODOs remain: do **not** create \`ai_workspace/loop_state.md\`, briefly explain why remaining TODOs were skipped, emit the exact line \`${CLEANUP_STOP_NO_TODOS}\`, and stop immediately.
+3. **Create \`loop_state.md\` and transition autonomously:**
+   - Skip interactive questioning and wrap-up confirmation.
+   - Explicitly name every selected TODO file in your summary and instruct the Planner to mandate a Worker deletion step for each.
+   - Choose \`test_level\` and \`do_docs\` using your runtime recommendations, set \`can_loop=false\` on line 3, and commit/transition to Planner (Role 02) per \`transition_guide.md\`.
+
+**If You Are Planner (Role 02):**
+1. **Skip Phase 1 user questioning** — record under \`### Pre-Plan Questions\` that Phase 1 was skipped in auto-cleanup mode.
+2. **Bypass waiting for manual console approval** — record \`Approval status: Auto-approved (pipeline-cleanup mode)\` in your summary.
+3. **Maintain full plan quality** — include architecture/rationale, file/module map, ordered Worker steps (with mandatory Worker TODO-deletion steps for every Interviewer-referenced TODO and mandatory test-creation deferral to Tester), testing strategy, and risks.
+4. **Follow the exact write order:** append summary to \`loop_state.md\` → update line 2 handoff to Worker → set \`can_loop=true\` on line 3 → git commit.
+5. **Preserve all hard constraints:** never write implementation code, edit project files, scaffold directories, or run build tools.
+
+**If You Are Worker (Role 03) through Finalizer (Role 07):**
+- Follow full Auto-Run Mode: make autonomous decisions (absorb out-of-scope changes, send-back in-scope issues, create TODOs for out-of-scope issues, pick recommended options silently) and complete all transitions.`;
+
+const CLEANUP_INTERVIEWER_KICKOFF =
+    "Running in /pipeline-cleanup auto-cleanup mode with no human at the keyboard. Load AGENTS.md and Interviewer (Role 01) instructions, follow the Auto-Cleanup Mode rules (check uncommitted changes for mid-work edits, strictly ignore TODO_manual_review_*.md files, autonomously pick eligible self-contained TODOs, or emit the appropriate stop sentinel without creating loop_state.md), and transition to Planner if eligible TODOs are selected.";
+
+const CLEANUP_LOOP_KICKOFF =
+    "Running in /pipeline-cleanup auto-cleanup mode with no human at the keyboard. Load ai_workspace/loop_state.md and your active role skill file, follow Auto-Cleanup / Auto-Run rules without waiting for user input or manual approval, and complete your full role workflow and transition.";
+
+/** Print usage instructions and safety/UX feature summary for `/pipeline-cleanup`. */
+function printCleanupHelp(): void {
+    console.log(`
+Pipeline-Cleanup — Automated multi-loop TODO cleanup runner with live streaming
+
+Starts from Interviewer (Role 01) when no loop is active, inspects pending TODOs in
+ai_workspace/TODO/, autonomously selects self-contained items requiring no user input,
+runs each cleanup loop end-to-end through Planner → Finalizer, and repeats until no
+eligible TODOs remain or a stop condition is reached.
+
+Options:
+  /pipeline-cleanup           Start automated TODO cleanup (max ${MAX_CLEANUP_LOOPS} loops)
+  /pipeline-cleanup --help    Show this help text
+
+Safety features:
+  - No-loop-in-progress guard: refuses to start if ai_workspace/loop_state.md exists
+  - Manual-review protection: strictly ignores all ${MANUAL_REVIEW_TODO_PREFIX}*.md files
+  - Mid-work change guard: stops with a warning if unfinished uncommitted edits are detected
+  - Max ${MAX_CLEANUP_LOOPS} complete cleanup loops per invocation (hard stop)
+  - Max ${MAX_SESSIONS} sequential sessions per loop (hard stop)
+  - Infinite-loop detection: halts immediately if same role repeats ${STUCK_THRESHOLD}+ times
+  - Error & zero-progress stops: halts immediately on sub-agent error or if a loop resolves zero eligible TODOs
+
+Streaming:
+  Non-thinking text from sub-agents streams live via RPC events.
+  Tool calls are shown inline. Extension UI dialogs are auto-accepted.
+  Blank lines in streamed output condense to "-" separator lines (runs of
+  consecutive blanks collapse into a single one).
+
+Steering (live input):
+  While a cleanup run is active, plain text typed into the TUI is forwarded to
+  the working sub-agent at its next turn boundary and echoed as "\u{1F3AF} Steering → …".
+  No flag or prefix needed. Commands ("/…") and inline bash ("!…") pass through
+  untouched. Text typed in the brief window between sessions is not forwarded —
+  a notice is shown instead.
+
+Low-context wind-down:
+  When a sub-agent session runs low on context (fewer than 15k tokens remaining),
+  the extension sends it a one-time instruction to save progress to
+  ai_workspace/loop_state.md and end its stream. The runner then spawns a fresh
+  session that resumes from loop_state.md — no work is lost.`);
+}
+
+/** Print a prominent warning banner when Interviewer signals unfinished mid-work git changes. */
+function printMidWorkWarning(completedLoops: number): void {
+    console.log("");
+    console.log("═".repeat(60));
+    console.log("  \u26A0 WARNING: Mid-work uncommitted changes detected!");
+    console.log("  The Interviewer detected uncommitted changes that look unfinished");
+    console.log("  (e.g., partial edits, conflict markers, or WIP/FIXME placeholders).");
+    console.log("  Stopping /pipeline-cleanup immediately to protect your work.");
+    if (completedLoops > 0) {
+        console.log(`  Completed ${completedLoops} cleanup loop${completedLoops === 1 ? "" : "s"} before stopping.`);
+    }
+    console.log("  Review `git status` / `git diff`, then re-run when ready.");
+    console.log("═".repeat(60));
+}
+
+/**
+ * Main command handler for `/pipeline-cleanup`.
+ *
+ * Enforces no-loop-in-progress and eligible-TODO pre-checks, then runs up to
+ * MAX_CLEANUP_LOOPS complete pipeline loops starting from Interviewer (Role 01),
+ * stopping cleanly when no eligible TODOs remain or immediately on mid-work
+ * warnings, sub-agent errors, infinite-loop detection, or zero-progress loops.
+ */
+async function cleanupHandler(_args: string, ctx: ExtensionCommandContext): Promise<void> {
+    if (_args.trim() === "--help" || _args.trim() === "-h") {
+        printCleanupHelp();
+        return;
+    }
+
+    if (_pipelineRunning) {
+        console.log("");
+        console.log("A pipeline run is already in progress. Wait for it to finish before starting /pipeline-cleanup.");
+        return;
+    }
+
+    const cwd = ctx.cwd;
+
+    // Guard: refuse to start if a loop is already active
+    if (loopStateExists(cwd)) {
+        console.log("");
+        console.log("Cannot start /pipeline-cleanup — a pipeline loop is already in progress (ai_workspace/loop_state.md exists).");
+        console.log("Finish or cancel the active loop first.");
+        return;
+    }
+
+    // Startup eligible TODO pre-check (excludes TODO_manual_review_*.md)
+    const initialTodos = listEligibleTodoFiles(cwd);
+    if (initialTodos.length === 0) {
+        console.log("");
+        console.log("No eligible non-manual-review TODO files found in ai_workspace/TODO/. Nothing to clean up.");
+        return;
+    }
+
+    _pipelineRunning = true;
+
+    // Clear terminal (screen + scrollback) before runner banner (delayed to avoid TUI race)
+    await new Promise<void>((resolve) => {
+        setTimeout(() => {
+            process.stdout.write("\x1b[2J\x1b[3J\x1b[H");
+            resolve();
+        }, 100);
+    });
+
+    console.log("");
+    console.log("═".repeat(60));
+    console.log("  Auto-Cleanup Pipeline Runner");
+    console.log(`  Max loops:    ${MAX_CLEANUP_LOOPS} (max ${MAX_SESSIONS} sessions/loop)`);
+    console.log(`  Candidate TODOs: ${initialTodos.length}`);
+    console.log(`  Working dir:  ${cwd}`);
+    console.log("═".repeat(60));
+
+    let completedLoops = 0;
+
+    try {
+        for (let loopNum = 1; loopNum <= MAX_CLEANUP_LOOPS; loopNum++) {
+            // Re-verify no active loop exists before starting each cleanup loop
+            if (loopStateExists(cwd)) {
+                console.log("");
+                console.log(`\u274C Unexpected active loop detected (ai_workspace/loop_state.md exists) before cleanup loop ${loopNum}. Stopping /pipeline-cleanup.`);
+                _pipelineCompleted = true;
+                return;
+            }
+
+            const beforeTodos = listEligibleTodoFiles(cwd);
+            if (beforeTodos.length === 0) {
+                console.log("");
+                console.log(`\u2713 Cleanup complete — no eligible non-manual-review TODOs remain.`);
+                console.log(`  Completed ${completedLoops} cleanup loop${completedLoops === 1 ? "" : "s"}. Type /new to continue to a new session.`);
+                _pipelineCompleted = true;
+                return;
+            }
+
+            console.log("");
+            console.log("═".repeat(60));
+            console.log(`  Cleanup Loop ${loopNum}/${MAX_CLEANUP_LOOPS} — ${beforeTodos.length} candidate TODO${beforeTodos.length === 1 ? "" : "s"}`);
+            console.log(`── Session 1/${MAX_SESSIONS}`);
+            console.log("═".repeat(60));
+            console.log("");
+            console.log("   Role: Interviewer (auto-cleanup inspection)");
+
+            let interviewerResult: SubAgentResult;
+            try {
+                interviewerResult = await runSubAgent(cwd, {
+                    systemPromptAppend: CLEANUP_AUTO_INSTRUCTIONS,
+                    kickoffMessage: CLEANUP_INTERVIEWER_KICKOFF,
+                });
+            } catch (err) {
+                const msg = err instanceof Error ? err.message : String(err);
+                console.log("");
+                console.log(`  \u274C Cleanup stopped — Interviewer sub-agent error: ${msg}`);
+                _pipelineCompleted = true;
+                return;
+            }
+
+            if (!_pipelineRunning) return;
+
+            if (!interviewerResult.ok) {
+                console.log("");
+                console.log(`  \u274C Cleanup stopped — Interviewer failed: ${interviewerResult.error ?? "unknown error"}`);
+                _pipelineCompleted = true;
+                return;
+            }
+
+            await new Promise((resolve) => setTimeout(resolve, FS_FLUSH_DELAY_MS));
+
+            if (interviewerResult.stopSignal === "mid_work") {
+                printMidWorkWarning(completedLoops);
+                _pipelineCompleted = true;
+                return;
+            }
+
+            // If Interviewer exited without creating loop_state.md, stop cleanly (no eligible TODOs)
+            if (!loopStateExists(cwd)) {
+                console.log("");
+                if (interviewerResult.stopSignal === "no_eligible_todos") {
+                    console.log("\u2713 Cleanup complete — Interviewer determined no remaining TODOs can be completed without user input.");
+                } else {
+                    console.log("\u2713 Cleanup complete — Interviewer exited without starting a new loop.");
+                }
+                console.log(`  Completed ${completedLoops} cleanup loop${completedLoops === 1 ? "" : "s"}. Type /new to continue to a new session.`);
+                _pipelineCompleted = true;
+                return;
+            }
+
+            // Inner role loop for the current cleanup loop (Planner → Finalizer)
+            const roleHistory: string[] = ["Interviewer"];
+            let loopFinished = false;
+
+            for (let sessionNum = 2; sessionNum <= MAX_SESSIONS; sessionNum++) {
+                const role = getCurrentRole(cwd);
+
+                console.log("");
+                console.log(`── Loop ${loopNum}/${MAX_CLEANUP_LOOPS} | Session ${sessionNum}/${MAX_SESSIONS}`);
+                console.log("═".repeat(60));
+                console.log("");
+                console.log(`   Role: ${role ?? "(unknown — loop_state.md may be stale)"}`);
+
+                // Infinite-loop detection: same role repeated STUCK_THRESHOLD+ times halts entire cleanup
+                if (role && roleHistory.length >= STUCK_THRESHOLD - 1) {
+                    const recent = [...roleHistory.slice(-(STUCK_THRESHOLD - 1)), role];
+                    if (recent.every((r) => r === role)) {
+                        console.log("");
+                        console.log("\u26A0 WARNING: Possible infinite loop detected!");
+                        console.log(`  "${role}" has run ${STUCK_THRESHOLD}+ times consecutively.`);
+                        console.log("  Stopping /pipeline-cleanup immediately. Check your role files and transition_guide.");
+                        _pipelineCompleted = true;
+                        return;
+                    }
+                }
+
+                if (role) {
+                    roleHistory.push(role);
+                    if (roleHistory.length > STUCK_THRESHOLD * 2) {
+                        roleHistory.splice(0, roleHistory.length - STUCK_THRESHOLD);
+                    }
+                }
+
+                const kickoffMessage = role === "Interviewer" ? CLEANUP_INTERVIEWER_KICKOFF : CLEANUP_LOOP_KICKOFF;
+                let sessionResult: SubAgentResult;
+                try {
+                    sessionResult = await runSubAgent(cwd, {
+                        systemPromptAppend: CLEANUP_AUTO_INSTRUCTIONS,
+                        kickoffMessage,
+                    });
+                } catch (err) {
+                    const msg = err instanceof Error ? err.message : String(err);
+                    console.log("");
+                    console.log(`  \u274C Cleanup stopped — sub-agent error: ${msg}`);
+                    _pipelineCompleted = true;
+                    return;
+                }
+
+                if (!_pipelineRunning) return;
+
+                if (!sessionResult.ok) {
+                    console.log("");
+                    console.log(`  \u274C Cleanup stopped — sub-agent failed: ${sessionResult.error ?? "unknown error"}`);
+                    _pipelineCompleted = true;
+                    return;
+                }
+
+                await new Promise((resolve) => setTimeout(resolve, FS_FLUSH_DELAY_MS));
+
+                // Only the Interviewer performs the git mid-work inspection, so only its mid_work
+                // signal is actionable here. Downstream roles may quote the sentinel in prose
+                // (e.g., while summarizing code changes) and must not abort the cleanup run.
+                if (sessionResult.stopSignal === "mid_work" && role === "Interviewer") {
+                    printMidWorkWarning(completedLoops);
+                    _pipelineCompleted = true;
+                    return;
+                }
+
+                if (!loopStateExists(cwd)) {
+                    completedLoops++;
+                    loopFinished = true;
+                    console.log("");
+                    console.log(`\u2713 Cleanup loop ${loopNum} complete — loop_state.md removed by Finalizer (${sessionNum} sessions).`);
+                    break;
+                }
+            }
+
+            if (!loopFinished) {
+                console.log("");
+                console.log(`\u274C Max sessions (${MAX_SESSIONS}) reached in cleanup loop ${loopNum} — loop_state.md still exists.`);
+                console.log("  Stopping /pipeline-cleanup immediately. Check for infinite loops.");
+                _pipelineCompleted = true;
+                return;
+            }
+
+            // No-progress safeguard: verify at least one pre-loop eligible TODO was resolved/deleted
+            const afterTodos = listEligibleTodoFiles(cwd);
+            if (afterTodos.length > 0 && beforeTodos.every((f) => afterTodos.includes(f))) {
+                console.log("");
+                console.log("\u26A0 WARNING: Cleanup loop completed with zero progress on eligible TODO files.");
+                console.log(`  All ${beforeTodos.length} pre-loop eligible TODO file(s) are still present on disk.`);
+                console.log(`  Stopping /pipeline-cleanup after ${completedLoops} completed loop${completedLoops === 1 ? "" : "s"} to avoid spinning.`);
+                _pipelineCompleted = true;
+                return;
+            }
+        }
+    } finally {
+        _pipelineRunning = false;
+    }
+
+    // Fell out of the loop: either all eligible TODOs were resolved (clean completion) or the
+    // hard cap of MAX_CLEANUP_LOOPS was hit with candidates still remaining.
+    const remainingTodos = listEligibleTodoFiles(cwd);
+    _pipelineCompleted = true;
+    console.log("");
+    if (remainingTodos.length === 0) {
+        console.log(`\u2713 Cleanup complete — no eligible non-manual-review TODOs remain.`);
+        console.log(`  Completed ${completedLoops} cleanup loop${completedLoops === 1 ? "" : "s"}. Type /new to continue to a new session.`);
+    } else {
+        console.log(`\u26A0 Max cleanup loops (${MAX_CLEANUP_LOOPS}) reached. Stopping /pipeline-cleanup.`);
+        console.log(`  Completed ${completedLoops} cleanup loops; ${remainingTodos.length} candidate TODO file${remainingTodos.length === 1 ? "" : "s"} still remain.`);
+    }
+}
+
+/**
  * Extension registration — the default export that pi calls to load this extension.
  *
- * Registers the `/pipeline-auto` command and sets up event listeners:
+ * Registers the `/pipeline-auto` and `/pipeline-cleanup` commands and sets up event listeners:
  * - `input`: forwards plain TUI text to active sub-agent for live steering
  * - `session_start`: captures initial role/goal summary, clears screen on /new after completion
  * - `turn_end`: updates footer status with current role + goal summary
@@ -753,6 +1201,11 @@ export default function (pi: ExtensionAPI) {
     pi.registerCommand("pipeline-auto", {
         description: "Run the role pipeline autonomously via sequential sub-agent sessions",
         handler,
+    });
+
+    pi.registerCommand("pipeline-cleanup", {
+        description: "Autonomously drain eligible non-manual-review TODOs across sequential cleanup loops",
+        handler: cleanupHandler,
     });
 
 

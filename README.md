@@ -47,7 +47,12 @@ Each role has a "What You Must Not Do" section that keeps it in its lane — the
 
 ### Optional: Auto-Pipeline Extension
 
-If you're using pi, you can drop in the `.pi/extensions/pipeline-auto.ts` extension to run the whole pipeline autonomously (no manual role transitions). Just type `/pipeline-auto` and it handles everything — spawning sub-agents, auto-responding to prompts with recommended defaults, streaming output live. See the [Pipeline-Auto Extension](#pipeline-auto-extension) section below for details.
+If you're using pi, you can drop in the `.pi/extensions/pipeline-auto.ts` extension to run the pipeline autonomously (no manual role transitions). It provides two slash commands:
+
+- `/pipeline-auto` — finishes an already-planned loop autonomously (Worker → Finalizer) once the Planner sets `can_loop=true`.
+- `/pipeline-cleanup` — starts from Interviewer when no loop is active, drains eligible self-contained TODOs in `ai_workspace/TODO/` across sequential cleanup loops, and stops automatically when none remain or a safety guard triggers.
+
+Both commands stream output live, auto-respond to extension UI dialogs with recommended defaults, and support live steering and low-context wind-down. See the [Pipeline-Auto Extension](#pipeline-auto-extension) section below for details.
 
 ## ⚠️ Disclaimers & Warnings
 
@@ -82,7 +87,20 @@ The `.pi/extensions/pipeline-auto.ts` file is a pi extension that runs the role 
 - **Low-context wind-down:** Sessions near their context limit (e.g., < 15k tokens remaining) automatically receive an instruction to save their progress to `loop_state.md` and exit, allowing a fresh session to seamlessly pick up the work.
 - **Safety features:** Max 50 sessions, infinite-loop detection (warns after 3+ consecutive same-role runs), `can_loop` guard (exits if Planner hasn't enabled it)
 
-**Usage:** `/pipeline-auto` — start the pipeline | `/pipeline-auto --help` — show help text
+**Usage:**
+- `/pipeline-auto` — start the autonomous pipeline for the active loop | `/pipeline-auto --help` — show help text
+- `/pipeline-cleanup` — drain eligible TODOs across sequential cleanup loops | `/pipeline-cleanup --help` — show help text
+
+#### `/pipeline-cleanup` — Automated Multi-Loop TODO Cleanup
+
+`/pipeline-cleanup` runs alongside `/pipeline-auto` in `.pi/extensions/pipeline-auto.ts` with full UX parity (live streaming, blank-line condensation, context usage display, live steering, and low-context wind-down), but starts from **Interviewer (Role 01)** when no loop is active and repeats across multiple loops:
+
+- **No-loop-in-progress guard:** Refuses to start (and re-checks before each subsequent loop) if `ai_workspace/loop_state.md` already exists.
+- **Manual-review protection:** Strictly ignores all consolidated `TODO_manual_review_*.md` files (both in the runner's pre-scanner and in Interviewer's instructions) — never reads, modifies, or deletes them.
+- **Autonomous TODO selection & batching:** Interviewer inspects pending TODO contents and selects only self-contained items requiring no user feedback or ambiguous design decisions (batching multiple eligible TODOs into one loop when sensible), chooses `test_level` and `do_docs` using its runtime recommendations, and hands off to Planner.
+- **Scoped Auto-Cleanup Mode (`01_interviewer.md` & `02_planner.md`):** Both role files contain concise *Auto-Cleanup Mode* rules that activate **only** when invoked by `/pipeline-cleanup` (bypassing interactive questioning and manual console approval wait while preserving plan quality, TODO-deletion mandates, and hard constraints). Normal human-driven sessions remain strictly interactive.
+- **Mid-work change guard:** Settled/minor uncommitted changes are absorbed into the loop's commits; if uncommitted edits look unfinished (conflict markers, partial syntax, `WIP`/`FIXME` placeholders, half-implemented changes), Interviewer exits without creating `loop_state.md`, emits `[CLEANUP_STOP: MID_WORK_CHANGES]`, and `/pipeline-cleanup` stops immediately with a warning banner.
+- **Clean exit & safety caps:** Stops cleanly when no eligible non-manual-review TODOs remain (or when Interviewer determines none can proceed without user input and emits `[CLEANUP_STOP: NO_ELIGIBLE_TODOS]` / leaves `loop_state.md` absent). Hard-capped at **20 complete cleanup loops** per invocation (and 50 sessions per loop), and halts immediately on sub-agent errors, infinite-loop detection (`3+` consecutive same-role runs), or a completed loop that resolves zero pre-existing eligible TODOs.
 
 ### Configuration
 
@@ -164,7 +182,7 @@ ai_workspace/
 ├── loop_state.md                      ← Runtime state (created at pipeline start, deleted by Finalizer)
 └── project_overview.md                ← Project history across loops
 .pi/extensions/
-└── pipeline-auto.ts                   ← Auto-pipeline runner extension (RPC mode)
+└── pipeline-auto.ts                   ← Auto-pipeline & TODO cleanup runner extension (RPC mode)
 ```
 
 ## Key Design Decisions
@@ -178,6 +196,16 @@ ai_workspace/
 - **Mid-loop cancellation** supported via two-step confirmation (Roles 01–06)
 
 ## Changelog
+
+### 2026-11-21 — Finalizer Loop-State Fix & `/pipeline-cleanup` Automated TODO Runner
+
+- **Fixed** contradiction in `ai_workspace/roles/07_finalizer.md`: replaced the `transition_guide.md` summary-append/handoff directive in *Deliverables* (and added a matching rule in *What You Must Not Do*) so Finalizer explicitly does **not** append to `loop_state.md` or update line 2 before deleting `loop_state.md` in *Loop Reset and Handoff*.
+- **Added** `/pipeline-cleanup` (and `/pipeline-cleanup --help`) in `.pi/extensions/pipeline-auto.ts` alongside `/pipeline-auto` — starts from Interviewer when no loop is active, drains eligible non-manual-review TODOs across up to 20 complete cleanup loops, and shares `/pipeline-auto`'s RPC streaming, blank-line condensation, context usage display, live steering, and low-context wind-down UX.
+- **Refactored** `runSubAgent()` in `.pi/extensions/pipeline-auto.ts` to accept `SubAgentOptions` and return structured `SubAgentResult` (`ok`, `error`, `stopSignal`), plus exported `listEligibleTodoFiles()`, `MAX_CLEANUP_LOOPS`, `CLEANUP_STOP_MID_WORK`, and `CLEANUP_STOP_NO_TODOS`. `/pipeline-auto` behavior remains unchanged.
+- **Hardened** stop-signal and exit handling (Reviewer send-back fixes): sentinels now require standalone-line exact matching (optional markdown emphasis/backticks stripped, so prose mentions don't trigger stops), any sub-agent process exit before `agent_end` — including a silent code 0 — resolves as an error, the mid-work halt is scoped to Interviewer sessions only, and a fully-resolved final loop prints a clean completion message instead of the cap warning.
+- **Added** scoped *Auto-Cleanup Mode* subsections to `ai_workspace/roles/01_interviewer.md` and `ai_workspace/roles/02_planner.md` (active only under `/pipeline-cleanup`; normal interactive sessions unchanged), covering mid-work uncommitted change detection, strict `TODO_manual_review_*.md` exclusion, autonomous eligibility judgment/batching, stop sentinels, and unattended planning while preserving all hard constraints.
+- **Added** `tests/test_pipeline_cleanup.js` (107 assertions covering role-file static guards, `listEligibleTodoFiles()` unit tests, and 16 fake-RPC end-to-end scenarios C1–C16), hardened live role assertions in `tests/test_pipeline_push.js`, and fixed stale import path in `tests/scratch_test.js` (**326 tests passing** across 7 suites).
+- **Updated** `README.md`, `API_DOCS.md`, and inline JSDoc comments in `.pi/extensions/pipeline-auto.ts`.
 
 ### 2026-08-16 — Deep Testing: Bug Fixes and Comprehensive Unit Test Suite
 

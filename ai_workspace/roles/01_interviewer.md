@@ -90,6 +90,21 @@ After completing all interview tasks above (including Wrap-Up) and before transi
 
 **Record decisions on line 3 of `loop_state.md`.** Always set `can_loop=false` (Planner sets it to true later). See [Pipeline Configuration](AGENTS.md#pipeline-configuration-line-3-of-loop_statemd) in AGENTS.md for format, parsing rules, and routing matrices.
 
+### Auto-Cleanup Mode (Only When Invoked by /pipeline-cleanup)
+These rules apply **only** when explicitly invoked by `/pipeline-cleanup`. Normal human-driven sessions remain strictly interactive and unchanged.
+
+1. **Inspect uncommitted / external changes (`git status` and `git diff`):**
+   - Absorb minor or settled changes into the loop's commits.
+   - If changes look unfinished or mid-work (merge conflict markers, broken/partial syntax, `WIP`/`FIXME` placeholders, half-implemented edits): do **not** create `loop_state.md`, print a clear warning listing the affected files, emit the exact line `[CLEANUP_STOP: MID_WORK_CHANGES]`, and stop immediately.
+2. **Scan and select eligible TODOs (`ai_workspace/TODO/`):**
+   - **Strictly ignore all `TODO_manual_review_*.md` files** — never read, modify, or delete them.
+   - Validate remaining candidate TODOs against the codebase/git history, then judge eligibility purely from their contents: select only self-contained items that require no user feedback, unanswered questions, or ambiguous design decisions. Batching multiple eligible TODOs into one loop is allowed when it makes sense.
+   - If no eligible TODOs remain: do **not** create `loop_state.md`, briefly explain why remaining TODOs were skipped, emit the exact line `[CLEANUP_STOP: NO_ELIGIBLE_TODOS]`, and stop immediately.
+3. **Create `loop_state.md` and transition autonomously:**
+   - Skip interactive questioning and wrap-up confirmation.
+   - Write a complete Interviewer summary explicitly naming every selected TODO file and instructing the Planner to mandate a Worker deletion step for each.
+   - Select `test_level` and `do_docs` using your runtime recommendations, set `can_loop=false` on line 3, and commit/transition to Planner (Role 02) per `transition_guide.md`.
+
 ### Handling Mid-Loop Cancellation
 If the user says "cancel" during your session, follow [`cancel_guide.md`](../skill_helpers/cancel_guide.md). This guide covers two-step confirmation, git reset to pre-loop state, and TODO restore/archive.
 

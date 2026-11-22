@@ -91,15 +91,25 @@ const shortContent = ["only one line"].join("\n");
 assert(getCurrentRole(shortContent) === undefined,
     "Returns undefined when file has < 2 lines");
 
-// Test against actual loop_state.md in the repo
+// Test against actual loop_state.md in the repo (robust to whichever role is currently active)
 console.log("\n--- Testing against actual loop_state.md ---");
+const KNOWN_PIPELINE_ROLES = new Set([
+    "Interviewer", "Planner", "Worker", "Tester", "Documenter", "Reviewer", "Finalizer"
+]);
 try {
     const actual = fs.readFileSync(path.join(ROOT, "ai_workspace", "loop_state.md"), "utf-8");
     const role = getCurrentRole(actual);
-    assert(role === "Tester", `Extracts 'Tester' from actual file (got: '${role}')`);
+    const validFormat = typeof role === "string" && /^[A-Z][a-zA-Z ]*$/.test(role);
+    assert(validFormat && KNOWN_PIPELINE_ROLES.has(role),
+        `Extracts a valid pipeline role from actual loop_state.md (got: '${role}')`);
 } catch (e) {
-    console.log(`  ✗ FAIL: Could not read loop_state.md: ${e.message}`);
-    failed++;
+    if (e && e.code === "ENOENT") {
+        console.log("  ↷ SKIP: loop_state.md not present (between pipeline loops)");
+        skipped++;
+    } else {
+        console.log(`  ✗ FAIL: Could not read loop_state.md: ${e.message}`);
+        failed++;
+    }
 }
 
 // ============================================================

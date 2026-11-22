@@ -28,9 +28,12 @@ ai_workspace/├── roles/
 │   ├── todo_guide.md                  ← Out-of-scope item capture workflow + template
 │   └── transition_guide.md            ← Role completion & git commit rules
 └── TODO/                              ← Pending items (one .md file per item; consolidated manual-review files excepted)
+.pi/extensions/
+    └── pipeline-auto.ts               ← pi extension: /pipeline-auto + /pipeline-cleanup commands (shared runSubAgent RPC runner)
 tests/
     ├── scratch_test.js                ← Scratch/experimental test
     ├── test_pipeline_auto_features.js ← Feature-level tests for pipeline-auto extension
+    ├── test_pipeline_cleanup.js       ← Cleanup-runner suite — static role guards, unit edge cases, 16 fake-RPC E2E scenarios C1–C16 (107 tests)
     ├── test_pipeline_push.js          ← Helper function and command tests (32 tests)
     ├── test_sendback.js               ← Send-back mode regression tests (38 tests)
     ├── test_todo_consolidation.js     ← Static guards for consolidated manual-review TODO routing (42 tests)
@@ -115,8 +118,11 @@ tests/
 - Severity-based Reviewer finding routing: Warning-tier findings send back to Worker for in-loop fixes (interactive: recommended, with per-warning ignore/todo fallback on non-affirmation; auto: silent send-back); Suggestion-tier findings from Tester and Reviewer bundle into one consolidated manual-review TODO file per loop — `TODO_manual_review_{slug}.md`, deterministic slug derived from the goal summary, Reviewer as sole writer, created only if ≥1 item exists, idempotent refresh with dedupe across send-back re-runs. No role creates per-item TODO files for Warning or Suggestion findings anymore.
 - Consolidated-file disposition workflow: When a loop starts from a `TODO_manual_review_` file, the Interviewer walks each item into three explicit buckets (worked on / dropped / preserved) and rewrites the file at wrap-up — worked-on and dropped items removed, preserved kept verbatim, deleted only when empty. Dropped items are recorded in the Interviewer summary so nothing is silently lost.
 - Doc-accuracy tiering: Inaccurate documentation, including inline comments, is a Warning-tier Reviewer finding (fixed in-loop via send-back); missing/incomplete docs remain Suggestion-tier (consolidated file). The AGENTS.md shared constraint carries a tight carve-out — Worker may make minimal factual corrections to existing docs/inline comments only when sent back a Warning-level doc-inaccuracy finding; Documenter remains the docs owner as deliverable.
+- /pipeline-cleanup runner: Second slash command registered in `.pi/extensions/pipeline-auto.ts` for hands-off batch draining of eligible TODOs. `runSubAgent(cwd, options?)` parameterized via Options/Strategy pattern (defaults preserve `/pipeline-auto` 100%) and now returns a typed `SubAgentResult` (`ok`, `error?`, `stopSignal?`). Safety architecture: startup + per-loop no-loop guard, dual-layer case-insensitive `TODO_manual_review_*.md` exclusion (runner pre-scan + Interviewer instructions), Interviewer mid-work uncommitted-change check with `[CLEANUP_STOP: MID_WORK_CHANGES]` sentinel, clean exit via `[CLEANUP_STOP: NO_ELIGIBLE_TODOS]` or absent `loop_state.md`, zero-progress guard immune to newly filed TODOs, 20-loop hard cap alongside the existing 50-session and 3-consecutive-same-role guards. Stop sentinels match standalone lines only (markdown emphasis/backticks normalized) so prose mentions never trigger; mid-work halt scoped to Interviewer sessions only.
+- Finalizer loop-state prohibition: `07_finalizer.md` explicitly forbids appending a summary to `loop_state.md` or updating line 2 — the Finalizer deletes `loop_state.md` during Loop Reset and Handoff instead of transitioning via `transition_guide.md`, resolving the prior Deliverables contradiction.
 
 ## Recent Changes
+- 2026-11-21: Add /pipeline-cleanup command (hands-off TODO batch draining with safety guards) + fix Finalizer loop_state.md append contradiction; runSubAgent Options/Strategy refactor, role auto-cleanup guidance, 107-test cleanup suite
 - 2026-11-21: Severity-based Reviewer finding routing — Warnings send back to Worker, Suggestions bundle into one consolidated manual-review TODO file per loop; doc inaccuracies tiered as Warning with Worker minimal-corrections carve-out
 - 2026-09-13: Update Second Opinion role to append to loop_state.md line 2 History: chain when logging approved findings
 - 2026-09-10: Add Planner test-creation deferral directive (test authoring belongs to Tester); absorb line-ending guardrails (.gitattributes + Finalizer self-heal check); repair stale test paths from the tests/ move

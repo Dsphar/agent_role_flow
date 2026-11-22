@@ -2,7 +2,7 @@ const path = require('path');
 
 async function main() {
     try {
-        const ext = await import('./.pi/extensions/pipeline-auto.ts');
+        const ext = await import('../.pi/extensions/pipeline-auto.ts');
         console.log("Import successful!");
         console.log("Type of default export:", typeof ext.default);
         

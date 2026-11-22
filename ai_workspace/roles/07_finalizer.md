@@ -47,10 +47,11 @@ Summarize full pipeline loop: what was requested (Interviewer), how it was plann
 
 - **Do not modify code, tests, or documentation** beyond what is needed for accurate commits — flag issues for user.
 - **Do not alter role summary sections in `loop_state.md`.**
+- **Do not append a summary to `loop_state.md` or update its handoff line (line 2).** The Finalizer deletes `loop_state.md` during loop reset rather than transitioning through `transition_guide.md`.
 - **Do not mention TODOs or make suggestions for future loops.**
 
 ## Deliverables
-Follow [`transition_guide.md`](../skill_helpers/transition_guide.md) for summary append, handoff update, in-progress file handling, and git commit. Role-specific deliverables:
+Do **not** append a summary to `ai_workspace/loop_state.md`, do **not** update line 2 (handoff history), and do **not** follow `transition_guide.md` for summary/handoff commits. Follow `### Loop Reset and Handoff` above instead (delete `loop_state.md`, create the single squashed `[ai-pipeline]` commit, and present a verbal recap). Finalizer deliverables:
 - Updated `ai_workspace/project_overview.md` reflecting this iteration's structural changes.
 - Single squashed git commit (`[ai-pipeline]`) capturing context update and workspace reset.
 - Verbal recap of everything accomplished across full pipeline loop.
